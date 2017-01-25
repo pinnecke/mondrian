@@ -7,9 +7,11 @@
 #include <stdbool.h>
 
 #include <core/config.h>
-#include <core/mtb.h>
+#include <core/macros.h>
 #include <core/strtable.h>
 
+typedef uint16_t u8;
+typedef uint16_t u16;
 typedef uint64_t u64;
 
 #endif

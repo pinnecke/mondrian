@@ -14,50 +14,51 @@
 #include <stdio.h>
 #include "stddef.h"
 
-typedef enum gsEnumDataType {
-    GS_DATA_TYP_UINT8,
-    GS_DATA_TYP_UINT16,
-    GS_DATA_TYP_UINT32,
-    GS_DATA_TYP_UINT64,
-    GS_DATA_TYP_INT8,
-    GS_DATA_TYP_INT16,
-    GS_DATA_TYP_INT32,
-    GS_DATA_TYP_INT64,
-    GS_DATA_TYP_FLOAT32,
-    GS_DATA_TYP_FLOAT64,
-    GS_DATA_TYP_FIXEDSTRING,
-    GS_DATA_TYP_VARIABLESTRING,
-    GS_DATA_TYP_BINARY
-} gsDataType_t;
-
-enum gsEnumAttributeFlags {
-    GS_ATTR_FLAG_UNIQUE,
-    GS_ATTR_FLAG_PRIMARY,
-    GS_ATTR_FLAG_NON_NULL,
-    GS_ATTR_FLAG_AUTO_INCR,
-    GS_ATTR_FLAG_NULLABLE
+enum data_type {
+    DT_BOOLEAN,
+    DT_BYTE,
+    DT_UBYTE,
+    DT_SHORT,
+    DT_CHAR,
+    DT_INT,
+    DT_UINT,
+    DT_LONG,
+    DT_ULONG,
+    DT_FLOAT,
+    DT_DOUBLE,
+    DT_FIXED_STRING,
+    DT_VAR_STRING
 };
 
-typedef struct gsStructAttribute
+struct attribute
 {
     const char *name;
-    gsDataType_t dataType;
-    size_t len;
-    uint8_t flags;
-    size_t attribute_id;
-} gsAttribute_t;
+    enum data_type type;
+    u64 type_size;
+    u64 num_of_elements;
+    u64 id;
 
-typedef struct gsStructAttributeHeapInfo
+    struct {
+        u16 is_unique        : 1;
+        u16 is_primary       : 1;
+        u16 is_foreign       : 1;
+        u16 is_compound      : 1;
+        u16 is_nullable      : 1;
+        u16 auto_inc_enabled : 1;
+        u16 variable_length  : 1;
+    } flags;
+};
+
+struct attribute_heap_info
 {
-    size_t numAttributesInUse;
-    size_t numAttributesInFreeList;
-    size_t bytesInUse;
-    size_t bytesInFreeList;
-    uint32_t lastGcExectTime;
+    u64 num_attributes_in_use;
+    u64 num_attributes_in_free_list;
+    u64 bytes_in_use;
+    u64 bytes_in_free_list;
+    u64 last_gc_timestamp;
+};
 
-} gsAttributeHeapInfo_t;
-
-enum pan_error gsShutdownAttributesManager();
+enum pan_error attribute_gc_cleanup();
 
 /// Constructs a new attribute object with given parameters.
 ///

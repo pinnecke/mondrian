@@ -109,6 +109,9 @@
 		<Unit filename="/Users/marcus/git/pantheon/include/core/collections/recycle_buffer.h">
 			<Option target="gridstore"/>
 		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/include/core/collections/stripe.h">
+			<Option target="gridstore"/>
+		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/include/core/config.h">
 			<Option target="gridstore"/>
 		</Unit>
@@ -118,7 +121,7 @@
 		<Unit filename="/Users/marcus/git/pantheon/include/core/event.h">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/include/core/mtb.h">
+		<Unit filename="/Users/marcus/git/pantheon/include/core/macros.h">
 			<Option target="gridstore"/>
 		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/include/core/schema.h">

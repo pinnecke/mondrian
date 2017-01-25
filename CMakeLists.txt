@@ -15,5 +15,5 @@ set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c11 -pedantic -Wall \
     -fno-omit-frame-pointer -ffloat-store -fno-common -fstrict-aliasing \
     -lm")
 
-set(SOURCE_FILES main.c include/core/attribute.h core/attribute.c include/core/error.h include/core/stddef.h include/core/schema.h core/error.c include/core/config.h core/config.c include/core/strtable.h include/core/event.h core/event.c include/core/mtb.h include/core/collections/queue.h include/core/stdinc.h core/collections/queue.c include/core/collections/recycle_buffer.h core/collections/recycle_buffer.c)
+set(SOURCE_FILES main.c include/core/attribute.h core/attribute.c include/core/error.h include/core/stddef.h include/core/schema.h core/error.c include/core/config.h core/config.c include/core/strtable.h include/core/event.h core/event.c include/core/macros.h include/core/collections/queue.h include/core/stdinc.h core/collections/queue.c include/core/collections/recycle_buffer.h core/collections/recycle_buffer.c include/core/collections/stripe.h)
 add_executable(gridstore ${SOURCE_FILES})
