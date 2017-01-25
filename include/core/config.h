@@ -21,7 +21,7 @@
 #endif
 
 /* The maximum number of handlers to be registered during runtime */
-/* Used in: core/eventType.c */
+/* Used in: core/type.c */
 #ifndef OPT_EVENT_MAXIMUM_GLOBAL_IDENTIFIER
 #define OPT_EVENT_MAXIMUM_GLOBAL_IDENTIFIER     1024
 #endif
@@ -33,6 +33,6 @@ struct config_info {
     size_t max_sub_id;
 };
 
-gsError_t config_get(struct config_info *info);
+enum pan_error config_get(struct config_info *info);
 
 #endif //GRIDSTORE_CONFIG_H

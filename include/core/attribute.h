@@ -57,7 +57,7 @@ typedef struct gsStructAttributeHeapInfo
 
 } gsAttributeHeapInfo_t;
 
-gsError_t gsShutdownAttributesManager();
+enum pan_error gsShutdownAttributesManager();
 
 /// Constructs a new attribute object with given parameters.
 ///
@@ -98,7 +98,7 @@ const gsAttribute_t *gsCreateAttribute(const char *columnName, gsDataType_t data
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-gsError_t gsCompareAttributes(const gsAttribute_t *lhs, const gsAttribute_t *rhs);
+enum pan_error gsCompareAttributes(const gsAttribute_t *lhs, const gsAttribute_t *rhs);
 
 /// Prints an attribute in a human-readable form to a stream.
 ///
@@ -112,7 +112,7 @@ gsError_t gsCompareAttributes(const gsAttribute_t *lhs, const gsAttribute_t *rhs
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-gsError_t gsPrintAttribute(FILE *stream, const gsAttribute_t *attribute);
+enum pan_error gsPrintAttribute(FILE *stream, const gsAttribute_t *attribute);
 
 /// Notifies the system that the given attribute is no longer needed.
 //
@@ -127,7 +127,7 @@ gsError_t gsPrintAttribute(FILE *stream, const gsAttribute_t *attribute);
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-gsError_t gsDisposeAttribute(gsAttribute_t *attribute);
+enum pan_error gsDisposeAttribute(gsAttribute_t *attribute);
 
 /// Receives information to the attribute heap.
 ///
@@ -137,7 +137,7 @@ gsError_t gsDisposeAttribute(gsAttribute_t *attribute);
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-gsError_t gsAttributeHeapInfo(gsAttributeHeapInfo_t *info);
+enum pan_error gsAttributeHeapInfo(gsAttributeHeapInfo_t *info);
 
 /// Requests to free memory for attributes object that are no longer in use.
 ///
@@ -151,6 +151,6 @@ gsError_t gsAttributeHeapInfo(gsAttributeHeapInfo_t *info);
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-gsError_t gsExecAttributesGarbageCollection();
+enum pan_error gsExecAttributesGarbageCollection();
 
 #endif

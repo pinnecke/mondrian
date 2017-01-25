@@ -1,6 +1,7 @@
 #include <printf.h>
 #include <core/attribute.h>
 #include <core/event.h>
+#include <core/collections/recycle_buffer.h>
 
 void handle_event(enum event_type type, void *data) {
     printf("Received: %d\n", type);
@@ -12,6 +13,13 @@ void handle_event2(enum event_type type, void *data) {
 
 void handle_event3(enum event_type type, void *data) {
     printf("Received: %d\n", type);
+}
+
+int comp(void *lhs, void *rhs)
+{
+    int a = *((int *) lhs);
+    int b = *((int *) rhs);
+    return (a > b ? 1 : (a < b ? -1 : 0));
 }
 
 int main() {
@@ -37,15 +45,27 @@ int main() {
     printf("%d\n", events_subscribe(GS_EVENT_ATTRIBUTES_HEAP_REALLOC, handle_event));
     events_unsubscribe(0);
 
+    printf("Next should be zero: %d\n", events_subscribe(GS_EVENT_ATTRIBUTES_HEAP_REALLOC, handle_event));
     printf("%d\n", events_subscribe(GS_EVENT_ATTRIBUTES_HEAP_REALLOC, handle_event));
     printf("%d\n", events_subscribe(GS_EVENT_ATTRIBUTES_HEAP_REALLOC, handle_event));
     printf("%d\n", events_subscribe(GS_EVENT_ATTRIBUTES_HEAP_REALLOC, handle_event));
     printf("%d\n", events_subscribe(GS_EVENT_ATTRIBUTES_HEAP_REALLOC, handle_event));
-    printf("%d\n", events_subscribe(GS_EVENT_ATTRIBUTES_HEAP_REALLOC_TESTXXX, handle_event));
-    printf("%d\n", events_subscribe(GS_EVENT_ATTRIBUTES_HEAP_REALLOC_TESTXXX, handle_event));
-    printf("%d\n", events_subscribe(GS_EVENT_ATTRIBUTES_HEAP_REALLOC_TESTXXX, handle_event));
-    printf("%d\n", events_subscribe(GS_EVENT_ATTRIBUTES_HEAP_REALLOC_TESTXXX, handle_event));
-    printf("%d\n", events_subscribe(GS_EVENT_ATTRIBUTES_HEAP_REALLOC_TESTXXX, handle_event));
+    printf("%d\n", events_subscribe(GS_EVENT_ATTRIBUTES_HEAP_REALLOC, handle_event));
+    events_unsubscribe(8);
+    events_unsubscribe(6);
+    printf("%d\n", events_subscribe(GS_EVENT_ATTRIBUTES_HEAP_REALLOC, handle_event));
+    printf("%d\n", events_subscribe(GS_EVENT_ATTRIBUTES_HEAP_REALLOC, handle_event));
+    printf("%d\n", events_subscribe(GS_EVENT_ATTRIBUTES_HEAP_REALLOC, handle_event));
+
+    int dummy;
+    events_post(GS_EVENT_ATTRIBUTES_HEAP_REALLOC, &dummy);
+    events_post(GS_EVENT_ATTRIBUTES_HEAP_REALLOC, &dummy);
+    events_process();
+    events_process();
+    events_process();
+
+    printf("--------------\n");
+
 
     return 0;
 }

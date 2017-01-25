@@ -10,11 +10,11 @@ struct queue {
     float grow_factor;
 };
 
-gsError_t queue_create(struct queue *out, size_t capacity, float grow_factor, size_t element_size);
+enum pan_error queue_create(struct queue *out, size_t capacity, float grow_factor, size_t element_size);
 
-gsError_t queue_dispose(struct queue *out);
+enum pan_error queue_dispose(struct queue *out);
 
-gsError_t queue_add(struct queue *out, const void *data);
+enum pan_error queue_add(struct queue *out, const void *data);
 
 const void *queue_newest(const struct queue *queue);
 
@@ -22,7 +22,7 @@ const void *queue_oldest(const struct queue *queue);
 
 const void *queue_pop(struct queue *queue);
 
-gsError_t queue_empty(const struct queue *queue);
+enum pan_error queue_empty(const struct queue *queue);
 
 size_t queue_num_elements(const struct queue *queue);
 

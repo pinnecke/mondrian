@@ -88,6 +88,9 @@
 		<Unit filename="/Users/marcus/git/pantheon/core/collections/queue.c">
 			<Option target="gridstore"/>
 		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/core/collections/recycle_buffer.c">
+			<Option target="gridstore"/>
+		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/core/config.c">
 			<Option target="gridstore"/>
 		</Unit>

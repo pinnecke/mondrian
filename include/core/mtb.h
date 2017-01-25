@@ -17,7 +17,7 @@
 }
 
 #define REQUIRE_SUCCESS(expression, errorString)                   \
-    _REQUIRE_MATCH(expression, true, GS_SUCCESS, errorString);
+    _REQUIRE_MATCH(expression, true, PE_SUCCESS, errorString);
 
 #define MTB_REQUIRE_UNEQUAL(expression, value, errorString)             \
     _REQUIRE_MATCH(expression, false, value, errorString);

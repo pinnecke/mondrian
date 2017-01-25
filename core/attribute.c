@@ -37,14 +37,14 @@ struct structHeap {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const gsAttribute_t *gsCreateAttribute(const char *columnName, gsDataType_t dataType, size_t length, uint8_t flags) {
-    gsError_t initAttributesManager();
+    enum pan_error initAttributesManager();
     heapEntry_t *findAttributeInHeap(const gsAttribute_t *needle);
     heapEntry_t *createHeapEntry(const gsAttribute_t *entry);
 
     initAttributesManager();
 
     if (columnName == NULL || length == 0) {
-        gsLastError = GS_ILLEGAL_ARGUMENT;
+        pan_last_err = PE_ILLEGAL_ARG;
         return NULL;
     }
     heapEntry_t *heapEntry;
@@ -63,14 +63,14 @@ const gsAttribute_t *gsCreateAttribute(const char *columnName, gsDataType_t data
     return heapEntry->attribute;
 }
 
-gsError_t gsCompareAttributes(const gsAttribute_t *lhs, const gsAttribute_t *rhs){
-    gsError_t initAttributesManager();
+enum pan_error gsCompareAttributes(const gsAttribute_t *lhs, const gsAttribute_t *rhs){
+    enum pan_error initAttributesManager();
 
     if (lhs == NULL || rhs == NULL)
-        return GS_ILLEGAL_ARGUMENT;
+        return PE_ILLEGAL_ARG;
     initAttributesManager();
     return ((strcmp(lhs->name, rhs->name) == 0) && (lhs->flags == rhs->flags) && (lhs->dataType == rhs->dataType) &&
-            (lhs->len == rhs->len))? gsEquals : gsUnequals; /* attribute_id does not participate for comparison */
+            (lhs->len == rhs->len))? PE_EQUALS : PE_UNEQUALS; /* attribute_id does not participate for comparison */
 }
 
 
@@ -80,9 +80,9 @@ gsError_t gsCompareAttributes(const gsAttribute_t *lhs, const gsAttribute_t *rhs
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-gsError_t initAttributesManager() {
+enum pan_error initAttributesManager() {
     if (heap.is_initialized)
-        return GS_NO_OPERATION;
+        return PE_NOP;
     heap.is_initialized = true;
     heap.inUseList = NULL;
     heap.num_in_use = 0;
@@ -104,12 +104,12 @@ gsError_t initAttributesManager() {
         cursor->next = NULL;
     }
 
-    return GS_SUCCESS;
+    return PE_SUCCESS;
 }
 
-gsError_t gsShutdownAttributesManager() {
+enum pan_error gsShutdownAttributesManager() {
     // TODO: ...
-    return GS_SUCCESS;
+    return PE_SUCCESS;
 }
 
 heapEntry_t *findAttributeInHeapNaiveImpl(const gsAttribute_t *needle) {
@@ -119,7 +119,7 @@ heapEntry_t *findAttributeInHeapNaiveImpl(const gsAttribute_t *needle) {
     while (it != NULL) {
         heapEntry_t *heapEntry = &heap.pool[it->position];
         assert (heapEntry->attribute != NULL);
-        if (gsCompareAttributes(needle, heapEntry->attribute) == gsEquals) {
+        if (gsCompareAttributes(needle, heapEntry->attribute) == PE_EQUALS) {
             return heapEntry;
         }
         it = it->next;
@@ -166,8 +166,8 @@ heapEntry_t *createHeapEntry(const gsAttribute_t *entry) {
 /// function returns <code>gsIllegalState</code> if called before first call of <code>gsInitAttributesManager</code>.
 ///
 /// \note <code>gsInitAttributesManager</code>() must be called before first call to this function.
-gsError_t gsPrintAttribute(FILE *stream, const gsAttribute_t *attribute){
-    return GS_SUCCESS;
+enum pan_error gsPrintAttribute(FILE *stream, const gsAttribute_t *attribute){
+    return PE_SUCCESS;
 }
 
 /// Notifies the system that the given attribute is no longer needed.
@@ -182,8 +182,8 @@ gsError_t gsPrintAttribute(FILE *stream, const gsAttribute_t *attribute){
 /// function returns <code>gsIllegalState</code> if called before first call of <code>gsInitAttributesManager</code>.
 ///
 /// \note <code>gsInitAttributesManager</code>() must be called before first call to this function.
-gsError_t gsDisposeAttribute(gsAttribute_t *attribute){
-    return GS_SUCCESS;
+enum pan_error gsDisposeAttribute(gsAttribute_t *attribute){
+    return PE_SUCCESS;
 }
 
 /// Receives information to the attribute heap.
@@ -193,8 +193,8 @@ gsError_t gsDisposeAttribute(gsAttribute_t *attribute){
 ///           <code>gsSuccess</code> otherwise.
 ///
 /// \note <code>gsInitAttributesManager</code>() must be called before first call to this function.
-gsError_t gsAttributeHeapInfo(gsAttributeHeapInfo_t *info){
-    return GS_SUCCESS;
+enum pan_error gsAttributeHeapInfo(gsAttributeHeapInfo_t *info){
+    return PE_SUCCESS;
 }
 
 /// Requests to free memory for attributes object that are no longer in use.
@@ -208,6 +208,6 @@ gsError_t gsAttributeHeapInfo(gsAttributeHeapInfo_t *info){
 /// The function returns <code>gsIllegalState</code> if called before first call of <code>gsInitAttributesManager</code>.
 ///
 /// \note <code>gsInitAttributesManager</code>() must be called before first call to this function.
-gsError_t gsExecAttributesGarbageCollection(){
-    return GS_SUCCESS;
+enum pan_error gsExecAttributesGarbageCollection(){
+    return PE_SUCCESS;
 }

@@ -8,7 +8,6 @@ enum event_type {
     /// Raised when heap size for attribute object management was readjusted
     /// \see Event handler argument pointer <code>arg</code> is of type <code>gsAttributesHeapReallocArgs_t</code>
     GS_EVENT_ATTRIBUTES_HEAP_REALLOC,
-    GS_EVENT_ATTRIBUTES_HEAP_REALLOC_TESTXXX,
 
     // new events here...
 
@@ -22,7 +21,7 @@ enum event_type {
 };
 
 struct subscriber {
-    enum event_type eventType;
+    enum event_type type;
     void (*callback)(enum event_type event, void *args);
 };
 
@@ -75,9 +74,9 @@ uint64_t events_subscribe(enum event_type type, void (*callback)(enum event_type
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-gsError_t events_unsubscribe(uint64_t subscriber_id);
+enum pan_error events_unsubscribe(uint64_t subscriber_id);
 
-gsError_t events_post(enum event_type type, void *args);
+enum pan_error events_post(enum event_type type, void *args);
 
 ///
 /// \note This function is a co-routine.
@@ -86,6 +85,6 @@ gsError_t events_post(enum event_type type, void *args);
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-gsError_t events_process();
+enum pan_error events_process();
 
 #endif //GRIDSTORE_EVENT_H

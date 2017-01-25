@@ -177,6 +177,33 @@ core/collections/queue.c.s:
 	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/collections/queue.c.s
 .PHONY : core/collections/queue.c.s
 
+core/collections/recycle_buffer.o: core/collections/recycle_buffer.c.o
+
+.PHONY : core/collections/recycle_buffer.o
+
+# target to build an object file
+core/collections/recycle_buffer.c.o:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/collections/recycle_buffer.c.o
+.PHONY : core/collections/recycle_buffer.c.o
+
+core/collections/recycle_buffer.i: core/collections/recycle_buffer.c.i
+
+.PHONY : core/collections/recycle_buffer.i
+
+# target to preprocess a source file
+core/collections/recycle_buffer.c.i:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/collections/recycle_buffer.c.i
+.PHONY : core/collections/recycle_buffer.c.i
+
+core/collections/recycle_buffer.s: core/collections/recycle_buffer.c.s
+
+.PHONY : core/collections/recycle_buffer.s
+
+# target to generate assembly for a file
+core/collections/recycle_buffer.c.s:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/collections/recycle_buffer.c.s
+.PHONY : core/collections/recycle_buffer.c.s
+
 core/config.o: core/config.c.o
 
 .PHONY : core/config.o
@@ -300,6 +327,9 @@ help:
 	@echo "... core/collections/queue.o"
 	@echo "... core/collections/queue.i"
 	@echo "... core/collections/queue.s"
+	@echo "... core/collections/recycle_buffer.o"
+	@echo "... core/collections/recycle_buffer.i"
+	@echo "... core/collections/recycle_buffer.s"
 	@echo "... core/config.o"
 	@echo "... core/config.i"
 	@echo "... core/config.s"
