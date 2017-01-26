@@ -123,194 +123,194 @@ gridstore/fast:
 	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/build
 .PHONY : gridstore/fast
 
-core/attribute.o: core/attribute.c.o
+core/Attribute.o: core/Attribute.cxx.o
 
-.PHONY : core/attribute.o
-
-# target to build an object file
-core/attribute.c.o:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/attribute.c.o
-.PHONY : core/attribute.c.o
-
-core/attribute.i: core/attribute.c.i
-
-.PHONY : core/attribute.i
-
-# target to preprocess a source file
-core/attribute.c.i:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/attribute.c.i
-.PHONY : core/attribute.c.i
-
-core/attribute.s: core/attribute.c.s
-
-.PHONY : core/attribute.s
-
-# target to generate assembly for a file
-core/attribute.c.s:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/attribute.c.s
-.PHONY : core/attribute.c.s
-
-core/collections/queue.o: core/collections/queue.c.o
-
-.PHONY : core/collections/queue.o
+.PHONY : core/Attribute.o
 
 # target to build an object file
-core/collections/queue.c.o:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/collections/queue.c.o
-.PHONY : core/collections/queue.c.o
+core/Attribute.cxx.o:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/Attribute.cxx.o
+.PHONY : core/Attribute.cxx.o
 
-core/collections/queue.i: core/collections/queue.c.i
+core/Attribute.i: core/Attribute.cxx.i
 
-.PHONY : core/collections/queue.i
+.PHONY : core/Attribute.i
 
 # target to preprocess a source file
-core/collections/queue.c.i:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/collections/queue.c.i
-.PHONY : core/collections/queue.c.i
+core/Attribute.cxx.i:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/Attribute.cxx.i
+.PHONY : core/Attribute.cxx.i
 
-core/collections/queue.s: core/collections/queue.c.s
+core/Attribute.s: core/Attribute.cxx.s
 
-.PHONY : core/collections/queue.s
+.PHONY : core/Attribute.s
 
 # target to generate assembly for a file
-core/collections/queue.c.s:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/collections/queue.c.s
-.PHONY : core/collections/queue.c.s
+core/Attribute.cxx.s:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/Attribute.cxx.s
+.PHONY : core/Attribute.cxx.s
 
-core/collections/recycle_buffer.o: core/collections/recycle_buffer.c.o
+core/collections/Queue.o: core/collections/Queue.cxx.o
 
-.PHONY : core/collections/recycle_buffer.o
+.PHONY : core/collections/Queue.o
 
 # target to build an object file
-core/collections/recycle_buffer.c.o:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/collections/recycle_buffer.c.o
-.PHONY : core/collections/recycle_buffer.c.o
+core/collections/Queue.cxx.o:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/collections/Queue.cxx.o
+.PHONY : core/collections/Queue.cxx.o
 
-core/collections/recycle_buffer.i: core/collections/recycle_buffer.c.i
+core/collections/Queue.i: core/collections/Queue.cxx.i
 
-.PHONY : core/collections/recycle_buffer.i
+.PHONY : core/collections/Queue.i
 
 # target to preprocess a source file
-core/collections/recycle_buffer.c.i:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/collections/recycle_buffer.c.i
-.PHONY : core/collections/recycle_buffer.c.i
+core/collections/Queue.cxx.i:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/collections/Queue.cxx.i
+.PHONY : core/collections/Queue.cxx.i
 
-core/collections/recycle_buffer.s: core/collections/recycle_buffer.c.s
+core/collections/Queue.s: core/collections/Queue.cxx.s
 
-.PHONY : core/collections/recycle_buffer.s
+.PHONY : core/collections/Queue.s
 
 # target to generate assembly for a file
-core/collections/recycle_buffer.c.s:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/collections/recycle_buffer.c.s
-.PHONY : core/collections/recycle_buffer.c.s
+core/collections/Queue.cxx.s:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/collections/Queue.cxx.s
+.PHONY : core/collections/Queue.cxx.s
 
-core/config.o: core/config.c.o
+core/collections/RecycleBuffer.o: core/collections/RecycleBuffer.cxx.o
+
+.PHONY : core/collections/RecycleBuffer.o
+
+# target to build an object file
+core/collections/RecycleBuffer.cxx.o:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/collections/RecycleBuffer.cxx.o
+.PHONY : core/collections/RecycleBuffer.cxx.o
+
+core/collections/RecycleBuffer.i: core/collections/RecycleBuffer.cxx.i
+
+.PHONY : core/collections/RecycleBuffer.i
+
+# target to preprocess a source file
+core/collections/RecycleBuffer.cxx.i:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/collections/RecycleBuffer.cxx.i
+.PHONY : core/collections/RecycleBuffer.cxx.i
+
+core/collections/RecycleBuffer.s: core/collections/RecycleBuffer.cxx.s
+
+.PHONY : core/collections/RecycleBuffer.s
+
+# target to generate assembly for a file
+core/collections/RecycleBuffer.cxx.s:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/collections/RecycleBuffer.cxx.s
+.PHONY : core/collections/RecycleBuffer.cxx.s
+
+core/config.o: core/config.cxx.o
 
 .PHONY : core/config.o
 
 # target to build an object file
-core/config.c.o:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/config.c.o
-.PHONY : core/config.c.o
+core/config.cxx.o:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/config.cxx.o
+.PHONY : core/config.cxx.o
 
-core/config.i: core/config.c.i
+core/config.i: core/config.cxx.i
 
 .PHONY : core/config.i
 
 # target to preprocess a source file
-core/config.c.i:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/config.c.i
-.PHONY : core/config.c.i
+core/config.cxx.i:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/config.cxx.i
+.PHONY : core/config.cxx.i
 
-core/config.s: core/config.c.s
+core/config.s: core/config.cxx.s
 
 .PHONY : core/config.s
 
 # target to generate assembly for a file
-core/config.c.s:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/config.c.s
-.PHONY : core/config.c.s
+core/config.cxx.s:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/config.cxx.s
+.PHONY : core/config.cxx.s
 
-core/error.o: core/error.c.o
+core/error.o: core/error.cxx.o
 
 .PHONY : core/error.o
 
 # target to build an object file
-core/error.c.o:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/error.c.o
-.PHONY : core/error.c.o
+core/error.cxx.o:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/error.cxx.o
+.PHONY : core/error.cxx.o
 
-core/error.i: core/error.c.i
+core/error.i: core/error.cxx.i
 
 .PHONY : core/error.i
 
 # target to preprocess a source file
-core/error.c.i:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/error.c.i
-.PHONY : core/error.c.i
+core/error.cxx.i:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/error.cxx.i
+.PHONY : core/error.cxx.i
 
-core/error.s: core/error.c.s
+core/error.s: core/error.cxx.s
 
 .PHONY : core/error.s
 
 # target to generate assembly for a file
-core/error.c.s:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/error.c.s
-.PHONY : core/error.c.s
+core/error.cxx.s:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/error.cxx.s
+.PHONY : core/error.cxx.s
 
-core/event.o: core/event.c.o
+core/event.o: core/event.cxx.o
 
 .PHONY : core/event.o
 
 # target to build an object file
-core/event.c.o:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/event.c.o
-.PHONY : core/event.c.o
+core/event.cxx.o:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/event.cxx.o
+.PHONY : core/event.cxx.o
 
-core/event.i: core/event.c.i
+core/event.i: core/event.cxx.i
 
 .PHONY : core/event.i
 
 # target to preprocess a source file
-core/event.c.i:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/event.c.i
-.PHONY : core/event.c.i
+core/event.cxx.i:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/event.cxx.i
+.PHONY : core/event.cxx.i
 
-core/event.s: core/event.c.s
+core/event.s: core/event.cxx.s
 
 .PHONY : core/event.s
 
 # target to generate assembly for a file
-core/event.c.s:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/event.c.s
-.PHONY : core/event.c.s
+core/event.cxx.s:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/core/event.cxx.s
+.PHONY : core/event.cxx.s
 
-main.o: main.c.o
+main.o: main.cxx.o
 
 .PHONY : main.o
 
 # target to build an object file
-main.c.o:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/main.c.o
-.PHONY : main.c.o
+main.cxx.o:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/main.cxx.o
+.PHONY : main.cxx.o
 
-main.i: main.c.i
+main.i: main.cxx.i
 
 .PHONY : main.i
 
 # target to preprocess a source file
-main.c.i:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/main.c.i
-.PHONY : main.c.i
+main.cxx.i:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/main.cxx.i
+.PHONY : main.cxx.i
 
-main.s: main.c.s
+main.s: main.cxx.s
 
 .PHONY : main.s
 
 # target to generate assembly for a file
-main.c.s:
-	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/main.c.s
-.PHONY : main.c.s
+main.cxx.s:
+	$(MAKE) -f CMakeFiles/gridstore.dir/build.make CMakeFiles/gridstore.dir/main.cxx.s
+.PHONY : main.cxx.s
 
 # Help Target
 help:
@@ -321,15 +321,15 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... gridstore"
-	@echo "... core/attribute.o"
-	@echo "... core/attribute.i"
-	@echo "... core/attribute.s"
-	@echo "... core/collections/queue.o"
-	@echo "... core/collections/queue.i"
-	@echo "... core/collections/queue.s"
-	@echo "... core/collections/recycle_buffer.o"
-	@echo "... core/collections/recycle_buffer.i"
-	@echo "... core/collections/recycle_buffer.s"
+	@echo "... core/Attribute.o"
+	@echo "... core/Attribute.i"
+	@echo "... core/Attribute.s"
+	@echo "... core/collections/Queue.o"
+	@echo "... core/collections/Queue.i"
+	@echo "... core/collections/Queue.s"
+	@echo "... core/collections/RecycleBuffer.o"
+	@echo "... core/collections/RecycleBuffer.i"
+	@echo "... core/collections/RecycleBuffer.s"
 	@echo "... core/config.o"
 	@echo "... core/config.i"
 	@echo "... core/config.s"

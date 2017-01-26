@@ -14,25 +14,35 @@
 #define OPT_GC_ATTRIBUTE_HEAPSIZE     10
 #endif
 
-/* The initial capacity (in number of objects) of the per-type group list of installed type handlers.
- * Used in: core/type.c */
+/* The initial Capacity (in number of objects) of the per-type group list of installed type handlers.
+ * Used in: Pantheon/type.c */
 #ifndef OPT_EVENT_GROUP_INIT_LIST_CAPACITY
 #define OPT_EVENT_GROUP_INIT_LIST_CAPACITY     10
 #endif
 
 /* The maximum number of handlers to be registered during runtime */
-/* Used in: core/type.c */
+/* Used in: Pantheon/type.c */
 #ifndef OPT_EVENT_MAXIMUM_GLOBAL_IDENTIFIER
 #define OPT_EVENT_MAXIMUM_GLOBAL_IDENTIFIER     1024
 #endif
 
-struct config_info {
-    bool shareAttributes;
-    size_t gcAttributeHeapSize;
-    size_t init_cap_event_groups;
-    size_t max_sub_id;
-};
+#ifndef OPT_RECYCLE_BUFFER_GROW_FACTOR
+#define OPT_RECYCLE_BUFFER_GROW_FACTOR     1.4f
+#endif
 
-enum pan_error config_get(struct config_info *info);
+namespace Pantheon
+{
+namespace Config
+{
+    struct StaticConfig
+    {
+        static const bool ShareAttributes;
+        static const size_t GcAttributeHeapSize;
+        static const size_t InitialEventGroupCapacity;
+        static const size_t InitialSubscriberCapacity;
+        static const float RecycleBufferGrowFactor;
+    };
+}
+}
 
 #endif //GRIDSTORE_CONFIG_H

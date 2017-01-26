@@ -5,8 +5,10 @@
 #ifndef GRIDSTORE_MACROS_H
 #define GRIDSTORE_MACROS_H
 
-#include <core/stdinc.h>
+#include <Pantheon/stdinc.h>
 #include "error.h"
+
+namespace Pantheon {
 
 #define _REQUIRE_MATCH(expression, equals, compareValue, errorString)  \
 {                                                                      \
@@ -17,7 +19,7 @@
 }
 
 #define REQUIRE_SUCCESS(expression, errorString)                   \
-    _REQUIRE_MATCH(expression, true, PE_SUCCESS, errorString);
+    _REQUIRE_MATCH(expression, true, ErrorType::Success, errorString);
 
 #define MTB_REQUIRE_UNEQUAL(expression, value, errorString)             \
     _REQUIRE_MATCH(expression, false, value, errorString);
@@ -56,6 +58,6 @@
     MTB_REQUIRE_GREATER_EQ(expression, lower, errorString)             \
     MTB_REQUIRE_LESS(expression, upper, errorString)
 
-
+}
 
 #endif //GRIDSTORE_MACROS_H

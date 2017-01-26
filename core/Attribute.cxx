@@ -1,12 +1,15 @@
-#include <core/attribute.h>
+#include <Pantheon/Attribute.h>
 #include <stdbool.h>
-#include <core/config.h>
+#include <Pantheon/config.h>
 #include <stdlib.h>
-#include <core/strtable.h>
+#include <Pantheon/strtable.h>
 #include <assert.h>
 #include <string.h>
-#include <core/macros.h>
+#include <Pantheon/macros.h>
 
+using namespace Pantheon;
+
+/*
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //  Structs
@@ -14,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 typedef struct structHeapEntry {
-    gsAttribute_t *attribute;
+    gsAttribute_t *Attribute;
     size_t shared_counter;
 } heapEntry_t;
 
@@ -37,14 +40,14 @@ struct structHeap {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const gsAttribute_t *gsCreateAttribute(const char *columnName, gsDataType_t dataType, size_t length, uint8_t flags) {
-    enum pan_error initAttributesManager();
+    enum ErrorType initAttributesManager();
     heapEntry_t *findAttributeInHeap(const gsAttribute_t *needle);
     heapEntry_t *createHeapEntry(const gsAttribute_t *entry);
 
     initAttributesManager();
 
     if (columnName == NULL || length == 0) {
-        pan_last_err = PE_ILLEGAL_ARG;
+        pan_last_err = IllegalArgument;
         return NULL;
     }
     heapEntry_t *heapEntry;
@@ -60,17 +63,17 @@ const gsAttribute_t *gsCreateAttribute(const char *columnName, gsDataType_t data
         exit (EXIT_FAILURE);
     }
 
-    return heapEntry->attribute;
+    return heapEntry->Attribute;
 }
 
-enum pan_error gsCompareAttributes(const gsAttribute_t *lhs, const gsAttribute_t *rhs){
-    enum pan_error initAttributesManager();
+enum ErrorType gsCompareAttributes(const gsAttribute_t *lhs, const gsAttribute_t *rhs){
+    enum ErrorType initAttributesManager();
 
     if (lhs == NULL || rhs == NULL)
-        return PE_ILLEGAL_ARG;
+        return IllegalArgument;
     initAttributesManager();
     return ((strcmp(lhs->name, rhs->name) == 0) && (lhs->flags == rhs->flags) && (lhs->dataType == rhs->dataType) &&
-            (lhs->len == rhs->len))? PE_EQUALS : PE_UNEQUALS; /* attribute_id does not participate for comparison */
+            (lhs->len == rhs->len))? Equals : Unequals;
 }
 
 
@@ -80,36 +83,36 @@ enum pan_error gsCompareAttributes(const gsAttribute_t *lhs, const gsAttribute_t
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-enum pan_error initAttributesManager() {
+enum ErrorType initAttributesManager() {
     if (heap.is_initialized)
-        return PE_NOP;
+        return NoOperation;
     heap.is_initialized = true;
     heap.inUseList = NULL;
     heap.num_in_use = 0;
 
-    struct config_info info;
+    struct StaticConfig info;
     config_get(&info);
-    heap.pool = malloc(info.gcAttributeHeapSize * sizeof(heapEntry_t));
+    heap.pool = malloc(info.GcAttributeHeapSize * sizeof(heapEntry_t));
 
     positionListEntry_t *cursor;
     cursor = malloc(sizeof(positionListEntry_t));
     cursor->position = 0;
     cursor->next = NULL;
     heap.freeList = cursor;
-    for (size_t idx = 1; idx < info.gcAttributeHeapSize; idx++) {
+    for (size_t Index = 1; Index < info.GcAttributeHeapSize; Index++) {
         positionListEntry_t *entry = malloc(sizeof(positionListEntry_t));
-        entry->position = idx;
+        entry->position = Index;
         cursor->next = entry;
         cursor = entry;
         cursor->next = NULL;
     }
 
-    return PE_SUCCESS;
+    return Success;
 }
 
-enum pan_error gsShutdownAttributesManager() {
+enum ErrorType gsShutdownAttributesManager() {
     // TODO: ...
-    return PE_SUCCESS;
+    return Success;
 }
 
 heapEntry_t *findAttributeInHeapNaiveImpl(const gsAttribute_t *needle) {
@@ -118,8 +121,8 @@ heapEntry_t *findAttributeInHeapNaiveImpl(const gsAttribute_t *needle) {
     positionListEntry_t *it = heap.inUseList;
     while (it != NULL) {
         heapEntry_t *heapEntry = &heap.pool[it->position];
-        assert (heapEntry->attribute != NULL);
-        if (gsCompareAttributes(needle, heapEntry->attribute) == PE_EQUALS) {
+        assert (heapEntry->Attribute != NULL);
+        if (gsCompareAttributes(needle, heapEntry->Attribute) == Equals) {
             return heapEntry;
         }
         it = it->next;
@@ -130,11 +133,11 @@ heapEntry_t *findAttributeInHeapNaiveImpl(const gsAttribute_t *needle) {
 heapEntry_t *findAttributeInHeap(const gsAttribute_t *needle) {
     assert(needle != NULL);
 
-    struct config_info config;
+    struct StaticConfig config;
     REQUIRE_SUCCESS(config_get(&config), MSG_CONFIG_LOAD);
 
     // TODO:                         Improve this by more efficient algorithm
-    return config.shareAttributes ? findAttributeInHeapNaiveImpl(needle) : NULL;
+    return config.ShareAttributes ? findAttributeInHeapNaiveImpl(needle) : NULL;
 }
 
 heapEntry_t *createHeapEntry(const gsAttribute_t *entry) {
@@ -147,67 +150,69 @@ heapEntry_t *createHeapEntry(const gsAttribute_t *entry) {
     heap.inUseList = heapEntry;
     heapEntry_t *poolEntry = &heap.pool[heapEntry->position];
     size_t typeSize = sizeof(gsAttribute_t);
-    poolEntry->attribute = malloc(typeSize);
-    memcpy(poolEntry->attribute, entry, typeSize);
-    poolEntry->attribute->name = strdup(entry->name);
+    poolEntry->Attribute = malloc(typeSize);
+    memcpy(poolEntry->Attribute, entry, typeSize);
+    poolEntry->Attribute->name = strdup(entry->name);
     poolEntry->shared_counter = 1;
-    poolEntry->attribute->attribute_id = heapEntry->position;
+    poolEntry->Attribute->attribute_id = heapEntry->position;
     return poolEntry;
 }
 
-/// Prints an attribute in a human-readable form to a stream.
+/// Prints an Attribute in a human-readable form to a stream.
 ///
-/// The content of the attribute \p attr is printed to stream \p stream with the following format:<br/>
+/// The content of the Attribute \p attr is printed to stream \p stream with the following format:<br/>
 /// <code>Attribute(type=[data type], length=[length], name=<[column name], flags=[verbose form of flags])</code>
 ///
-/// \param stream stream to which the attribute should be printed, e.g., <code>stdout</code>
-/// \param attribute the attribute that should be printed. The attribute pointer must be valid.
+/// \param stream stream to which the Attribute should be printed, e.g., <code>stdout</code>
+/// \param Attribute the Attribute that should be printed. The Attribute pointer must be valid.
 /// \return <code>gsSuccess</code> if success, <code>gsIllegalArgument</code> if \p stream or \p attr are illegal. The
 /// function returns <code>gsIllegalState</code> if called before first call of <code>gsInitAttributesManager</code>.
 ///
 /// \note <code>gsInitAttributesManager</code>() must be called before first call to this function.
-enum pan_error gsPrintAttribute(FILE *stream, const gsAttribute_t *attribute){
-    return PE_SUCCESS;
+enum ErrorType gsPrintAttribute(FILE *stream, const gsAttribute_t *Attribute){
+    return Success;
 }
 
-/// Notifies the system that the given attribute is no longer needed.
+/// Notifies the system that the given Attribute is no longer needed.
 //
-/// The system is requested to free up memory for the given attribute object. Since multiple callers might share the
-/// same pointer to the attribute object \p attr, the actual deleting of the given attribute object might be done at
-/// a later time. However, after calling this function the caller should treat its attribute object as freed and
+/// The system is requested to free up memory for the given Attribute object. Since multiple callers might share the
+/// same pointer to the Attribute object \p attr, the actual deleting of the given Attribute object might be done at
+/// a later time. However, after calling this function the caller should treat its Attribute object as freed and
 /// should no longer use the pointer to \p attr.
 ///
-/// \param attribute A valid pointer to an attribute object
-/// \return <code>gsSuccess</code> if success, <code>gsIllegalArgument</code> if \p is non-valid attribute. The
+/// \param Attribute A valid pointer to an Attribute object
+/// \return <code>gsSuccess</code> if success, <code>gsIllegalArgument</code> if \p is non-valid Attribute. The
 /// function returns <code>gsIllegalState</code> if called before first call of <code>gsInitAttributesManager</code>.
 ///
 /// \note <code>gsInitAttributesManager</code>() must be called before first call to this function.
-enum pan_error gsDisposeAttribute(gsAttribute_t *attribute){
-    return PE_SUCCESS;
+enum ErrorType gsDisposeAttribute(gsAttribute_t *Attribute){
+    return Success;
 }
 
-/// Receives information to the attribute heap.
+/// Receives information to the Attribute heap.
 ///
 /// \param info a pointer to an <code>gsAttributeHeapInfo_t</code> object in which the info will be stored
 /// \returns  <code>gsIllegalState</code> if called before first call of <code>gsInitAttributesManager</code>,
 ///           <code>gsSuccess</code> otherwise.
 ///
 /// \note <code>gsInitAttributesManager</code>() must be called before first call to this function.
-enum pan_error gsAttributeHeapInfo(gsAttributeHeapInfo_t *info){
-    return PE_SUCCESS;
+enum ErrorType gsAttributeHeapInfo(gsAttributeHeapInfo_t *info){
+    return Success;
 }
 
 /// Requests to free memory for attributes object that are no longer in use.
 ///
 /// If <code>gsCreateAttribute</code> is called more than one times with same parameters, subsequent callers receive
-/// a shared pointer to the first created attribute object. A call to <code>gsDisposeAttribute</code> requests to
+/// a shared pointer to the first created Attribute object. A call to <code>gsDisposeAttribute</code> requests to
 /// remove these objects but none of these request actually starts a memory deallocation. Using this function,
-/// the system is notified to free allocated memory for attribute objects that are no longer needed.
+/// the system is notified to free allocated memory for Attribute objects that are no longer needed.
 ///
 /// \return <code>gsSuccess</code> if garbage collection removes at least one object, otherwise <code>gsNoOperation</code>.
 /// The function returns <code>gsIllegalState</code> if called before first call of <code>gsInitAttributesManager</code>.
 ///
 /// \note <code>gsInitAttributesManager</code>() must be called before first call to this function.
-enum pan_error gsExecAttributesGarbageCollection(){
-    return PE_SUCCESS;
+enum ErrorType gsExecAttributesGarbageCollection(){
+    return Success;
 }
+
+*/

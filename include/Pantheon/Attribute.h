@@ -1,64 +1,64 @@
 
 // - managed host memory with custom garbage collector to share attributes in order to save space.
-// - attribute heap statically allocates certain amount of memory; heap capacity can be configured at compile time.
+// - Attribute heap statically allocates certain amount of memory; heap Capacity can be configured at compile time.
 // - memory deallication is done over lazy garbage collector execution
-// - dictionary compression of attribute string representing the attribute names
+// - dictionary compression of Attribute string representing the Attribute names
 // - numeric (integer and real) data types with different sizes, variable and fixed-sized string data
-// - fixed and variable length attribute data types
+// - fixed and variable length Attribute data types
 
 #ifndef GRIDSTORE_TABLES_H
 #define GRIDSTORE_TABLES_H
 
-#include <core/error.h>
+#include <Pantheon/error.h>
 #include <stddef.h>
 #include <stdio.h>
 #include "stddef.h"
 
-enum data_type {
-    DT_BOOLEAN,
-    DT_BYTE,
-    DT_UBYTE,
-    DT_SHORT,
-    DT_CHAR,
-    DT_INT,
-    DT_UINT,
-    DT_LONG,
-    DT_ULONG,
-    DT_FLOAT,
-    DT_DOUBLE,
-    DT_FIXED_STRING,
-    DT_VAR_STRING
-};
+namespace Pantheon {
 
-struct attribute
-{
-    const char *name;
-    enum data_type type;
-    u64 type_size;
-    u64 num_of_elements;
-    u64 id;
+    enum data_type {
+        DT_BOOLEAN,
+        DT_BYTE,
+        DT_UBYTE,
+        DT_SHORT,
+        DT_CHAR,
+        DT_INT,
+        DT_UINT,
+        DT_LONG,
+        DT_ULONG,
+        DT_FLOAT,
+        DT_DOUBLE,
+        DT_FIXED_STRING,
+        DT_VAR_STRING
+    };
 
-    struct {
-        u16 is_unique        : 1;
-        u16 is_primary       : 1;
-        u16 is_foreign       : 1;
-        u16 is_compound      : 1;
-        u16 is_nullable      : 1;
-        u16 auto_inc_enabled : 1;
-        u16 variable_length  : 1;
-    } flags;
-};
+    struct Attribute {
+        const char *name;
+        enum data_type type;
+        QWORD type_size;
+        QWORD num_of_elements;
+        QWORD id;
 
-struct attribute_heap_info
-{
-    u64 num_attributes_in_use;
-    u64 num_attributes_in_free_list;
-    u64 bytes_in_use;
-    u64 bytes_in_free_list;
-    u64 last_gc_timestamp;
-};
+        struct {
+            BYTE is_unique        : 1;
+            BYTE is_primary       : 1;
+            BYTE is_foreign       : 1;
+            BYTE is_compound      : 1;
+            BYTE is_nullable      : 1;
+            BYTE auto_inc_enabled : 1;
+            BYTE variable_length  : 1;
+        } flags;
+    };
 
-enum pan_error attribute_gc_cleanup();
+    struct attribute_heap_info {
+        QWORD num_attributes_in_use;
+        QWORD num_attributes_in_free_list;
+        QWORD bytes_in_use;
+        QWORD bytes_in_free_list;
+        QWORD last_gc_timestamp;
+    };
+
+    enum ErrorType attribute_gc_cleanup();
 
 /// Constructs a new attribute object with given parameters.
 ///
@@ -83,7 +83,7 @@ enum pan_error attribute_gc_cleanup();
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-const gsAttribute_t *gsCreateAttribute(const char *columnName, gsDataType_t dataType, size_t length, uint8_t flags);
+//const gsAttribute_t *gsCreateAttribute(const char *columnName, gsDataType_t dataType, size_t length, uint8_t flags);
 
 /// Compares two attributes \p lhs and \p rhs.
 ///
@@ -99,7 +99,7 @@ const gsAttribute_t *gsCreateAttribute(const char *columnName, gsDataType_t data
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-enum pan_error gsCompareAttributes(const gsAttribute_t *lhs, const gsAttribute_t *rhs);
+//enum ErrorType gsCompareAttributes(const gsAttribute_t *lhs, const gsAttribute_t *rhs);
 
 /// Prints an attribute in a human-readable form to a stream.
 ///
@@ -113,7 +113,7 @@ enum pan_error gsCompareAttributes(const gsAttribute_t *lhs, const gsAttribute_t
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-enum pan_error gsPrintAttribute(FILE *stream, const gsAttribute_t *attribute);
+//enum ErrorType gsPrintAttribute(FILE *stream, const gsAttribute_t *Attribute);
 
 /// Notifies the system that the given attribute is no longer needed.
 //
@@ -128,7 +128,7 @@ enum pan_error gsPrintAttribute(FILE *stream, const gsAttribute_t *attribute);
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-enum pan_error gsDisposeAttribute(gsAttribute_t *attribute);
+//enum ErrorType gsDisposeAttribute(gsAttribute_t *Attribute);
 
 /// Receives information to the attribute heap.
 ///
@@ -138,7 +138,7 @@ enum pan_error gsDisposeAttribute(gsAttribute_t *attribute);
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-enum pan_error gsAttributeHeapInfo(gsAttributeHeapInfo_t *info);
+//enum ErrorType gsAttributeHeapInfo(gsAttributeHeapInfo_t *info);
 
 /// Requests to free memory for attributes object that are no longer in use.
 ///
@@ -152,6 +152,8 @@ enum pan_error gsAttributeHeapInfo(gsAttributeHeapInfo_t *info);
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-enum pan_error gsExecAttributesGarbageCollection();
+//enum ErrorType gsExecAttributesGarbageCollection();
+
+}
 
 #endif

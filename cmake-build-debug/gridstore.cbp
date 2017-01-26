@@ -82,61 +82,61 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/Users/marcus/git/pantheon/core/attribute.c">
+		<Unit filename="/Users/marcus/git/pantheon/core/Attribute.cxx">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/core/collections/queue.c">
+		<Unit filename="/Users/marcus/git/pantheon/core/collections/Queue.cxx">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/core/collections/recycle_buffer.c">
+		<Unit filename="/Users/marcus/git/pantheon/core/collections/RecycleBuffer.cxx">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/core/config.c">
+		<Unit filename="/Users/marcus/git/pantheon/core/config.cxx">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/core/error.c">
+		<Unit filename="/Users/marcus/git/pantheon/core/error.cxx">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/core/event.c">
+		<Unit filename="/Users/marcus/git/pantheon/core/event.cxx">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/include/core/attribute.h">
+		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/Attribute.h">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/include/core/collections/queue.h">
+		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/Container/Queue.h">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/include/core/collections/recycle_buffer.h">
+		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/Container/RecycleBuffer.h">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/include/core/collections/stripe.h">
+		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/Container/Stripe.h">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/include/core/config.h">
+		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/config.h">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/include/core/error.h">
+		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/error.h">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/include/core/event.h">
+		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/event.h">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/include/core/macros.h">
+		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/macros.h">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/include/core/schema.h">
+		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/schema.h">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/include/core/stddef.h">
+		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/stddef.h">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/include/core/stdinc.h">
+		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/stdinc.h">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/include/core/strtable.h">
+		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/strtable.h">
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/main.c">
+		<Unit filename="/Users/marcus/git/pantheon/main.cxx">
 			<Option target="gridstore"/>
 		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/CMakeLists.txt">
