@@ -959,7 +959,7 @@ void Sample(size_t N, size_t NumberOfRepetitions) {
 int main() {
 
     size_t numberOfIndependentVariableSamples = 30;
-    size_t numberOfRepititions = 50;
+    size_t numberOfRepititions = 150;
     size_t numberOfCustomersStart = 300000;
     size_t numberOfRecordsEnd = numberOfCustomersStart * 10 * 15;
     size_t stepSize = (numberOfRecordsEnd - numberOfCustomersStart)  / numberOfIndependentVariableSamples;
