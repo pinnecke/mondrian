@@ -37,6 +37,94 @@
 					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/pantheon/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
+			<Target title="exp_row_vs_column_store">
+				<Option output="/Users/marcus/git/pantheon/cmake-build-debug/exp_row_vs_column_store" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/pantheon/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/pantheon/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.3.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/pantheon/cmake-build-debug/Makefile&quot;  VERBOSE=1 exp_row_vs_column_store"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/pantheon/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/pantheon/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/pantheon/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="exp_row_vs_column_store/fast">
+				<Option output="/Users/marcus/git/pantheon/cmake-build-debug/exp_row_vs_column_store" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/pantheon/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/pantheon/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.3.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/pantheon/cmake-build-debug/Makefile&quot;  VERBOSE=1 exp_row_vs_column_store/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/pantheon/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/pantheon/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/pantheon/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="exp">
+				<Option output="/Users/marcus/git/pantheon/cmake-build-debug/exp" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/pantheon/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/pantheon/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.3.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/pantheon/cmake-build-debug/Makefile&quot;  VERBOSE=1 exp"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/pantheon/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/pantheon/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/pantheon/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="exp/fast">
+				<Option output="/Users/marcus/git/pantheon/cmake-build-debug/exp" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/pantheon/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/pantheon/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.3.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/pantheon/cmake-build-debug/Makefile&quot;  VERBOSE=1 exp/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/pantheon/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/pantheon/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/pantheon/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
 			<Target title="gridstore">
 				<Option output="/Users/marcus/git/pantheon/cmake-build-debug/gridstore" prefix_auto="0" extension_auto="0"/>
 				<Option working_dir="/Users/marcus/git/pantheon/cmake-build-debug"/>
@@ -82,58 +170,107 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/Users/marcus/git/pantheon/core/Attribute.cxx">
+		<Unit filename="/Users/marcus/git/pantheon/Experiments/PagingVsBuffering/launcher.cpp">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/core/collections/Queue.cxx">
+		<Unit filename="/Users/marcus/git/pantheon/Experiments/RowVsColumnStore/launcher.cpp">
+			<Option target="exp_row_vs_column_store"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/Pantheon/Attribute.cxx">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/core/collections/RecycleBuffer.cxx">
+		<Unit filename="/Users/marcus/git/pantheon/Pantheon/Container/ArrayList.cxx">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/core/config.cxx">
+		<Unit filename="/Users/marcus/git/pantheon/Pantheon/Container/LinkedList.cxx">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/core/error.cxx">
+		<Unit filename="/Users/marcus/git/pantheon/Pantheon/Container/Queue.cxx">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
-		<Unit filename="/Users/marcus/git/pantheon/core/event.cxx">
+		<Unit filename="/Users/marcus/git/pantheon/Pantheon/Container/RecycleBuffer.cxx">
+			<Option target="exp"/>
+			<Option target="gridstore"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/Pantheon/IO/BufferManager.cxx">
+			<Option target="exp"/>
+			<Option target="gridstore"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/Pantheon/config.cxx">
+			<Option target="exp"/>
+			<Option target="gridstore"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/Pantheon/error.cxx">
+			<Option target="exp"/>
+			<Option target="gridstore"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/Pantheon/event.cxx">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/Attribute.h">
+			<Option target="exp"/>
+			<Option target="gridstore"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/Container/ArrayList.h">
+			<Option target="exp"/>
+			<Option target="gridstore"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/Container/LinkedList.h">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/Container/Queue.h">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/Container/RecycleBuffer.h">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/Container/Stripe.h">
+			<Option target="exp"/>
+			<Option target="gridstore"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/IO/BufferManager.h">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/config.h">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/error.h">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/event.h">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/macros.h">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/schema.h">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/stddef.h">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/stdinc.h">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/include/Pantheon/strtable.h">
+			<Option target="exp"/>
 			<Option target="gridstore"/>
 		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/main.cxx">

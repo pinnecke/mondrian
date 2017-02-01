@@ -3,27 +3,27 @@
 namespace Pantheon {
     namespace Container {
 
-        ErrorType RecycleBuffer::Create(RecycleBuffer *Buffer, QWORD Capacity, QWORD ElementSize) {
+        PRESULT RecycleBuffer::Create(RecycleBuffer *Buffer, QWORD Capacity, QWORD ElementSize) {
             if (Capacity == 0 || Capacity == 0)
-                return ErrorType::IllegalArgument;
-            if ((InitBuffer(Buffer, Capacity, ElementSize) != ErrorType::Success) ||
-                (InitFreeList(Buffer, Capacity) != ErrorType::Success))
-                return ErrorType::Failed;
-            return ErrorType::Success;
+                return PRESULT::IllegalArgument;
+            if ((InitBuffer(Buffer, Capacity, ElementSize) != PRESULT::OK) ||
+                (InitFreeList(Buffer, Capacity) != PRESULT::OK))
+                return PRESULT::Failed;
+            return PRESULT::OK;
         }
 
-        enum ErrorType RecycleBuffer::GetSlot(QWORD *Slot, RecycleBuffer *Buffer) {
+        enum PRESULT RecycleBuffer::GetSlot(QWORD *Slot, RecycleBuffer *Buffer) {
             if ((Slot == nullptr) || (Buffer == nullptr))
-                return ErrorType::IllegalArgument;
+                return PRESULT::IllegalArgument;
 
             if (!IsFreeListFilled(Buffer))
                 ExpandFreeList(Buffer);
 
             *Slot = PopFromFreeList(Buffer);
-            return ErrorType::Success;
+            return PRESULT::OK;
         }
 
-        enum ErrorType RecycleBuffer::RemoveSlot(RecycleBuffer *Buffer, QWORD Slot) {
+        enum PRESULT RecycleBuffer::RemoveSlot(RecycleBuffer *Buffer, QWORD Slot) {
             assert (Buffer != nullptr);
             assert (Buffer->Base != nullptr);
             assert (Buffer->InUseList != nullptr);
@@ -35,7 +35,7 @@ namespace Pantheon {
                 Buffer->FreeList = root;
                 Buffer->NumberOfFreedElements++;
                 Buffer->NumberOfElementsInUse--;
-                return ErrorType::Success;
+                return PRESULT::OK;
             }
             for (auto prev = root, it = root->next; it != nullptr; prev = it, it = it->next) {
                 if (it->Index == Slot) {
@@ -44,61 +44,61 @@ namespace Pantheon {
                     Buffer->FreeList = it;
                     Buffer->NumberOfFreedElements++;
                     Buffer->NumberOfElementsInUse--;
-                    return ErrorType::Success;
+                    return PRESULT::OK;
                 }
             }
-            return ErrorType::NoSuchElement;
+            return PRESULT::NoSuchElement;
         }
 
         static inline BYTE *GetOffset(const RecycleBuffer *buffer, QWORD slot) {
             return buffer->Base + (slot * buffer->ElementSize);
         }
 
-        ErrorType RecycleBuffer::PutData(RecycleBuffer *Buffer, QWORD Slot, const BYTE *Data) {
+        PRESULT RecycleBuffer::PutData(RecycleBuffer *Buffer, QWORD Slot, const BYTE *Data) {
             if ((Buffer == nullptr) || (Slot >= Buffer->Capacity) || (Data == nullptr))
-                return ErrorType::IllegalArgument;
+                return PRESULT::IllegalArgument;
             assert (!RecycleBuffer::IsSlotFreed(Buffer, Slot));
             auto offset = GetOffset(Buffer, Slot);
             auto size = Buffer->ElementSize;
             memset(offset, 0, size);
             memcpy(offset, Data, size);
-            return ErrorType::Success;
+            return PRESULT::OK;
         }
 
-        ErrorType RecycleBuffer::GetData(retval BYTE **data, const RecycleBuffer *Buffer, QWORD Slot) {
+        PRESULT RecycleBuffer::GetData(retval BYTE **data, const RecycleBuffer *Buffer, QWORD Slot) {
             if ((Buffer == nullptr) || (Slot >= Buffer->Capacity)) {
-                return ErrorType::IllegalArgument;
+                return PRESULT::IllegalArgument;
             }
             assert(!(IsSlotFreed(Buffer, Slot)));
             *data = GetOffset(Buffer, Slot);
-            return ErrorType::Success;
+            return PRESULT::OK;
         }
 
-        enum ErrorType RecycleBuffer::Dispose(struct RecycleBuffer *Buffer) {
+        enum PRESULT RecycleBuffer::Dispose(struct RecycleBuffer *Buffer) {
             // TODO
-            return ErrorType::Success;
+            return PRESULT::OK;
         }
 
-        static inline ErrorType fill(RecycleBuffer::Slot **begin, QWORD beginValue, QWORD endValue) {
+        static inline PRESULT fill(RecycleBuffer::Slot **begin, QWORD beginValue, QWORD endValue) {
             using Slot = RecycleBuffer::Slot;
 
             Slot *head, *it;
             if ((head = (Slot *) malloc(sizeof(Slot)), MSG_HOST_MALLOC) == nullptr)
-                return ErrorType::HostMallocFailed;
+                return PRESULT::HostMallocFailed;
 
             head->Index = endValue - 1;
             head->next = nullptr;
 
             for (auto handlerId = head->Index; handlerId > beginValue; handlerId--) {
                 if ((it = (Slot *) malloc(sizeof(Slot))) == NULL)
-                    return ErrorType::HostMallocFailed;
+                    return PRESULT::HostMallocFailed;
                 it->Index = handlerId - 1;
                 it->next = head;
                 head = it;
             }
 
             *begin = head;
-            return ErrorType::Success;
+            return PRESULT::OK;
         }
 
         static inline RecycleBuffer::Slot *tail(RecycleBuffer::Slot *begin) {
@@ -136,13 +136,13 @@ namespace Pantheon {
             return (buffer->FreeList != nullptr);
         }
 
-        ErrorType RecycleBuffer::InitFreeList(RecycleBuffer *Buffer, QWORD Capacity) {
+        PRESULT RecycleBuffer::InitFreeList(RecycleBuffer *Buffer, QWORD Capacity) {
             assert (Buffer != nullptr);
             assert (Capacity > 0);
             fill(&Buffer->FreeList, 0, Capacity);
             Buffer->NumberOfFreedElements = Capacity;
             Buffer->NumberOfElementsInUse = 0;
-            return ErrorType::Success;
+            return PRESULT::OK;
         }
 
         void RecycleBuffer::ExpandFreeList(RecycleBuffer *Buffer) {
@@ -155,17 +155,17 @@ namespace Pantheon {
             fill(&Buffer->FreeList, capacityOld, capacityNew);
         }
 
-        enum ErrorType RecycleBuffer::InitBuffer(RecycleBuffer *Buffer, QWORD Capacity, QWORD ElementSize) {
+        enum PRESULT RecycleBuffer::InitBuffer(RecycleBuffer *Buffer, QWORD Capacity, QWORD ElementSize) {
             assert (Capacity != 0);
             assert (ElementSize != 0);
 
             QWORD size = ElementSize * Capacity;
             if ((Buffer->Base = (BYTE *) malloc(size)) == NULL)
-                return ErrorType::Failed;
+                return PRESULT::Failed;
             memset(Buffer->Base, 0, size);
             Buffer->Capacity = Capacity;
             Buffer->ElementSize = ElementSize;
-            return ErrorType::Success;
+            return PRESULT::OK;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Pantheon {
 }
 
 #define REQUIRE_SUCCESS(expression, errorString)                   \
-    _REQUIRE_MATCH(expression, true, ErrorType::Success, errorString);
+    _REQUIRE_MATCH(expression, true, PRESULT::Success, errorString);
 
 #define MTB_REQUIRE_UNEQUAL(expression, value, errorString)             \
     _REQUIRE_MATCH(expression, false, value, errorString);

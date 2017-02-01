@@ -4,12 +4,12 @@
 
 namespace Pantheon {
 
-    enum class ErrorType
+    enum class PRESULT
     {
         Failed = 0,
         False = 0,
         NoOperation = 0,
-        Success = 1,
+        OK = 1,
         True = 1,
         IllegalArgument,
         IllegalOperation,
@@ -19,14 +19,15 @@ namespace Pantheon {
         IllegalState,
         Unequals,
         Equals,
-        NoSuchElement
+        NoSuchElement,
+        OutOfBounds
     };
 
     namespace DiagnosticService {
 
-        void PrintError(FILE *stream, enum ErrorType error);
-        ErrorType GetLastError();
-        void SetLastError(ErrorType error);
+        void PrintError(FILE *stream, enum PRESULT error);
+        PRESULT GetLastError();
+        void SetLastError(PRESULT error);
 
     }
 }

@@ -21,23 +21,23 @@ namespace Pantheon
             QWORD NumberOfElementsInUse;
             Slot *FreeList, *InUseList;
 
-            static ErrorType Create(retval RecycleBuffer *Buffer, QWORD Capacity, QWORD ElementSize);
+            static PRESULT Create(retval RecycleBuffer *Buffer, QWORD Capacity, QWORD ElementSize);
 
-            static ErrorType GetSlot(retval QWORD *Slot, RecycleBuffer *Buffer);
+            static PRESULT GetSlot(retval QWORD *Slot, RecycleBuffer *Buffer);
 
-            static ErrorType RemoveSlot(RecycleBuffer *Buffer, QWORD Slot);
+            static PRESULT RemoveSlot(RecycleBuffer *Buffer, QWORD Slot);
 
-            static ErrorType PutData(RecycleBuffer *Buffer, QWORD Slot, const BYTE *Data);
+            static PRESULT PutData(RecycleBuffer *Buffer, QWORD Slot, const BYTE *Data);
 
-            static ErrorType GetData(retval BYTE **data, const RecycleBuffer *Buffer, QWORD Slot);
+            static PRESULT GetData(retval BYTE **data, const RecycleBuffer *Buffer, QWORD Slot);
 
-            static ErrorType Dispose(RecycleBuffer *Buffer);
+            static PRESULT Dispose(RecycleBuffer *Buffer);
 
         private:
 
-            static ErrorType InitBuffer(RecycleBuffer *Buffer, QWORD Capacity, QWORD ElementSize);
+            static PRESULT InitBuffer(RecycleBuffer *Buffer, QWORD Capacity, QWORD ElementSize);
 
-            static ErrorType InitFreeList(RecycleBuffer *Buffer, QWORD Capacity);
+            static PRESULT InitFreeList(RecycleBuffer *Buffer, QWORD Capacity);
 
             static bool IsFreeListFilled(RecycleBuffer *Buffer);
 

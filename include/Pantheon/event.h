@@ -34,11 +34,11 @@ namespace Pantheon {
 
     uint64_t events_subscribe(enum event_type type, void (*callback)(enum event_type event, void *args));
 
-    ErrorType events_unsubscribe(uint64_t subscriber_id);
+    PRESULT events_unsubscribe(uint64_t subscriber_id);
 
-    ErrorType events_post(enum event_type type, void *args);
+    PRESULT events_post(enum event_type type, void *args);
 
-    ErrorType events_process();
+    PRESULT events_process();
 
 }
 

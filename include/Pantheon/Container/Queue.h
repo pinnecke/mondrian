@@ -15,11 +15,11 @@ namespace Pantheon
             QWORD Capacity, ElementSize;
             float GrowFactor;
 
-            static ErrorType Create(retval Queue *Queue, size_t Capacity, float GrowFactor, QWORD ElementSize);
+            static PRESULT Create(retval Queue *Queue, size_t Capacity, float GrowFactor, QWORD ElementSize);
 
-            static ErrorType Dispose(Queue *Queue);
+            static PRESULT Dispose(Queue *Queue);
 
-            static ErrorType Enqueue(Queue *Queue, const BYTE *data);
+            static PRESULT Enqueue(Queue *Queue, const BYTE *data);
 
             static const BYTE *GetNewest(const Queue *queue);
 
@@ -27,7 +27,7 @@ namespace Pantheon
 
             static const BYTE *Deqeue(Queue *queue);
 
-            static ErrorType IsEmpty(const Queue *queue);
+            static PRESULT IsEmpty(const Queue *queue);
 
             QWORD GetNumberOfElements(const Queue *queue);
         };

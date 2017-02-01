@@ -3,35 +3,35 @@
 using namespace Pantheon;
 using namespace Pantheon::Container;
 
-ErrorType Queue::Create(Queue *Queue, size_t Capacity, float GrowFactor, QWORD ElementSize)
+PRESULT Queue::Create(Queue *Queue, size_t Capacity, float GrowFactor, QWORD ElementSize)
 {
     if (Queue == NULL || Capacity == 0 || GrowFactor <= 1 || ElementSize == 0)
-        return ErrorType::IllegalArgument;
+        return PRESULT::IllegalArgument;
     if ((Queue->Base = (BYTE *) malloc(ElementSize * Capacity)) == NULL)
-        return ErrorType::HostMallocFailed;
+        return PRESULT::HostMallocFailed;
     Queue->Front = Queue->Back = Queue->Base;
     Queue->ElementSize = ElementSize;
     Queue->Capacity = Capacity;
     Queue->GrowFactor = GrowFactor;
-    return ErrorType::Success;
+    return PRESULT::OK;
 }
 
-ErrorType Queue::Dispose(Queue *Queue)
+PRESULT Queue::Dispose(Queue *Queue)
 {
     if (Queue == nullptr)
-        return ErrorType::IllegalArgument;
+        return PRESULT::IllegalArgument;
     if (Queue->Front == nullptr)
-        return ErrorType::AlreadyFreed;
+        return PRESULT::AlreadyFreed;
     free (Queue->Front);
     Queue->Front = NULL;
     Queue->Capacity = Queue->ElementSize = 0;
-    return ErrorType::Success;
+    return PRESULT::OK;
 }
 
-enum ErrorType Queue::Enqueue(Queue *Queue, const BYTE *data)
+enum PRESULT Queue::Enqueue(Queue *Queue, const BYTE *data)
 {
     if (Queue == nullptr || data == nullptr)
-        return ErrorType::IllegalArgument;
+        return PRESULT::IllegalArgument;
     size_t currentSize = (Queue->Back - Queue->Base) / Queue->ElementSize;
     size_t currentFrontOffset = (Queue->Front - Queue->Base);
     size_t currentFrontPosition = currentFrontOffset / Queue->ElementSize;
@@ -46,20 +46,20 @@ enum ErrorType Queue::Enqueue(Queue *Queue, const BYTE *data)
     if (currentSize + 1 >= Queue->Capacity) {
         size_t newCapacity = Queue->Capacity * Queue->GrowFactor;
         if ((Queue->Base = (BYTE *) realloc(Queue->Base, Queue->ElementSize * newCapacity)) == NULL)
-            return ErrorType::HostReallocFailed;
+            return PRESULT::HostReallocFailed;
         Queue->Back = Queue->Base + (currentSize * Queue->ElementSize);
     }
 
     memcpy(Queue->Back, data, Queue->ElementSize);
     Queue->Back += Queue->ElementSize;
     Queue->Front = Queue->Base + currentFrontOffset;
-    return ErrorType::Success;
+    return PRESULT::OK;
 }
 
 const BYTE *Queue::GetNewest(const Queue *Queue)
 {
     if (Queue == nullptr) {
-        DiagnosticService::SetLastError(ErrorType::IllegalArgument);
+        DiagnosticService::SetLastError(PRESULT::IllegalArgument);
         return nullptr;
     }
     return Queue->Back;
@@ -68,7 +68,7 @@ const BYTE *Queue::GetNewest(const Queue *Queue)
 const BYTE *Queue::GetOldest(const Queue *Queue)
 {
     if (Queue == nullptr) {
-        DiagnosticService::SetLastError(ErrorType::IllegalArgument);
+        DiagnosticService::SetLastError(PRESULT::IllegalArgument);
         return nullptr;
     }
     return Queue->Front;
@@ -77,11 +77,11 @@ const BYTE *Queue::GetOldest(const Queue *Queue)
 const BYTE *Queue::Deqeue(Queue *Queue)
 {
     if (Queue == nullptr) {
-        DiagnosticService::SetLastError(ErrorType::IllegalArgument);
+        DiagnosticService::SetLastError(PRESULT::IllegalArgument);
         return nullptr;
     }
     if (Queue->Front >= Queue->Back) {
-        DiagnosticService::SetLastError(ErrorType::IllegalOperation);
+        DiagnosticService::SetLastError(PRESULT::IllegalOperation);
         return nullptr;
     }
     const BYTE *result = Queue->Front;
@@ -89,15 +89,15 @@ const BYTE *Queue::Deqeue(Queue *Queue)
     return result;
 }
 
-enum ErrorType Queue::IsEmpty(const Queue *Queue)
+enum PRESULT Queue::IsEmpty(const Queue *Queue)
 {
-    return ((Queue == nullptr) || (Queue->Front == Queue->Back)) ? ErrorType::True : ErrorType::False;
+    return ((Queue == nullptr) || (Queue->Front == Queue->Back)) ? PRESULT::True : PRESULT::False;
 }
 
 QWORD Queue::GetNumberOfElements(const Queue *Queue)
 {
     if (Queue == nullptr) {
-        DiagnosticService::SetLastError(ErrorType::IllegalArgument);
+        DiagnosticService::SetLastError(PRESULT::IllegalArgument);
         return 0;
     }
     return ((Queue->Front == Queue->Back) / Queue->ElementSize);

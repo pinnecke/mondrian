@@ -40,7 +40,7 @@ struct structHeap {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const gsAttribute_t *gsCreateAttribute(const char *columnName, gsDataType_t dataType, size_t length, uint8_t flags) {
-    enum ErrorType initAttributesManager();
+    enum PRESULT initAttributesManager();
     heapEntry_t *findAttributeInHeap(const gsAttribute_t *needle);
     heapEntry_t *createHeapEntry(const gsAttribute_t *entry);
 
@@ -66,8 +66,8 @@ const gsAttribute_t *gsCreateAttribute(const char *columnName, gsDataType_t data
     return heapEntry->Attribute;
 }
 
-enum ErrorType gsCompareAttributes(const gsAttribute_t *lhs, const gsAttribute_t *rhs){
-    enum ErrorType initAttributesManager();
+enum PRESULT gsCompareAttributes(const gsAttribute_t *lhs, const gsAttribute_t *rhs){
+    enum PRESULT initAttributesManager();
 
     if (lhs == NULL || rhs == NULL)
         return IllegalArgument;
@@ -83,7 +83,7 @@ enum ErrorType gsCompareAttributes(const gsAttribute_t *lhs, const gsAttribute_t
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-enum ErrorType initAttributesManager() {
+enum PRESULT initAttributesManager() {
     if (heap.is_initialized)
         return NoOperation;
     heap.is_initialized = true;
@@ -107,12 +107,12 @@ enum ErrorType initAttributesManager() {
         cursor->next = NULL;
     }
 
-    return Success;
+    return OK;
 }
 
-enum ErrorType gsShutdownAttributesManager() {
+enum PRESULT gsShutdownAttributesManager() {
     // TODO: ...
-    return Success;
+    return OK;
 }
 
 heapEntry_t *findAttributeInHeapNaiveImpl(const gsAttribute_t *needle) {
@@ -169,8 +169,8 @@ heapEntry_t *createHeapEntry(const gsAttribute_t *entry) {
 /// function returns <code>gsIllegalState</code> if called before first call of <code>gsInitAttributesManager</code>.
 ///
 /// \note <code>gsInitAttributesManager</code>() must be called before first call to this function.
-enum ErrorType gsPrintAttribute(FILE *stream, const gsAttribute_t *Attribute){
-    return Success;
+enum PRESULT gsPrintAttribute(FILE *stream, const gsAttribute_t *Attribute){
+    return OK;
 }
 
 /// Notifies the system that the given Attribute is no longer needed.
@@ -185,8 +185,8 @@ enum ErrorType gsPrintAttribute(FILE *stream, const gsAttribute_t *Attribute){
 /// function returns <code>gsIllegalState</code> if called before first call of <code>gsInitAttributesManager</code>.
 ///
 /// \note <code>gsInitAttributesManager</code>() must be called before first call to this function.
-enum ErrorType gsDisposeAttribute(gsAttribute_t *Attribute){
-    return Success;
+enum PRESULT gsDisposeAttribute(gsAttribute_t *Attribute){
+    return OK;
 }
 
 /// Receives information to the Attribute heap.
@@ -196,8 +196,8 @@ enum ErrorType gsDisposeAttribute(gsAttribute_t *Attribute){
 ///           <code>gsSuccess</code> otherwise.
 ///
 /// \note <code>gsInitAttributesManager</code>() must be called before first call to this function.
-enum ErrorType gsAttributeHeapInfo(gsAttributeHeapInfo_t *info){
-    return Success;
+enum PRESULT gsAttributeHeapInfo(gsAttributeHeapInfo_t *info){
+    return OK;
 }
 
 /// Requests to free memory for attributes object that are no longer in use.
@@ -211,8 +211,8 @@ enum ErrorType gsAttributeHeapInfo(gsAttributeHeapInfo_t *info){
 /// The function returns <code>gsIllegalState</code> if called before first call of <code>gsInitAttributesManager</code>.
 ///
 /// \note <code>gsInitAttributesManager</code>() must be called before first call to this function.
-enum ErrorType gsExecAttributesGarbageCollection(){
-    return Success;
+enum PRESULT gsExecAttributesGarbageCollection(){
+    return OK;
 }
 
 */

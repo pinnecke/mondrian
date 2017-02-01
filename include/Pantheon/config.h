@@ -30,6 +30,10 @@
 #define OPT_RECYCLE_BUFFER_GROW_FACTOR     1.4f
 #endif
 
+#ifndef OPT_BUFFER_MANAGER_GROW_FACTOR
+#define OPT_BUFFER_MANAGER_GROW_FACTOR     1.4f
+#endif
+
 namespace Pantheon
 {
 namespace Config
@@ -41,6 +45,7 @@ namespace Config
         static const size_t InitialEventGroupCapacity;
         static const size_t InitialSubscriberCapacity;
         static const float RecycleBufferGrowFactor;
+        static const float BufferManagerGrowFactor;
     };
 }
 }

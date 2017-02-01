@@ -9,6 +9,7 @@ namespace Config
     const size_t StaticConfig::InitialEventGroupCapacity = OPT_EVENT_GROUP_INIT_LIST_CAPACITY;
     const size_t StaticConfig::InitialSubscriberCapacity = OPT_EVENT_MAXIMUM_GLOBAL_IDENTIFIER;
     const float StaticConfig::RecycleBufferGrowFactor = OPT_RECYCLE_BUFFER_GROW_FACTOR;
+    const float StaticConfig::BufferManagerGrowFactor = OPT_BUFFER_MANAGER_GROW_FACTOR;
 }
 }
 

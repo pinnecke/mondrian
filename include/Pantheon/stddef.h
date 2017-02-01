@@ -18,6 +18,7 @@ namespace Pantheon {
     typedef uint64_t QWORD;
 
 #define retval
+#define nullable
 
 }
 #endif

@@ -58,7 +58,7 @@ namespace Pantheon {
         QWORD last_gc_timestamp;
     };
 
-    enum ErrorType attribute_gc_cleanup();
+    enum PRESULT attribute_gc_cleanup();
 
 /// Constructs a new attribute object with given parameters.
 ///
@@ -99,7 +99,7 @@ namespace Pantheon {
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-//enum ErrorType gsCompareAttributes(const gsAttribute_t *lhs, const gsAttribute_t *rhs);
+//enum PRESULT gsCompareAttributes(const gsAttribute_t *lhs, const gsAttribute_t *rhs);
 
 /// Prints an attribute in a human-readable form to a stream.
 ///
@@ -113,7 +113,7 @@ namespace Pantheon {
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-//enum ErrorType gsPrintAttribute(FILE *stream, const gsAttribute_t *Attribute);
+//enum PRESULT gsPrintAttribute(FILE *stream, const gsAttribute_t *Attribute);
 
 /// Notifies the system that the given attribute is no longer needed.
 //
@@ -128,7 +128,7 @@ namespace Pantheon {
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-//enum ErrorType gsDisposeAttribute(gsAttribute_t *Attribute);
+//enum PRESULT gsDisposeAttribute(gsAttribute_t *Attribute);
 
 /// Receives information to the attribute heap.
 ///
@@ -138,7 +138,7 @@ namespace Pantheon {
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-//enum ErrorType gsAttributeHeapInfo(gsAttributeHeapInfo_t *info);
+//enum PRESULT gsAttributeHeapInfo(gsAttributeHeapInfo_t *info);
 
 /// Requests to free memory for attributes object that are no longer in use.
 ///
@@ -152,7 +152,7 @@ namespace Pantheon {
 /// \author Marcus Pinnecke
 /// \date 2017-01-11
 /// \since 1.00.00
-//enum ErrorType gsExecAttributesGarbageCollection();
+//enum PRESULT gsExecAttributesGarbageCollection();
 
 }
 

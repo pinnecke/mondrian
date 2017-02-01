@@ -54,7 +54,7 @@ static inline void init_register()
                                               sizeof(struct global_sub)),
                         MSG_EVENT_SYSTEM_INIT_FAILED);
 
-        REQUIRE_EQUAL(Queue::Create(&posted_events, 200, GROW_FACT, sizeof(struct event)), ErrorType::Success, MSG_EVENT_QUEUE)
+        REQUIRE_EQUAL(Queue::Create(&posted_events, 200, GROW_FACT, sizeof(struct event)), PRESULT::OK, MSG_EVENT_QUEUE)
     }
 }
 
@@ -67,16 +67,16 @@ static inline void install_callback(Container::RecycleBuffer *group, uint64_t id
     Container::RecycleBuffer::PutData(group, id, (const BYTE *) &data);
 }
 
-static inline enum ErrorType create_global_id(QWORD *id, enum event_type event, uint64_t local_id)
+static inline enum PRESULT create_global_id(QWORD *id, enum event_type event, uint64_t local_id)
 {
     assert (id != NULL);
     assert (event >= 0);
     assert (event < _ENUM_EVENT_MAX);
 
     QWORD global_id;
-    enum ErrorType result;
+    enum PRESULT result;
 
-    if ((result = Container::RecycleBuffer::GetSlot(&global_id, &global_register)) != ErrorType::Success) {
+    if ((result = Container::RecycleBuffer::GetSlot(&global_id, &global_register)) != PRESULT::OK) {
         return result;
     }
 
@@ -86,13 +86,13 @@ static inline enum ErrorType create_global_id(QWORD *id, enum event_type event, 
         .local_id = local_id
     };
 
-    if ((result = Container::RecycleBuffer::PutData(&global_register, global_id, (const BYTE *) &data)) != ErrorType::Success) {
+    if ((result = Container::RecycleBuffer::PutData(&global_register, global_id, (const BYTE *) &data)) != PRESULT::OK) {
         return result;
     }
 
     *id = global_id;
 
-    return ErrorType::Success;
+    return PRESULT::OK;
 }
 
 static inline struct global_sub * get_local_id(QWORD global_id)
@@ -126,26 +126,26 @@ static inline void remove_global_sub(QWORD global_id) {
                     MSG_REMOVE_EVENT_HANLDER_FAILED);
 }
 
-enum ErrorType Pantheon::events_unsubscribe(QWORD subscriber_id) {
+enum PRESULT Pantheon::events_unsubscribe(QWORD subscriber_id) {
     if(is_initialized != true)
-        return ErrorType::IllegalState;
+        return PRESULT::IllegalState;
 
     struct global_sub *local_id = get_local_id(subscriber_id);
     REQUIRE_IN_RANGE(local_id->event, 0, _ENUM_EVENT_MAX, MSG_ENUM_BOUNDS)
 
     Container::RecycleBuffer *group = event_register + local_id->event;
-    if (Container::RecycleBuffer::RemoveSlot(group, local_id->local_id) != ErrorType::Success)
-        return ErrorType::NoSuchElement;
+    if (Container::RecycleBuffer::RemoveSlot(group, local_id->local_id) != PRESULT::OK)
+        return PRESULT::NoSuchElement;
     remove_global_sub(subscriber_id);
-    return ErrorType::Success;
+    return PRESULT::OK;
 }
 
-enum ErrorType Pantheon::events_post(enum event_type type, void *args) {
+enum PRESULT Pantheon::events_post(enum event_type type, void *args) {
     if(!is_initialized)
-        return ErrorType::IllegalState;
+        return PRESULT::IllegalState;
 
     if((type >= _ENUM_EVENT_MAX) || (args == NULL))
-        return ErrorType::IllegalArgument;
+        return PRESULT::IllegalArgument;
 
     struct event data = {
         .type = type,
@@ -155,9 +155,9 @@ enum ErrorType Pantheon::events_post(enum event_type type, void *args) {
     return Container::Queue::Enqueue(&posted_events, (BYTE *) &data);
 }
 
-enum ErrorType Pantheon::events_process() {
-    if (Container::Queue::IsEmpty(&posted_events) == ErrorType::True)
-        return ErrorType::NoOperation;
+enum PRESULT Pantheon::events_process() {
+    if (Container::Queue::IsEmpty(&posted_events) == PRESULT::True)
+        return PRESULT::NoOperation;
     const struct event *data = (const event *) Container::Queue::Deqeue(&posted_events);
     const Container::RecycleBuffer *group = event_register + data->type;
     Container::RecycleBuffer::Slot *it = group->InUseList;
@@ -168,5 +168,5 @@ enum ErrorType Pantheon::events_process() {
         callback->func(data->type, data->args);
         it = it->next;
     }
-    return ErrorType::Success;
+    return PRESULT::OK;
 }
