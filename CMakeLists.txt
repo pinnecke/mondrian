@@ -49,7 +49,7 @@ set(
 
 set(
         EXP_LAUNCER_ROW_VS_COLUMN_STORE
-        Experiments/RowVsColumnStore/Launcher.cpp
+        Experiments/RowVsColumnStore/HostLauncher.cpp
         Experiments/RowVsColumnStore/Configure.h
         Experiments/RowVsColumnStore/Host/Query.h
         Experiments/RowVsColumnStore/Host/Query.cxx
