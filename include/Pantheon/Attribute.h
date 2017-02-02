@@ -1,7 +1,7 @@
 
 // - managed host memory with custom garbage collector to share attributes in order to save space.
 // - Attribute heap statically allocates certain amount of memory; heap Capacity can be configured at compile time.
-// - memory deallication is done over lazy garbage collector execution
+// - memory deallication is done over lazy garbage collector run
 // - dictionary compression of Attribute string representing the Attribute names
 // - numeric (integer and real) data types with different sizes, variable and fixed-sized string data
 // - fixed and variable length Attribute data types

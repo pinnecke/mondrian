@@ -13,7 +13,7 @@ namespace Pantheon {
      * Swapping is delegated to OS due to VM management. Modern MM rely heavily on parallelized
      * memory-bound scanning rather than cache-inefficent index structures such as B-Trees which also comes to
      * the cost of index maintainance during updates inside the table. Unfortunately, scanning requires to touch
-     * all tuples inside a relation which inherently requires to load previously swapped data from disk back
+     * all Tuples inside a relation which inherently requires to load previously swapped data from disk back
      * to VM. Suggestion: Divide table data into three parts: Hot, Cold, and Frozen Data.
      * Hot: fresh data of interest, heavily in use. Must be kept in continuous memory in MM for fast transactional
      *      processing. Is target of analytic (say once per day) along with Cold/Frozen data

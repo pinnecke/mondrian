@@ -13,7 +13,7 @@ template<typename TimeT = std::chrono::nanoseconds>
 struct measure
 {
     template<typename F, typename ...Args>
-    static typename TimeT::rep execution(F&& func, Args&&... args)
+    static typename TimeT::rep run(F &&func, Args &&... args)
     {
         auto start = std::chrono::steady_clock::now();
         std::forward<decltype(func)>(func)(std::forward<Args>(args)...);
@@ -113,9 +113,9 @@ struct QueryForData {
 
         // Scan (equivalent to compiled queried)
         /*for (size_t cursor = 0; cursor < tableSize; cursor++) {
-            if (table->O_W_ID[cursor] == params->O_W_ID &&
-                    table->O_D_ID[cursor] == params->O_D_ID &&
-                    table->O_C_ID[cursor] == params->O_C_ID) {
+            if (table->O_W_ID[cursor] == Params->O_W_ID &&
+                    table->O_D_ID[cursor] == Params->O_D_ID &&
+                    table->O_C_ID[cursor] == Params->O_C_ID) {
 
                 if (table->O_ID[cursor] > maxOId) {
                     maxOId = table->O_ID[cursor];
@@ -192,7 +192,7 @@ void Sample(size_t N, size_t NumberOfRepetitions) {
 
         /* Query */
         ResultSet result;
-        auto duration = measure<>::execution(QueryForData(&result, &table, N, queryParams));
+        auto duration = measure<>::run(QueryForData(&result, &table, N, queryParams));
 
         size_t dataSetSizeInByte = (sizeof(unsigned) * 5 + sizeof(u_int64_t) * 3) * N;
 
