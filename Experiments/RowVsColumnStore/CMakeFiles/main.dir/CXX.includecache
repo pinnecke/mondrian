@@ -31,6 +31,8 @@ Shared/Common.h
 include/Configure.h
 
 include/Device/Query.cuh
+Shared/Common.h
+-
 
 include/Host/Operations.h
 

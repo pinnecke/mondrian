@@ -164,6 +164,7 @@ void SampleRowStoreHost(size_t NumberOfCustomers, size_t NumberOfItems, size_t C
     DisposeTables(&customerTable, &itemTable);
 }
 
+
 void SampleColumnStoreDevice(size_t NumberOfCustomers, size_t NumberOfItems, size_t CurrentRepetition)
 {
     srand(0);
@@ -177,27 +178,62 @@ void SampleColumnStoreDevice(size_t NumberOfCustomers, size_t NumberOfItems, siz
     FillOrdersTable(&customerTable, NumberOfCustomers);
     FillItemsTable(&itemTable, NumberOfItems);
 
-    void *devicePtr;
-    void *hostPtr = (void *) malloc(sizeof(size_t) * NumberOfCustomers);
+   /* void *devicePriceColumnHandle;
+    void *queryResultSum = (void *) calloc(1, sizeof(size_t));
 
-    if(!CopyDataToDevice(&devicePtr, customerTable.C_ID, NumberOfCustomers * sizeof(size_t)))
+    for (int i = 0; i < 100; i++)
+        	printf("%zu\n", itemTable.I_PRICE[i]);
+
+    if ((devicePriceColumnHandle = CopyDataToDevice(itemTable.I_PRICE, NumberOfItems * sizeof(size_t))) == NULL)
     	return;
-    if(!CopyDataFromDevice(&hostPtr, devicePtr, NumberOfCustomers * sizeof(size_t)))
+
+	ResultSetQ1 result1st, result1mt;
+	size_t itemsBougth = ITEMS_BOUGTH_BY_CUSTOMER_AVG;
+	auto queryParamsQ1 = CreateQueryParamsQ1(NumberOfCustomers, itemsBougth, NumberOfItems);
+
+	auto durationQ1st = measure<>::run(QueryForDataQ1ColumnStore(&result1st, &itemTable, queryParamsQ1, ThreadingPolicy::SingleThreaded));
+	auto durationQ1mt = measure<>::run(QueryForDataQ1ColumnStore(&result1mt, &itemTable, queryParamsQ1, ThreadingPolicy::MultiThreaded));
+
+	DisposeQueryParamsQ1(&queryParamsQ1);
+
+
+    if(!CopyDataFromDevice(queryResultSum, devicePriceColumnHandle, sizeof(size_t)))
 		return;
-    if(!FreeDataInDevice(devicePtr))
+    if(!FreeDataInDevice(devicePriceColumnHandle))
     		return;
+    ResetDevice();
+
+    printf("OUT %zu\n", ((size_t *)queryResultSum)[0]);
+
+    free(queryResultSum);
 
     printf("OK\n");
-//
-//    /* Query Q1 */
-//    ResultSetQ1 result1st, result1mt;
-//    size_t itemsBougth = ITEMS_BOUGTH_BY_CUSTOMER_AVG;
-//    auto queryParamsQ1 = CreateQueryParamsQ1(NumberOfCustomers, itemsBougth, NumberOfItems);
-//
-//    auto durationQ1st = measure<>::run(QueryForDataQ1ColumnStore(&result1st, &itemTable, queryParamsQ1, ThreadingPolicy::SingleThreaded));
-//    auto durationQ1mt = measure<>::run(QueryForDataQ1ColumnStore(&result1mt, &itemTable, queryParamsQ1, ThreadingPolicy::MultiThreaded));
-//
-//    DisposeQueryParamsQ1(&queryParamsQ1);
+
+    exit(0);*/
+
+    /* Query Q1 */
+    ResultSetQ1 result1st, result1mt;
+    size_t itemsBougth = ITEMS_BOUGTH_BY_CUSTOMER_AVG;
+    auto queryParamsQ1 = CreateQueryParamsQ1(NumberOfCustomers, itemsBougth, NumberOfItems);
+
+    auto Query1st = DeviceQueryForDataQ1ColumnStore(&result1st, &itemTable, queryParamsQ1, ThreadingPolicy::SingleThreaded, NumberOfItems);
+    auto durationQ1st_to   = measure<>::run([&Query1st] () { Query1st.CopyToDevice(); });
+    auto durationQ1st_opp  = measure<>::run(Query1st);
+    auto durationQ1st_from = measure<>::run([&Query1st] () { Query1st.ReceiveFromDevice(); });
+
+    auto Query1mt = DeviceQueryForDataQ1ColumnStore(&result1mt, &itemTable, queryParamsQ1, ThreadingPolicy::MultiThreaded, NumberOfItems);
+	auto durationQ1mt_to   = measure<>::run([&Query1mt] () { Query1mt.CopyToDevice(); });
+	auto durationQ1mt_opp  = measure<>::run(Query1mt);
+	auto durationQ1mt_from = measure<>::run([&Query1mt] () { Query1mt.ReceiveFromDevice(); });
+
+	printf("durationQ1st_to %zu\ndurationQ1st_opp %zu\ndurationQ1st_from %zu\n"
+			"durationQ1mt_to %zu\ndurationQ1mt_opp %zu\ndurationQ1mt_from %zu\n",
+			durationQ1st_to, durationQ1st_opp, durationQ1st_from,
+			durationQ1mt_to, durationQ1mt_opp, durationQ1mt_from);
+
+    DisposeQueryParamsQ1(&queryParamsQ1);
+
+    exit(0);
 //
 //    /* Query Q2 */
 //    ResultSetQ2 result2st, result2mt;
@@ -230,8 +266,8 @@ void SampleColumnStoreDevice(size_t NumberOfCustomers, size_t NumberOfItems, siz
 void Sample(size_t N, size_t NumberOfRepetitions) {
     size_t NUMBER_OF_ITEMS = 0.7f * N;
     for (size_t currentRepetition = 0; currentRepetition < NumberOfRepetitions; currentRepetition++) {
-        //SampleColumnStoreHost(N, NUMBER_OF_ITEMS, currentRepetition);
-        //SampleRowStoreHost(N, NUMBER_OF_ITEMS, currentRepetition);
+        SampleColumnStoreHost(N, NUMBER_OF_ITEMS, currentRepetition);
+        SampleRowStoreHost(N, NUMBER_OF_ITEMS, currentRepetition);
         SampleColumnStoreDevice(N, NUMBER_OF_ITEMS, currentRepetition);
     }
 }
