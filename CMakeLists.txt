@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.4)
+
 project(gridstore)
+
+FIND_PACKAGE(CUDA REQUIRED)
+
 
 include_directories("include")
 
-set(
-        CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -std=c++11 -pthread -pedantic -Wall"
-)
+#set(
+#        CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -std=c++11 -pthread -pedantic -Wall"
+#)
 
 set(
         SOURCE_FILES
@@ -49,7 +53,7 @@ set(
 
 set(
         EXP_LAUNCER_ROW_VS_COLUMN_STORE
-        Experiments/RowVsColumnStore/HostLauncher.cpp
+        Experiments/RowVsColumnStore/HostLauncher.cu
         Experiments/RowVsColumnStore/Configure.h
         Experiments/RowVsColumnStore/Host/Query.h
         Experiments/RowVsColumnStore/Host/Query.cxx
@@ -61,4 +65,18 @@ set(
 
 add_executable(gridstore ${MAIN_LAUNCER})
 add_executable(exp ${EXP_LAUNCER})
-add_executable(exp_row_vs_column_store ${EXP_LAUNCER_ROW_VS_COLUMN_STORE})
+
+INCLUDE(FindCUDA)
+
+include_directories(${CUDA_INCLUDE_DIRS})
+
+#set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -std=c++11 -m64 -gencode arch=compute_35,code=sm_35)
+
+set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-gencode arch=compute_35,code=sm_35;--std=c++11)
+set(CUDA_HOST_COMPILER clang++)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+
+CUDA_ADD_EXECUTABLE(exp-row-vs-column-all ${EXP_LAUNCER_ROW_VS_COLUMN_STORE})
+
+TARGET_LINK_LIBRARIES(exp-row-vs-column-all /usr/local/cuda/lib64/libcudart.so)

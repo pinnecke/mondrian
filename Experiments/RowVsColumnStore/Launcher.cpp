@@ -1,6 +1,7 @@
 #include "Shared/Common.h"
 #include "Shared/Utility.h"
 #include "Host/Query.h"
+#include "Device/Query.cuh"
 
 const size_t ITEMS_BOUGTH_BY_CUSTOMER_AVG = 150;
 const size_t BESTSELLING_ITEM_NUMBER_OF_CUSTOMERS = 40000;
@@ -60,7 +61,7 @@ void WriteOberservation(size_t NumberOfCustomers, size_t NumberOfItems,
     fflush(stdout);
 }
 
-void SampleColumnStore(size_t NumberOfCustomers, size_t NumberOfItems, size_t CurrentRepetition)
+void SampleColumnStoreHost(size_t NumberOfCustomers, size_t NumberOfItems, size_t CurrentRepetition)
 {
     srand(0);
 
@@ -111,7 +112,7 @@ void SampleColumnStore(size_t NumberOfCustomers, size_t NumberOfItems, size_t Cu
     DisposeTables(&customerTable, &itemTable);
 }
 
-void SampleRowStore(size_t NumberOfCustomers, size_t NumberOfItems, size_t CurrentRepetition)
+void SampleRowStoreHost(size_t NumberOfCustomers, size_t NumberOfItems, size_t CurrentRepetition)
 {
     srand(0);
 
@@ -161,14 +162,77 @@ void SampleRowStore(size_t NumberOfCustomers, size_t NumberOfItems, size_t Curre
     free(result2st.CustomerInfos);
     free(result2mt.CustomerInfos);
     DisposeTables(&customerTable, &itemTable);
+}
 
+void SampleColumnStoreDevice(size_t NumberOfCustomers, size_t NumberOfItems, size_t CurrentRepetition)
+{
+    srand(0);
+
+    /* Setup */
+    CustomerTableDSM customerTable;
+    ItemTableDSM itemTable;
+
+    CreateOrdersTables(&customerTable, NumberOfCustomers);
+    CreateItemsTables(&itemTable, NumberOfItems);
+    FillOrdersTable(&customerTable, NumberOfCustomers);
+    FillItemsTable(&itemTable, NumberOfItems);
+
+    void *devicePtr;
+    void *hostPtr = (void *) malloc(sizeof(size_t) * NumberOfCustomers);
+
+    if(!CopyDataToDevice(&devicePtr, customerTable.C_ID, NumberOfCustomers * sizeof(size_t)))
+    	return;
+    if(!CopyDataFromDevice(&hostPtr, devicePtr, NumberOfCustomers * sizeof(size_t)))
+		return;
+    if(!FreeDataInDevice(devicePtr))
+    		return;
+
+    printf("OK\n");
+//
+//    /* Query Q1 */
+//    ResultSetQ1 result1st, result1mt;
+//    size_t itemsBougth = ITEMS_BOUGTH_BY_CUSTOMER_AVG;
+//    auto queryParamsQ1 = CreateQueryParamsQ1(NumberOfCustomers, itemsBougth, NumberOfItems);
+//
+//    auto durationQ1st = measure<>::run(QueryForDataQ1ColumnStore(&result1st, &itemTable, queryParamsQ1, ThreadingPolicy::SingleThreaded));
+//    auto durationQ1mt = measure<>::run(QueryForDataQ1ColumnStore(&result1mt, &itemTable, queryParamsQ1, ThreadingPolicy::MultiThreaded));
+//
+//    DisposeQueryParamsQ1(&queryParamsQ1);
+//
+//    /* Query Q2 */
+//    ResultSetQ2 result2st, result2mt;
+//    size_t buyingCustomers = BESTSELLING_ITEM_NUMBER_OF_CUSTOMERS;
+//    auto queryParamsQ2 = CreateQueryParamsQ2(NumberOfItems, buyingCustomers, NumberOfCustomers);
+//
+//    auto durationQ2st = measure<>::run(QueryForDataQ2ColumnStore(&result2st, &customerTable, queryParamsQ2, ThreadingPolicy::SingleThreaded));
+//    auto durationQ2mt = measure<>::run(QueryForDataQ2ColumnStore(&result2mt, &customerTable, queryParamsQ2, ThreadingPolicy::MultiThreaded));
+//    DisposeQueryParamsQ2(&queryParamsQ2);
+//
+//    /* Query Q3 */
+//    ResultSetQ1 result3st, result3mt;
+//    auto queryParamsQ3 = CreateQueryParamsQ1(NumberOfCustomers, NumberOfItems, NumberOfItems);
+//
+//    auto durationQ3st = measure<>::run(QueryForDataQ1ColumnStore(&result3st, &itemTable, queryParamsQ3, ThreadingPolicy::SingleThreaded));
+//    auto durationQ3mt = measure<>::run(QueryForDataQ1ColumnStore(&result3mt, &itemTable, queryParamsQ3, ThreadingPolicy::MultiThreaded));
+//
+//    DisposeQueryParamsQ1(&queryParamsQ3);
+//
+//    WriteOberservation(NumberOfCustomers, NumberOfItems, queryParamsQ1.NumOfItemsTupleIds, CurrentRepetition,
+//                       "ColumnStore",
+//                       durationQ1st, durationQ2st, durationQ3st, durationQ1mt, durationQ2mt, durationQ3mt);
+//
+//    /* Cleanup */
+//    free(result2st.CustomerInfos);
+//    free(result2mt.CustomerInfos);
+//    DisposeTables(&customerTable, &itemTable);
 }
 
 void Sample(size_t N, size_t NumberOfRepetitions) {
     size_t NUMBER_OF_ITEMS = 0.7f * N;
     for (size_t currentRepetition = 0; currentRepetition < NumberOfRepetitions; currentRepetition++) {
-        SampleColumnStore(N, NUMBER_OF_ITEMS, currentRepetition);
-        SampleRowStore(N, NUMBER_OF_ITEMS, currentRepetition);
+        //SampleColumnStoreHost(N, NUMBER_OF_ITEMS, currentRepetition);
+        //SampleRowStoreHost(N, NUMBER_OF_ITEMS, currentRepetition);
+        SampleColumnStoreDevice(N, NUMBER_OF_ITEMS, currentRepetition);
     }
 }
 

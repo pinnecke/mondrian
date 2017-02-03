@@ -1,4 +1,4 @@
-#include "Common.h"
+#include <Shared/Common.h>
 
 void CreateOrdersTables(CustomerTableDSM *Table, size_t NumberOfRecords)
 {

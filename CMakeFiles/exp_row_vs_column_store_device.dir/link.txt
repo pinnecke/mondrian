@@ -1,0 +1,1 @@
+/usr/bin/c++    -O3 -std=c++11 -pthread -pedantic -Wall   CMakeFiles/exp_row_vs_column_store_device.dir/Experiments/RowVsColumnStore/exp_row_vs_column_store_device_generated_DeviceLauncher.cu.o  -o exp_row_vs_column_store_device /usr/local/cuda-8.0/lib64/libcudart.so -Wl,-rpath,/usr/local/cuda-8.0/lib64 

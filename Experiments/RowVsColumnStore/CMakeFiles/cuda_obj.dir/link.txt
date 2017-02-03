@@ -1,0 +1,2 @@
+/usr/bin/ar qc libcuda_obj.a  CMakeFiles/cuda_obj.dir/Device/cuda_obj_generated_Query.cu.o
+/usr/bin/ranlib libcuda_obj.a

@@ -1,6 +1,6 @@
-#include "Query.h"
-#include "Parallel.h"
-#include "Operations.h"
+#include <Host/Query.h>
+#include <Host/Parallel.h>
+#include <Host/Operations.h>
 
 
 void QueryForDataQ1ColumnStore::operator()() const
