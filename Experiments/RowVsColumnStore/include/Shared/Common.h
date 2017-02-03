@@ -13,6 +13,8 @@
 #define DEVICE_MEM_HANDLE void *
 #define HOST_MEM_POINTER void *
 
+#define COLUMN_NUMBER_TO_COPY 10
+
 struct CustomerTableDSM
 {
     uint64_t *C_ID;

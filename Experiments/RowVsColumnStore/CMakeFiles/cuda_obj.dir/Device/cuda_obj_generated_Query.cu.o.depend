@@ -85,6 +85,7 @@ SET(CUDA_NVCC_DEPEND
  "/usr/include/c++/5.4.0/cstdint"
  "/usr/include/c++/5.4.0/cstdio"
  "/usr/include/c++/5.4.0/cstdlib"
+ "/usr/include/c++/5.4.0/cstring"
  "/usr/include/c++/5.4.0/ctime"
  "/usr/include/c++/5.4.0/cwchar"
  "/usr/include/c++/5.4.0/cwctype"

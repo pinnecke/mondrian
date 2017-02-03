@@ -23,6 +23,8 @@ Host/Query.h
 /home/marcus/cuda-workspace/Pantheon/Experiments/RowVsColumnStore/Host/Query.h
 Device/Query.cuh
 /home/marcus/cuda-workspace/Pantheon/Experiments/RowVsColumnStore/Device/Query.cuh
+unistd.h
+-
 
 /home/marcus/cuda-workspace/Pantheon/Experiments/RowVsColumnStore/Shared/Common.cpp
 Shared/Common.h
@@ -32,6 +34,8 @@ include/Configure.h
 
 include/Device/Query.cuh
 Shared/Common.h
+-
+cstring
 -
 
 include/Host/Operations.h

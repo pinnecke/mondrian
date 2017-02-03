@@ -26,6 +26,7 @@ extern "C"
 	bool deviceCopyFromDeviceToHost(HOST_MEM_POINTER Destination, DEVICE_MEM_HANDLE Source, size_t NumberOfBytes)
 	{
 		REQUIRED(cudaMemcpy(Destination, Source, NumberOfBytes, cudaMemcpyDeviceToHost), false);
+		cudaDeviceSynchronize();
 		return true;
 	}
 
@@ -53,10 +54,44 @@ extern "C"
 		return sum;
 	}
 
-	void deviceCleanUp(DEVICE_MEM_HANDLE DevicePriceColumnHandle, DEVICE_MEM_HANDLE deviceResultHandle)
+	DEVICE_MEM_HANDLE *deviceQueryEvaluateManySum(DEVICE_MEM_HANDLE *PriceColumn, size_t NumberOfColumns, size_t NumberOfItems, bool MultipleThreads)
 	{
-		cudaFree(DevicePriceColumnHandle);
-		cudaFree(deviceResultHandle);
+		DEVICE_MEM_HANDLE *out = (DEVICE_MEM_HANDLE *) malloc(NumberOfColumns * sizeof(DEVICE_MEM_HANDLE));
+
+		int threads = MultipleThreads ? 512 : 1024;
+		int blocks = MultipleThreads ? std::min((int)(NumberOfItems + threads - 1) / threads, 1024) : 1;
+
+		for (size_t i = 0; i < COLUMN_NUMBER_TO_COPY; ++i) {
+			REQUIRED(cudaMalloc(&out[i], sizeof(size_t)*1024), 0);
+		}
+
+		for (size_t i = 0; i < COLUMN_NUMBER_TO_COPY; ++i) {
+			deviceReduceKernel<<<blocks, threads>>>((size_t*) PriceColumn[i], (size_t*) out[i], NumberOfItems); // TODO
+			deviceReduceKernel<<<1, 1024>>>((size_t*) out[i], (size_t*) out[i], blocks); // TODO
+		}
+
+		cudaDeviceSynchronize();
+
+		return out;
+	}
+
+	size_t *deviceQueryFetchManySumValues(DEVICE_MEM_HANDLE *deviceResultHandle, size_t NumberOfColumns)
+	{
+		size_t *sum = (size_t *) malloc (sizeof(size_t) * NumberOfColumns);
+
+		for (size_t i = 0; i < COLUMN_NUMBER_TO_COPY; ++i) {
+			REQUIRED(cudaMemcpy(&sum[i],deviceResultHandle[i],sizeof(size_t),cudaMemcpyDeviceToHost), 0);
+		}
+		cudaDeviceSynchronize();
+
+		return sum;
+	}
+
+	void deviceCleanUp(DEVICE_MEM_HANDLE *DevHandle, size_t NumDevHandle)
+	{
+		for (size_t i = 0; i < NumDevHandle; i++) {
+			REQUIRED(cudaFree(DevHandle[i]), );
+		}
 		cudaDeviceReset();
 	}
 

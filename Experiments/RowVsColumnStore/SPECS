@@ -1,0 +1,11 @@
+Host specs: x86_64 machine architecture w/ Intel(R) Core(TM) i7-6700HQ CPU @ 2.60GHz, 2016 MHz, 
+Intel Sky Lake PCIe Controller (x16), 8 CPUs w/ 2 threads per core, 4 cores on single socket, 
+max 3500MHz clock speed, L1d/L1i/L2/L3 cache size 32K/32K/256K/6144K. 16GiB System Memory 
+(2x 8GiB SODIMM Synchronous 2133 MHz (0,5 ns)) running Ubuntu 16.04.1 LTS (Kernel 4.4.0-59-generic). 
+Compiled w/ clang++ (3.8.0-2ubuntu4, x86_64-pc-linux-gnu) having flags: -O3 -std=c++11. Device specs: 
+Cuda driver (runtime) version 8.0 (8.0), capability 5.0, 4044 MBytes total global memory,
+5 multiprocessors w/ 128 Cuda Cores/MP, GPU max clock rate of 1.18 GHz, memory clock rate of 2505 Mhz 
+(128-bit bus width), L2 cache size 2097152 byte, total amount of shared memory per block 49152 bytes, 
+warp size of 32, maximum 1024 threads per block, maximum memory pitch of 2147483647 bytes, no sharing 
+of device/host memory, connected w/ PCIe. Compiled w/ NVIDIA (R) nvcc as part of Cuda compilation 
+tools R8.0 (V8.0.44) having flags set: -gencode arch=compute_50,code=sm_50;--std=c++11;-O3.
