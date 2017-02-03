@@ -8,13 +8,16 @@ extern "C"
     bool CopyDataFromDevice(void *DestinationHost, void *SourceDevice, unsigned long long NumberOfBytes);
     bool FreeDataInDevice(void *DestinationDevice);
     void ResetDevice();
-    unsigned long long EvaluateSum(void *DevicePriceColumnHandle, unsigned long long NumberOfItems, bool MultipleThreads);
+    void *EvaluateSum(void *DevicePriceColumnHandle, size_t NumberOfItems, bool MultipleThreads);
+    size_t GetSumValue(void *deviceResultHandle);
+    void cleanUp(void *DevicePriceColumnHandle, void *deviceResultHandle);
 }
 
 struct DeviceQueryForDataQ1ColumnStore : public QueryForDataQ1
 {
 	unsigned long long *hostPriceColumnPointer;
 	void *devicePriceColumnHandle;
+	void *deviceResultHandle;
 	size_t NumberOfItems;
 
 	DeviceQueryForDataQ1ColumnStore(ResultSetQ1 *ResultSet, ItemTableDSM *itemTableColumnStore, QueryParamsQ1 Params,
@@ -26,22 +29,34 @@ struct DeviceQueryForDataQ1ColumnStore : public QueryForDataQ1
 
     	// TODO: XXX
     	for (size_t i = 0; i < NumberOfItems; i++)
-    		hostPriceColumnPointer[i] = 1;
+    		hostPriceColumnPointer[i] = 2;
 
     	devicePriceColumnHandle = CopyDataToDevice(hostPriceColumnPointer, NumberOfItems * sizeof(unsigned long long *));
     	// !!!!! TODO: Nicht die ganze Liste wird gelesen, sondern nur über das Index Array!
     }
 
-    void operator()() const
+    void operator()()
     {
-    	ResultSet->TotalPrice = EvaluateSum(devicePriceColumnHandle, NumberOfItems, (Policy == ThreadingPolicy::MultiThreaded));
-    	ResultSet->CustomerId = Params.CustomerTupleId;
-
-    	printf("TOTAL: %zu, #ITEMS: %zu\n",ResultSet->TotalPrice ,NumberOfItems);
+    	deviceResultHandle = EvaluateSum(devicePriceColumnHandle, NumberOfItems, (Policy == ThreadingPolicy::MultiThreaded));
     }
 
     void ReceiveFromDevice()
     {
+    	if (hostPriceColumnPointer != NULL && deviceResultHandle != NULL)
+    	{
+        	ResultSet->CustomerId = Params.CustomerTupleId;
+        	ResultSet->TotalPrice = GetSumValue(deviceResultHandle);
+
+        	printf("TOTAL: %zu, #ITEMS: %zu\n",ResultSet->TotalPrice ,NumberOfItems);
+
+    	} else {
+    		fprintf(stderr, "ERROR: cannot fetch data from device. Something went wrong.\n");
+    	}
+
+
+
+
+
 //    	if (devicePriceColumnHandle != NULL) {
 //			if(!CopyDataFromDevice(&ResultSet->TotalPrice, devicePriceColumnHandle, sizeof(size_t)))
 //				return;
@@ -49,6 +64,11 @@ struct DeviceQueryForDataQ1ColumnStore : public QueryForDataQ1
 //				return;
 //			ResetDevice();
 //    	}
+    }
+
+    void CleanUp()
+    {
+
     }
 };
 

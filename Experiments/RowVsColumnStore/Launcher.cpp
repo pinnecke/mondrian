@@ -220,11 +220,13 @@ void SampleColumnStoreDevice(size_t NumberOfCustomers, size_t NumberOfItems, siz
     auto durationQ1st_to   = measure<>::run([&Query1st] () { Query1st.CopyToDevice(); });
     auto durationQ1st_opp  = measure<>::run(Query1st);
     auto durationQ1st_from = measure<>::run([&Query1st] () { Query1st.ReceiveFromDevice(); });
+    Query1st.CleanUp();
 
     auto Query1mt = DeviceQueryForDataQ1ColumnStore(&result1mt, &itemTable, queryParamsQ1, ThreadingPolicy::MultiThreaded, NumberOfItems);
 	auto durationQ1mt_to   = measure<>::run([&Query1mt] () { Query1mt.CopyToDevice(); });
 	auto durationQ1mt_opp  = measure<>::run(Query1mt);
 	auto durationQ1mt_from = measure<>::run([&Query1mt] () { Query1mt.ReceiveFromDevice(); });
+	Query1mt.CleanUp();
 
 	printf("durationQ1st_to %zu\ndurationQ1st_opp %zu\ndurationQ1st_from %zu\n"
 			"durationQ1mt_to %zu\ndurationQ1mt_opp %zu\ndurationQ1mt_from %zu\n",
@@ -266,8 +268,8 @@ void SampleColumnStoreDevice(size_t NumberOfCustomers, size_t NumberOfItems, siz
 void Sample(size_t N, size_t NumberOfRepetitions) {
     size_t NUMBER_OF_ITEMS = 0.7f * N;
     for (size_t currentRepetition = 0; currentRepetition < NumberOfRepetitions; currentRepetition++) {
-        SampleColumnStoreHost(N, NUMBER_OF_ITEMS, currentRepetition);
-        SampleRowStoreHost(N, NUMBER_OF_ITEMS, currentRepetition);
+        //SampleColumnStoreHost(N, NUMBER_OF_ITEMS, currentRepetition);
+        //SampleRowStoreHost(N, NUMBER_OF_ITEMS, currentRepetition);
         SampleColumnStoreDevice(N, NUMBER_OF_ITEMS, currentRepetition);
     }
 }
@@ -275,9 +277,9 @@ void Sample(size_t N, size_t NumberOfRepetitions) {
 int main() {
 
     size_t numberOfIndependentVariableSamples = 30;
-    size_t numberOfRepititions = 150;
+    size_t numberOfRepititions = 15;
     size_t numberOfCustomersStart = 300000;
-    size_t numberOfRecordsEnd = numberOfCustomersStart * 10 * 15;
+    size_t numberOfRecordsEnd = numberOfCustomersStart * 25 * 15;
     size_t stepSize = (numberOfRecordsEnd - numberOfCustomersStart)  / numberOfIndependentVariableSamples;
 
     printf("Timestamp;"

@@ -70,7 +70,7 @@ set(generated_file_internal "/home/marcus/cuda-workspace/Pantheon/Experiments/Ro
 set(generated_cubin_file_internal "/home/marcus/cuda-workspace/Pantheon/Experiments/RowVsColumnStore/CMakeFiles/cuda_obj.dir/Device/./cuda_obj_generated_Query.cu.o.cubin.txt") # path
 
 set(CUDA_NVCC_EXECUTABLE "/usr/local/cuda-8.0/bin/nvcc") # path
-set(CUDA_NVCC_FLAGS -gencode;arch=compute_30,code=sm_30;--std=c++11;-O3 ;; ) # list
+set(CUDA_NVCC_FLAGS -gencode;arch=compute_50,code=sm_50;--std=c++11;-O3 ;; ) # list
 # Build specific configuration flags
 set(CUDA_NVCC_FLAGS_DEBUG  ; )
 set(CUDA_NVCC_FLAGS_MINSIZEREL  ; )

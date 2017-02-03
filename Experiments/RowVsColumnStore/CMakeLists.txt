@@ -13,7 +13,7 @@ include_directories(
 )
 
 set(
-	CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-gencode arch=compute_30,code=sm_30;--std=c++11;-O3
+	CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-gencode arch=compute_50,code=sm_50;--std=c++11;-O3
 )
 
 set(

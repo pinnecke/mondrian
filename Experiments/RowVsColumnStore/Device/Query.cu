@@ -1,6 +1,14 @@
 #include <Device/Query.cuh>
 #include <stdio.h>
 
+#define cudaCheckError() {                                          \
+  cudaError_t e=cudaGetLastError();                                  \
+  if(e!=cudaSuccess) {                                               \
+  printf("Cuda failure %s:%d: '%s'\n",__FILE__,__LINE__,cudaGetErrorString(e));           \
+  exit(0); \
+  }                                                                  \
+}
+
 #define REQUIRE_SUCCESS(Expression, RetVal)																			\
 {																													\
 	const cudaError_t error = Expression;																			\
@@ -37,21 +45,21 @@ extern "C"
 	}
 
 	__inline__ __device__
-	int warpReduceSum(unsigned long long val) {
+	int warpReduceSum(size_t val) {
 	  for (int offset = warpSize/2; offset > 0; offset /= 2)
 	    val += __shfl_down(val, offset);
 	  return val;
 	}
 
 	__inline__ __device__
-	int warpAllReduceSum(unsigned long long val) {
+	int warpAllReduceSum(size_t val) {
 	  for (int mask = warpSize/2; mask > 0; mask /= 2)
 	    val += __shfl_xor(val, mask);
 	  return val;
 	}
 
 	__inline__ __device__
-	int blockReduceSum(unsigned long long val) {
+	int blockReduceSum(size_t val) {
 
 	  static __shared__ int shared[32]; // Shared mem for 32 partial sums
 	  int lane = threadIdx.x % warpSize;
@@ -71,52 +79,90 @@ extern "C"
 	  return val;
 	}
 
-	__global__ void deviceReduceKernel(unsigned long long *in, unsigned long long* out, unsigned long long N) {
-		unsigned long long sum = 0;
+	__global__ void deviceReduceKernel(size_t *in, size_t* out, size_t N) {
+		size_t sum = 0;
 
-		 printf("sum...%llu\n", sum);
-		 /*
 	  //reduce multiple elements per thread
 	  for (int i = blockIdx.x * blockDim.x + threadIdx.x;
 	       i < N;
 	       i += blockDim.x * gridDim.x) {
 	    sum += in[i];
-	    printf("sum...%llu\n", sum);
 	  }
 	  sum = blockReduceSum(sum);
 	  if (threadIdx.x==0)
-	    out[blockIdx.x]=sum;*/
+	    out[blockIdx.x]=sum;
 	}
 
 	// see
 	// https://github.com/parallel-forall/code-samples/blob/master/posts/parallel_reduction_with_shfl/main.cu
-	unsigned long long EvaluateSum(void *DevicePriceColumnHandle, unsigned long long NumberOfItems, bool MultipleThreads)
+	void *EvaluateSum(void *DevicePriceColumnHandle, size_t NumberOfItems, bool MultipleThreads)
 	{
-		if (DevicePriceColumnHandle != NULL) {
+		int deviceCount = 0;
+		    cudaError_t error_id = cudaGetDeviceCount(&deviceCount);
 
-			unsigned long long *in, *out;
+		    if (error_id != cudaSuccess)
+		    {
+		        printf("cudaGetDeviceCount returned %d\n-> %s\n", (int)error_id, cudaGetErrorString(error_id));
+		        printf("Result = FAIL\n");
+		        exit(EXIT_FAILURE);
+		    }
+
+		    // This function call returns 0 if there are no CUDA capable devices.
+		    if (deviceCount == 0)
+		    {
+		        printf("There are no available device(s) that support CUDA\n");
+		    }
+		    else
+		    {
+		        printf("Detected %d CUDA Capable device(s)\n", deviceCount);
+		    }
+
+		    int dev, driverVersion = 0, runtimeVersion = 0;
+
+
+		        cudaSetDevice(0);
+
+
+
+		//if (DevicePriceColumnHandle != NULL) {
+
+		cudaCheckError();
+
+			size_t *out;
 
 			int threads = 512;
 			int blocks = std::min((int)(NumberOfItems + threads - 1) / threads, 1024);
 
-			cudaMalloc(&out,sizeof(unsigned long long)*1024);
+			REQUIRE_SUCCESS(cudaMalloc(&out, sizeof(size_t)*1024), 0);
 
-			deviceReduceKernel<<<blocks, threads>>>(in, out, NumberOfItems);
+			cudaCheckError();
+
+			deviceReduceKernel<<<blocks, threads>>>((size_t*) DevicePriceColumnHandle, out, NumberOfItems);
 		    deviceReduceKernel<<<1, 1024>>>(out, out, blocks);
 		    cudaDeviceSynchronize();
 
-		    unsigned long long sum;
-		    cudaMemcpy(&sum,out,sizeof(unsigned long long),cudaMemcpyDeviceToHost);
+		   // size_t sum;
+		   // cudaMemcpy(&sum,out,sizeof(size_t),cudaMemcpyDeviceToHost);
 
-		    printf("SUMMM: %llu\n", sum);
+		    //printf("Summe returned: %zu\n", sum);
 
-		    cudaFree(in);
-		    cudaFree(out);
-		    cudaDeviceReset();
+		    return out;
 
-			return sum;
-		}
-		return 0;
+		//	return sum;
+		//}
+		//return 0;
+	}
+
+	size_t GetSumValue(void *deviceResultHandle) {
+		size_t sum;
+		cudaMemcpy(&sum,deviceResultHandle,sizeof(size_t),cudaMemcpyDeviceToHost);
+		return sum;
+	}
+
+	void cleanUp(void *DevicePriceColumnHandle, void *deviceResultHandle) {
+		cudaFree(DevicePriceColumnHandle);
+		cudaFree(deviceResultHandle);
+		cudaDeviceReset();
 	}
 
 }
