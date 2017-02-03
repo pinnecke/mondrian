@@ -57,6 +57,7 @@ include CMakeFiles/cuda_obj.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/cuda_obj.dir/flags.make
 
+CMakeFiles/cuda_obj.dir/Device/cuda_obj_generated_Query.cu.o: Device/Kernels/ParallelReduction.cu
 CMakeFiles/cuda_obj.dir/Device/cuda_obj_generated_Query.cu.o: Device/Query.cu
 CMakeFiles/cuda_obj.dir/Device/cuda_obj_generated_Query.cu.o: include/Device/Query.cuh
 CMakeFiles/cuda_obj.dir/Device/cuda_obj_generated_Query.cu.o: include/Shared/Common.h

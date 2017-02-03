@@ -10,6 +10,9 @@
 #include <random>
 #include <iostream>
 
+#define DEVICE_MEM_HANDLE void *
+#define HOST_MEM_POINTER void *
+
 struct CustomerTableDSM
 {
     uint64_t *C_ID;

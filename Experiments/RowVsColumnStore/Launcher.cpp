@@ -211,31 +211,31 @@ void SampleColumnStoreDevice(size_t NumberOfCustomers, size_t NumberOfItems, siz
 
     exit(0);*/
 
-    /* Query Q1 */
-    ResultSetQ1 result1st, result1mt;
+    /* Query Q3 */
+    ResultSetQ1 result3st, result3mt;
     size_t itemsBougth = ITEMS_BOUGTH_BY_CUSTOMER_AVG;
-    auto queryParamsQ1 = CreateQueryParamsQ1(NumberOfCustomers, itemsBougth, NumberOfItems);
+    auto queryParamsQ3 = CreateQueryParamsQ1(NumberOfCustomers, itemsBougth, NumberOfItems);
 
-    auto Query1st = DeviceQueryForDataQ1ColumnStore(&result1st, &itemTable, queryParamsQ1, ThreadingPolicy::SingleThreaded, NumberOfItems);
-    auto durationQ1st_to   = measure<>::run([&Query1st] () { Query1st.CopyToDevice(); });
-    auto durationQ1st_opp  = measure<>::run(Query1st);
-    auto durationQ1st_from = measure<>::run([&Query1st] () { Query1st.ReceiveFromDevice(); });
-    Query1st.CleanUp();
+    auto Query3st = DeviceQueryForDataQ3ColumnStore(&result3st, &itemTable, queryParamsQ3, ThreadingPolicy::SingleThreaded, NumberOfItems);
+    auto durationQ3st_to   = measure<>::run([&Query3st] () { Query3st.CopyToDevice(); });
+    auto durationQ3st_opp  = measure<>::run(Query3st);
+    auto durationQ3st_from = measure<>::run([&Query3st] () { Query3st.ReceiveFromDevice(); });
+    Query3st.CleanUp();
 
-    auto Query1mt = DeviceQueryForDataQ1ColumnStore(&result1mt, &itemTable, queryParamsQ1, ThreadingPolicy::MultiThreaded, NumberOfItems);
-	auto durationQ1mt_to   = measure<>::run([&Query1mt] () { Query1mt.CopyToDevice(); });
-	auto durationQ1mt_opp  = measure<>::run(Query1mt);
-	auto durationQ1mt_from = measure<>::run([&Query1mt] () { Query1mt.ReceiveFromDevice(); });
-	Query1mt.CleanUp();
+    auto Query3mt = DeviceQueryForDataQ3ColumnStore(&result3mt, &itemTable, queryParamsQ3, ThreadingPolicy::MultiThreaded, NumberOfItems);
+	auto durationQ3mt_to   = measure<>::run([&Query3mt] () { Query3mt.CopyToDevice(); });
+	auto durationQ3mt_opp  = measure<>::run(Query3mt);
+	auto durationQ3mt_from = measure<>::run([&Query3mt] () { Query3mt.ReceiveFromDevice(); });
+	Query3mt.CleanUp();
 
-	printf("durationQ1st_to %zu\ndurationQ1st_opp %zu\ndurationQ1st_from %zu\n"
-			"durationQ1mt_to %zu\ndurationQ1mt_opp %zu\ndurationQ1mt_from %zu\n",
-			durationQ1st_to, durationQ1st_opp, durationQ1st_from,
-			durationQ1mt_to, durationQ1mt_opp, durationQ1mt_from);
+	printf("durationQ3st_to %zu\ndurationQ3st_opp %zu\ndurationQ3st_from %zu\n"
+			"durationQ3mt_to %zu\ndurationQ3mt_opp %zu\ndurationQ3mt_from %zu\n",
+			durationQ3st_to, durationQ3st_opp, durationQ3st_from,
+			durationQ3mt_to, durationQ3mt_opp, durationQ3mt_from);
 
-    DisposeQueryParamsQ1(&queryParamsQ1);
+    DisposeQueryParamsQ1(&queryParamsQ3);
 
-    exit(0);
+   // exit(0);
 //
 //    /* Query Q2 */
 //    ResultSetQ2 result2st, result2mt;
@@ -277,7 +277,7 @@ void Sample(size_t N, size_t NumberOfRepetitions) {
 int main() {
 
     size_t numberOfIndependentVariableSamples = 30;
-    size_t numberOfRepititions = 15;
+    size_t numberOfRepititions = 50;
     size_t numberOfCustomersStart = 300000;
     size_t numberOfRecordsEnd = numberOfCustomersStart * 25 * 15;
     size_t stepSize = (numberOfRecordsEnd - numberOfCustomersStart)  / numberOfIndependentVariableSamples;

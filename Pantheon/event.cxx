@@ -46,11 +46,11 @@ static inline void init_register()
 
         for (QWORD event_type = 0; event_type < _ENUM_EVENT_MAX; event_type++) {
             RecycleBuffer *buffer = event_register + event_type;
-            REQUIRE_SUCCESS(RecycleBuffer::Create(buffer, capacity, sizeof(struct func_ptr)),
+            REQUIRED(RecycleBuffer::Create(buffer, capacity, sizeof(struct func_ptr)),
                             MSG_EVENT_SYSTEM_INIT_FAILED)
         }
 
-        REQUIRE_SUCCESS(RecycleBuffer::Create(&global_register, Config::StaticConfig::InitialSubscriberCapacity,
+        REQUIRED(RecycleBuffer::Create(&global_register, Config::StaticConfig::InitialSubscriberCapacity,
                                               sizeof(struct global_sub)),
                         MSG_EVENT_SYSTEM_INIT_FAILED);
 
@@ -98,7 +98,7 @@ static inline enum PRESULT create_global_id(QWORD *id, enum event_type event, ui
 static inline struct global_sub * get_local_id(QWORD global_id)
 {
     BYTE *result;
-    REQUIRE_SUCCESS(Container::RecycleBuffer::GetData(&result, &global_register, global_id), MSG_NO_ELEMENT);
+    REQUIRED(Container::RecycleBuffer::GetData(&result, &global_register, global_id), MSG_NO_ELEMENT);
     return (global_sub *) result;
 }
 
@@ -113,16 +113,16 @@ QWORD Pantheon::events_subscribe(enum event_type type, void (*callback)(enum eve
 
     Container::RecycleBuffer *eventGroup = event_register + type;
     QWORD localId;
-    REQUIRE_SUCCESS(Container::RecycleBuffer::GetSlot(&localId, eventGroup), GS_MSG_EVENT_HANDLER_REGISTRATION_FAILED);
+    REQUIRED(Container::RecycleBuffer::GetSlot(&localId, eventGroup), GS_MSG_EVENT_HANDLER_REGISTRATION_FAILED);
     install_callback(eventGroup, localId, callback);
 
     QWORD global_id;
-    REQUIRE_SUCCESS(create_global_id(&global_id, type, localId), GS_MSG_EVENT_HANDLER_REGISTRATION_FAILED);
+    REQUIRED(create_global_id(&global_id, type, localId), GS_MSG_EVENT_HANDLER_REGISTRATION_FAILED);
     return global_id;
 }
 
 static inline void remove_global_sub(QWORD global_id) {
-    REQUIRE_SUCCESS(Container::RecycleBuffer::RemoveSlot(&global_register, global_id),
+    REQUIRED(Container::RecycleBuffer::RemoveSlot(&global_register, global_id),
                     MSG_REMOVE_EVENT_HANLDER_FAILED);
 }
 
@@ -163,7 +163,7 @@ enum PRESULT Pantheon::events_process() {
     Container::RecycleBuffer::Slot *it = group->InUseList;
     while (it != NULL) {
         func_ptr *callback;
-        REQUIRE_SUCCESS(Container::RecycleBuffer::GetData((BYTE **) &callback, group, it->Index),
+        REQUIRED(Container::RecycleBuffer::GetData((BYTE **) &callback, group, it->Index),
                         MSG_EVENT_PROCESSING_FAILED);
         callback->func(data->type, data->args);
         it = it->next;
