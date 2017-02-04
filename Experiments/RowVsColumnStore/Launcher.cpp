@@ -360,35 +360,7 @@ int main() {
     size_t numberOfRecordsEnd = numberOfCustomersStart * 75;
     size_t stepSize = (numberOfRecordsEnd - numberOfCustomersStart)  / numberOfIndependentVariableSamples;
 
-    printf("Timestamp;"
-           "N;"
-           "Repetition;"
-           "Q1TimeInNanoSec_SingleThreaded;"
-           "Q2TimeInNanoSec_SingleThreaded;"
-           "Q3TimeInNanoSec_SingleThreaded;"
-           "Q1TimeInNanoSec_MultiThreaded;"
-           "Q2TimeInNanoSec_MultiThreaded;"
-           "Q3TimeInNanoSec_MultiThreaded;"
-           "CustomerTableInByte;"
-           "ItemTableInByte;"
-           "JoinTableInByte;"
-           "Q1NumRecordsToProcess;"
-    	   "Q1NumRecordToProcessedRefSize;"
-    	   "Q1NumRecordToProcessedDeRefSize;"
-		   "Q2NumRecordsToProcess;"
-		   "Q2NumRecordToProcessedRefSize;"
-		   "Q2NumRecordToProcessedDeRefSize;"
-    	   "Q3NumRecordsToProcess;"
-		   "Q3NumRecordToProcessedRefSize;"
-		   "Q3NumRecordToProcessedDeRefSize;"
-      	   "Q1GBpsecSingleThreaded;"
-     	   "Q2GBpsecSingleThreaded;"
-    	   "Q3GBpsecSingleThreaded;"
-    	   "Q1GBpsecMultiThreaded;"
-		   "Q2GBpsecMultiThreaded;"
-		   "Q3GBpsecMultiThreaded;"
-           "Type;"
-           "ProcessResistendMemoryGiB\n");
+    printf("timestamp;NumberOfCustomers;CurrentRepetition;DurationQ1SingleThreaded;DurationQ2SingleThreaded;DurationQ3SingleThreaded;DurationQ1MultiThreaded;DurationQ2MultiThreaded;DurationQ3MultiThreaded;dataSetSizeCustomersInByte;dataSetSizeItemsInByte;dataSetSizeJoinTableInByte;NumberOfRecordsToProcess;Q1NumRecordsToProcess;Unset1;Q1NumRecordToProcessedDeRefSize;Q2NumRecordsToProcess;Unset2;Q2NumRecordToProcessedDeRefSize;Q3NumRecordsToProcess;Unset3;Q3NumRecordToProcessedDeRefSize;Q1GBpsecSingleThreaded;Q2GBpsecSingleThreaded;Q3GBpsecSingleThreaded;Q1GBpsecMultiThreaded;Q2GBpsecMultiThreaded;Q3GBpsecMultiThreaded;Type;Platform;ProcessVmSize\n");
 
     //for (size_t N = numberOfCustomersStart; N <= numberOfRecordsEnd; N += stepSize) {
     for (size_t N = numberOfCustomersStart; true; N += stepSize) {
