@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Shared/Common.h>
+#include <Shared/Types.h>
 #include <cstring>
 
 extern "C"
@@ -16,16 +17,19 @@ extern "C"
 
     DEVICE_MEM_HANDLE *deviceQueryEvaluateManySum(DEVICE_MEM_HANDLE *DevicePriceColumnHandle, size_t NumberOfColumns, size_t NumberOfItems, bool MultipleThreads);
     size_t *deviceQueryFetchManySumValues(DEVICE_MEM_HANDLE *deviceResultHandle, size_t NumberOfColumns);
+
+    DEVICE_MEM_HANDLE deviceQueryEvaluateManySumRow(DEVICE_MEM_HANDLE PricesTable, size_t NumberOfItems, bool MultipleThreads);
+    PricesRowStoreTuple *deviceQueryFetchManySumValuesRow(DEVICE_MEM_HANDLE RowHandle);
 }
 
-struct DeviceQueryForDataQ1ColumnStore : public QueryForDataQ1
+struct DeviceQueryForDataQ3ColumnStore : public QueryForDataQ1
 {
 	size_t *HostPriceColumn;
 	DEVICE_MEM_HANDLE PriceColumn;
 	DEVICE_MEM_HANDLE TotalPriceSum;
 	size_t NumberOfItems;
 
-	DeviceQueryForDataQ1ColumnStore(ResultSetQ1 *ResultSet, ItemTableDSM *ItemTable, QueryParamsQ1 Params,
+	DeviceQueryForDataQ3ColumnStore(ResultSetQ1 *ResultSet, ItemTableDSM *ItemTable, QueryParamsQ1 Params,
                               ThreadingPolicy Policy, size_t NumberOfItems):
             QueryForDataQ1(ResultSet, Params, Policy), HostPriceColumn((size_t *) ItemTable->I_PRICE),
             PriceColumn(NULL), NumberOfItems(NumberOfItems) { }
@@ -62,7 +66,7 @@ struct DeviceQueryForDataQ1ColumnStore : public QueryForDataQ1
 
 
 
-struct DeviceQueryForDataQ2ColumnStore : public DeviceQueryForDataQ1ColumnStore
+struct DeviceQueryForDataQ2ColumnStore : public DeviceQueryForDataQ3ColumnStore
 {
 	DEVICE_MEM_HANDLE PriceColumn[COLUMN_NUMBER_TO_COPY];
 	DEVICE_MEM_HANDLE *TotalPriceSum;
@@ -70,7 +74,7 @@ struct DeviceQueryForDataQ2ColumnStore : public DeviceQueryForDataQ1ColumnStore
 
 	DeviceQueryForDataQ2ColumnStore(ResultSetQ1 *ResultSet, ItemTableDSM *ItemTable, QueryParamsQ1 Params,
 	                              ThreadingPolicy Policy, size_t NumberOfItems):
-	                            	  DeviceQueryForDataQ1ColumnStore(ResultSet, ItemTable, Params, Policy,
+	                            	  DeviceQueryForDataQ3ColumnStore(ResultSet, ItemTable, Params, Policy,
 									  NumberOfItems)
 	{
 		for (size_t i = 0; i < COLUMN_NUMBER_TO_COPY; ++i) {
@@ -137,5 +141,71 @@ struct DeviceQueryForDataQ2ColumnStore : public DeviceQueryForDataQ1ColumnStore
 			free (Sums);
 		if (TotalPriceSum != NULL)
 			free (TotalPriceSum);
+	}
+};
+
+
+struct DeviceQueryForDataQ2RowStore : public DeviceQueryForDataQ3ColumnStore
+{
+	DEVICE_MEM_HANDLE DevicePricesTable;
+	DEVICE_MEM_HANDLE DeviceTotalPriceTuple;
+	PricesRowStoreTuple *HostPricesTable;
+	PricesRowStoreTuple *Sums;
+
+	DeviceQueryForDataQ2RowStore(ResultSetQ1 *ResultSet, ItemTableDSM *ItemTable, QueryParamsQ1 Params,
+	                              ThreadingPolicy Policy, size_t NumberOfItems):
+	                            	  DeviceQueryForDataQ3ColumnStore(ResultSet, ItemTable, Params, Policy,
+									  NumberOfItems)
+	{
+		HostPricesTable = (PricesRowStoreTuple *) malloc (NumberOfItems * sizeof(PricesRowStoreTuple));
+		for (size_t i = 0; i < NumberOfItems; i++) {
+			PricesRowStoreTuple t;
+			t.f0 = t.f1 = t.f2 = t.f3 = t.f4 = t.f5 = t.f6 = t.f7 = t.f8 = t.f9 = ItemTable->I_PRICE[i];
+			HostPricesTable[i] = t;
+		}
+	}
+
+
+
+	virtual void CopyToDevice() override
+	{
+		DevicePricesTable = deviceCopyFromHostToDevice(HostPricesTable, NumberOfItems * sizeof(PricesRowStoreTuple));
+	}
+
+	virtual void operator()() override
+	{
+		if (DevicePricesTable != NULL) {
+
+			DeviceTotalPriceTuple = deviceQueryEvaluateManySumRow(DevicePricesTable, NumberOfItems, (Policy == ThreadingPolicy::MultiThreaded));
+
+		} else fprintf(stderr, "ERROR: price device column handle is UNSET.\n");
+	}
+
+	virtual void ReceiveFromDevice() override
+	{
+		if (DeviceTotalPriceTuple != NULL)
+		{
+			ResultSet->CustomerId = Params.CustomerTupleId;
+
+			Sums = deviceQueryFetchManySumValuesRow(DeviceTotalPriceTuple);
+
+			// ResultSet->TotalPrice[i = 1...COLUMN_NUMBER_TO_COPY] = ...
+		} else {
+			fprintf(stderr, "ERROR: cannot fetch data from device. Something went wrong.\n");
+		}
+	}
+
+
+	virtual void CleanUp() override
+	{
+		if (DevicePricesTable != NULL && DeviceTotalPriceTuple != NULL) {
+			DEVICE_MEM_HANDLE handles[2] = { DevicePricesTable, DeviceTotalPriceTuple };
+			deviceCleanUp(handles, 2);
+		}
+		if (HostPricesTable != NULL)
+			free(HostPricesTable);
+
+		if (Sums != NULL)
+			free(Sums);
 	}
 };

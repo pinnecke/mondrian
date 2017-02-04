@@ -13,6 +13,7 @@ CMakeFiles/main.dir/Launcher.cpp.o: include/Configure.h
 CMakeFiles/main.dir/Launcher.cpp.o: include/Device/Query.cuh
 CMakeFiles/main.dir/Launcher.cpp.o: include/Host/Query.h
 CMakeFiles/main.dir/Launcher.cpp.o: include/Shared/Common.h
+CMakeFiles/main.dir/Launcher.cpp.o: include/Shared/Types.h
 CMakeFiles/main.dir/Launcher.cpp.o: include/Shared/Utility.h
 
 CMakeFiles/main.dir/Shared/Common.cpp.o: Shared/Common.cpp

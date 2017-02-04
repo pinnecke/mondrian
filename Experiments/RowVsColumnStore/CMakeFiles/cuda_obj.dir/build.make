@@ -61,6 +61,7 @@ CMakeFiles/cuda_obj.dir/Device/cuda_obj_generated_Query.cu.o: Device/Kernels/Par
 CMakeFiles/cuda_obj.dir/Device/cuda_obj_generated_Query.cu.o: Device/Query.cu
 CMakeFiles/cuda_obj.dir/Device/cuda_obj_generated_Query.cu.o: include/Device/Query.cuh
 CMakeFiles/cuda_obj.dir/Device/cuda_obj_generated_Query.cu.o: include/Shared/Common.h
+CMakeFiles/cuda_obj.dir/Device/cuda_obj_generated_Query.cu.o: include/Shared/Types.h
 CMakeFiles/cuda_obj.dir/Device/cuda_obj_generated_Query.cu.o: /usr/include/_G_config.h
 CMakeFiles/cuda_obj.dir/Device/cuda_obj_generated_Query.cu.o: /usr/include/alloca.h
 CMakeFiles/cuda_obj.dir/Device/cuda_obj_generated_Query.cu.o: /usr/include/asm-generic/errno-base.h

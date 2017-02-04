@@ -87,6 +87,29 @@ extern "C"
 		return sum;
 	}
 
+	DEVICE_MEM_HANDLE deviceQueryEvaluateManySumRow(DEVICE_MEM_HANDLE PricesTable, size_t NumberOfItems, bool MultipleThreads)
+	{
+		DEVICE_MEM_HANDLE out;
+
+		int threads = MultipleThreads ? 512 : 1024;
+		int blocks = MultipleThreads ? std::min((int)(NumberOfItems + threads - 1) / threads, 1024) : 1;
+
+		REQUIRED(cudaMalloc(&out, sizeof(PricesRowStoreTuple)*1024), 0);
+
+		deviceReduceKernel2<<<blocks, threads>>>((PricesRowStoreTuple*) PricesTable, (PricesRowStoreTuple*) out, NumberOfItems);
+		deviceReduceKernel2<<<1, 1024>>>((PricesRowStoreTuple*) out, (PricesRowStoreTuple*) out, blocks);
+		cudaDeviceSynchronize();
+
+		return out;
+	}
+
+	PricesRowStoreTuple *deviceQueryFetchManySumValuesRow(DEVICE_MEM_HANDLE RowHandle)
+	{
+		PricesRowStoreTuple *sum = (PricesRowStoreTuple *) malloc (sizeof(PricesRowStoreTuple));
+		REQUIRED(cudaMemcpy(sum,RowHandle,sizeof(PricesRowStoreTuple),cudaMemcpyDeviceToHost), 0);
+		return sum;
+	}
+
 	void deviceCleanUp(DEVICE_MEM_HANDLE *DevHandle, size_t NumDevHandle)
 	{
 		for (size_t i = 0; i < NumDevHandle; i++) {

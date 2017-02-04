@@ -4,6 +4,7 @@ SET(CUDA_NVCC_DEPEND
  "/home/marcus/cuda-workspace/Pantheon/Experiments/RowVsColumnStore/Device/Query.cu"
  "/home/marcus/cuda-workspace/Pantheon/Experiments/RowVsColumnStore/include/Device/Query.cuh"
  "/home/marcus/cuda-workspace/Pantheon/Experiments/RowVsColumnStore/include/Shared/Common.h"
+ "/home/marcus/cuda-workspace/Pantheon/Experiments/RowVsColumnStore/include/Shared/Types.h"
  "/usr/include/_G_config.h"
  "/usr/include/alloca.h"
  "/usr/include/asm-generic/errno-base.h"

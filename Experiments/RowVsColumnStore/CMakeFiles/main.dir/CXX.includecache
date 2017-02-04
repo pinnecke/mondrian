@@ -35,6 +35,8 @@ include/Configure.h
 include/Device/Query.cuh
 Shared/Common.h
 -
+Shared/Types.h
+-
 cstring
 -
 
@@ -67,6 +69,8 @@ random
 -
 iostream
 -
+
+include/Shared/Types.h
 
 include/Shared/Utility.h
 chrono
