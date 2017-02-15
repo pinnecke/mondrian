@@ -1,1 +1,0 @@
-/usr/bin/c++    -O3 -std=c++11 -Wall   CMakeFiles/main.dir/Host/Query.cpp.o CMakeFiles/main.dir/Shared/Common.cpp.o CMakeFiles/main.dir/Launcher.cpp.o  -o main -rdynamic /usr/local/cuda-8.0/lib64/libcudart_static.a -lpthread -ldl -lrt libcuda_obj.a /usr/local/cuda-8.0/lib64/libcudart_static.a -lpthread -ldl -lrt 
