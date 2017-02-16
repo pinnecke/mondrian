@@ -1,5 +1,5 @@
 #include <iostream>
-#include <storage/vector_column.hpp>
+#include <storage/host_vector_column.hpp>
 
 using namespace pantheon::storage;
 
