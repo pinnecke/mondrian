@@ -3,7 +3,17 @@
 
 namespace pantheon
 {
-    enum class ErrorType { OK };
+    enum class ErrorType
+    {
+        OK,
+        UnresolvedConflict,
+        UnsupportedOpertation,
+        IllegalNullReference,
+        ExplicitPrimiaryKeyMightNotHold,
+        ForeignKeyConstraintViolated,
+        PrimaryKeyConstraintViolated,
+        ValueConstraintNotSatisfied
+    };
 }
 
 #endif //PANTHEON_ERROR_HPP

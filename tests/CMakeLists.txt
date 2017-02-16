@@ -3,6 +3,9 @@ project(tests)
 
 set(CMAKE_CXX_STANDARD 14)
 
+#add_definitions(-DNWARNING)
+#add_definitions(-DNINFO)
+
 include_directories(
         "../pantheon/include"
 )

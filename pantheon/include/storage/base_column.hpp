@@ -17,9 +17,24 @@ namespace pantheon
         template <typename ValueType>
         struct column_function_factory
         {
-            static constexpr function<bool(const ValueType *value)> no_constraints()
+            static constexpr function<char *(bool *all_satisfy, const ValueType *values_contained, size_t num_of_values, bool values_might_be_null,
+                                           const ValueType *values_to_be_added, size_t num_of_values_to_be_added,
+                                           const vector<bool> *values_contained_null_mask)> no_constraints()
             {
-                return ([] (const ValueType *) { return true; });
+                return ([] (bool *all_satisfy, const ValueType *, size_t, bool, const ValueType *, size_t num_of_values,
+                            const vector<bool> *) -> char *
+                {
+                    if (num_of_values == 0) {
+                        assert (all_satisfy != nullptr);
+                        *all_satisfy = true;
+                        return nullptr;
+                    } else {
+                        *all_satisfy = false;
+                        char *m = (char *) malloc(100 * sizeof(char));
+                        strcpy(m, "Too many ;D");
+                        return m;
+                    }
+                });
             }
 
             static constexpr function<ValueType()> default_constructor() {
@@ -28,6 +43,10 @@ namespace pantheon
 
             static constexpr function<ValueType(ValueType *value)> numeric_increment() {
                 return ([] (ValueType *value) { return (*value)++; });
+            }
+
+            static constexpr function<bool(const ValueType *value, size_t num_of_values)> any_value_exists() {
+                return ([] (const ValueType *, size_t) { return true; });
             }
         };
 
@@ -61,9 +80,12 @@ namespace pantheon
             Trilean contains_unique_values;
             InternalState internal_state;
 
-            function<bool(const value_t *value)> value_constraints;
+            function<char *(bool *all_satisfy, const value_t *values_contained, size_t num_of_values, bool values_might_be_null,
+                          const value_t *values_to_be_added, size_t num_of_values_to_be_added,
+                          const vector<bool> *values_contained_null_mask)> value_constraints;
             function<value_t()> default_value_supplier;
             function<ValueType(ValueType *value)> increment_function;
+            function<bool(const value_t *value, size_t num_of_values)> foreign_value_exists_check;
 
             void lock()
             {
@@ -88,10 +110,13 @@ namespace pantheon
             virtual bool is_empty() noexcept = 0;
             virtual size_t get_num_of_tuplets() noexcept = 0;
 
-            virtual ErrorType on_append(tuplet_id_t *tuplet_ids, const value_t *values, size_t num_of_values,
-                                        LockHandling lock_policy = LockHandling::Lock,
-                                        ReuseOfTupletIdsPolicy tuplet_id_policy = ReuseOfTupletIdsPolicy::RecycleTupletIdsIfPossible,
-                                        AutoIncAndNullConflictPolicy conflict_policy = AutoIncAndNullConflictPolicy::DontCare) noexcept = 0;
+            virtual ErrorType on_append(tuplet_id_t *tuplet_ids, size_t *num_of_tuplet_ids,
+                                        const value_t *values,
+                                        size_t num_of_values,
+                                        DeduplicationPolicy deduplication_policy,
+                                        LockHandling lock_policy,
+                                        ReuseOfTupletIdsPolicy tuplet_id_policy,
+                                        AutoIncAndNullConflictPolicy conflict_policy) noexcept = 0;
 
             virtual ErrorType on_update(const tuplet_id_t *tuplets, size_t num_of_ids, const value_t *new_value) noexcept = 0;
 
@@ -103,15 +128,18 @@ namespace pantheon
 
         public:
             base_column(const char *column_name,
-                        ThreadSafenessPolicy lock_policy = ThreadSafenessPolicy::UseLocks,
-                        UpdatePolicy update_policy = UpdatePolicy::MultiVersionFields,
+                        ThreadSafenessPolicy lock_policy = ThreadSafenessPolicy::DontUseLocks,
+                        UpdatePolicy update_policy = UpdatePolicy::InPlaceUpdates,
                         AccessPolicy access_policy = AccessPolicy::ReadAppend,
-                        NullPolicy null_policy = NullPolicy::Nullable,
+                        NullPolicy null_policy = NullPolicy::NonNull,
                         CollectionBehaviorPolicy collection_behavior_policy = CollectionBehaviorPolicy::Bag,
                         KeyPolicy key_policy = KeyPolicy::NoRestriction,
                         AutoIncrementPolicy auto_increment_policy = AutoIncrementPolicy::NoAutoIncrement,
+                        function<bool(const value_t *value, size_t num_of_values)> foreign_value_exists_check = column_function_factory<value_t>::any_value_exists(),
                         function<value_t()> default_value_supplier = column_function_factory<value_t>::default_constructor(),
-                        function<bool(const value_t *value)> value_constraints = column_function_factory<value_t>::no_constraints(),
+                        function<char *(bool *all_satisfy, const value_t *values_contained, size_t num_of_values, bool values_might_be_null,
+                                      const value_t *values_to_be_added, size_t num_of_values_to_be_added,
+                                      const vector<bool> *values_contained_null_mask)> value_constraints = column_function_factory<value_t>::no_constraints(),
                         function<ValueType(ValueType *value)> increment_function = column_function_factory<value_t>::numeric_increment()):
                     column_name(nullptr),
                     lock_policy(lock_policy),
@@ -124,6 +152,7 @@ namespace pantheon
                     default_value_supplier(default_value_supplier),
                     value_constraints(value_constraints),
                     increment_function(increment_function),
+                    foreign_value_exists_check(foreign_value_exists_check),
                     locked_flag(false)
             {
                 reinitialize();
@@ -230,17 +259,25 @@ namespace pantheon
             ///                   decidable whether to add null values or to auto-increment values. The conflict
             ///                   resolving is managed by the parameter \p conflict_policy. If \p conflict_policy
             ///                   does not resolve this conflict (i.e., it is set to <code>DontCare</code>), the request
-            ///                   for adding values will be rejected. <br/><br/>
-            ///                   <b>Non-compound key constrain handling</b>. In case \p values is non-<code>null</code>
-            ///                   and this column is constrained to contain values that are from a pre-defined range
-            ///                   (e.g., a foreign-key constraint) but at least one value in \p values is not contained
+            ///                   for adding values will be rejected. Also, if \p conflict_policy requests a
+            ///                   strategy that is not supported by the column (e.g., add null but the column
+            ///                   is non-nullable), the request will be rejected.<br/><br/>
+            ///                   <b>Non-compound key constraint handling</b>. In case \p values is non-<code>null</code>
+            ///                   and this column is constrainted to contain values that are from a pre-defined range
+            ///                   (i.e., a foreign-key constraint) but at least one value in \p values is not contained
             ///                   in this range, the operation will be rejected. If this column is configured to
             ///                   contain non-compound (explicit) primary key values, the operation is rejected if
-            ///                   \p values contains duplicates (see below) or if at least one value in \p values is
-            ///                   already contained in this column.<br/><br/>
-            ///                   <b>Compound key constrain handling</b>. In case this column is configured to be a
-            ///                   compound key, the constrain check is not done for this operation and must be done at
-            ///                   a higher-level. <br/><br/>
+            ///                   \p values contains duplicates, or if at least one value in \p values is
+            ///                   already contained in this column. Since this check is expensive, it is
+            ///                   statically turned off when <code>NDEBUG</code> is defined. In case \p values is
+            ///                   <code>null</code>, the request will be rejected if the column is configured to contain
+            ///                   non-compound foreign key. In the same case, if the column is configured to contain
+            ///                   non-compound primary key values, the column must be configured to behave like a set,
+            ///                   auto-increment must be turned on, and null-values must be disabled. <br/><br/>
+            ///                   <b>Compound key constraint handling</b>. In case this column is configured to be a
+            ///                   compound key, the constraint check is not done for this operation and must be done at
+            ///                   a higher-level. However, in case \p values is
+            ///                   <code>null</code>, the request will be rejected. <br/><br/>
             ///                   <b>Duplication handling</b>. If this column is configured to behave like a set
             ///                   (see constructor), a deduplication on \p values is executed if \p deduplication_policy
             ///                   is set to <code>RunDeduplicationIfNeeded</code>. If this column is configured to
@@ -308,19 +345,33 @@ namespace pantheon
             ///                 <li><code>UnresolvedConflict</code> if \p values is <code>null</code> and
             ///                     \p conflict_policy does not resolve the conflict if both nullable values and
             ///                     auto-incrementation is turned on for this column.</li>
+            ///                 <li><code>UnsupportedOpertation</code> if \p conflict_policy requests for an
+            ///                     proceeding that is not supported for this column configuration (e.g., add
+            ///                     null values but null values are not allowed).</li>
             ///                 <li><code>LockNotSupported</code> if \p lock_policy forces to use locking but locking
             ///                     is disabled for this column.</li>
             ///                 <li><code>CapacityExceeded</code> if there are more values to be added than the
             ///                     column is able to manage. This specific limit depends on the type of
             ///                     <code>tuplet_id_t</code> that was statically defined for this column.</li>
-            ///                 <li><code>ForeignKeyConstraintViolated</code></li> if this column is configured to
+            ///                 <li><code>ForeignKeyConstraintViolated</code> if this column is configured to
             ///                     contain values from a range outside this column and at least one value in
             ///                     \p values does not satisfy this requirement. This check only considers non-compound
-            ///                     (explicit) foreign key value constraints.
-            ///                 <li><code>PrimaryKeyConstraintViolated</code></li> if this column is configured to
+            ///                     (explicit) foreign key value constraints.</li>
+            ///                 <li><code>PrimaryKeyConstraintViolated</code> if this column is configured to
             ///                     contain unique values used as primary key and at least one value in \p values
             ///                     does not satisfy this requirement. This check only considers non-compound
-            ///                     (explicit) primary key value constraints.
+            ///                     (explicit) primary key value constraints. <b>Note</b>: This check is only
+            ///                     done if <code>NDEBUG</code> is <i>not</i> defined.</li>
+            ///                 <li><code>IllegalNullReference</code> if \p values is null, this column
+            ///                     has a non-unrestricted key value policy, and this column is not a non-compound
+            ///                     primary key (i.e., this column is configured as a foreign key, or compound primary
+            ///                     key).</li>
+            ///                 <li><code>ExplicitPrimiaryKeyMightNotHold</code> if \p values is null,
+            ///                     this column is configured as a non-compound primary key, but either this column
+            ///                     is able to contain null values, or auto-incrementation is not enabled.</li>
+            ///                 <li>code>ValueConstraintNotSatisfied</code> the values to be added (or the values
+            ///                     with consideration of the already stored values) does not satify a given
+            ///                     constraint.</li>
             ///                 <li>code>ModificationNotAllowed</code> if this column is read only
             ///                                                        (see constructor)</li>
             ///             </ul>
@@ -345,7 +396,8 @@ namespace pantheon
             /// \author Marcus Pinnecke
             /// \date 2017-02-15
             /// \since 1.0.00
-            ErrorType append(tuplet_id_t *tuplet_ids, size_t *num_of_tuplet_ids,
+            ErrorType append(tuplet_id_t *tuplet_ids,
+                                     size_t *num_of_tuplet_ids,
                                      const value_t *values,
                                      size_t num_of_values,
                                      DeduplicationPolicy deduplication_policy = DeduplicationPolicy::RunDeduplicationIfNeeded,
@@ -356,7 +408,8 @@ namespace pantheon
             {
 
 
-                return on_append(tuplet_ids, values, num_of_values, lock_policy, tuplet_id_policy, conflict_policy);
+                return on_append(tuplet_ids, num_of_tuplet_ids, values, num_of_values, deduplication_policy,
+                                 lock_policy, tuplet_id_policy, conflict_policy);
             }
 
             ErrorType update(const tuplet_id_t *tuplets, size_t num_of_ids, const value_t *new_value) noexcept
@@ -414,6 +467,21 @@ namespace pantheon
             AccessPolicy get_access_policy() const noexcept
             {
                 return access_policy;
+            }
+
+            ThreadSafenessPolicy get_lock_policy() const noexcept
+            {
+                return lock_policy;
+            }
+
+            UpdatePolicy get_update_policy() const noexcept
+            {
+                return update_policy;
+            }
+
+            CollectionBehaviorPolicy get_behavior_policy() const noexcept
+            {
+                return collection_behavior_policy;
             }
 
             virtual void dispose() noexcept
