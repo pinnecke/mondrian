@@ -17,8 +17,9 @@
         pantheon::KeyPolicy::NoRestriction,                                 \
         pantheon::AutoIncrementPolicy::autoinc);
 
-#define APPEND_RESOLVE(column, conflict_policy)                                                                     \
+#define APPEND_RESOLVE(column, conflict_policy)                                                             \
         column->append(nullptr, nullptr, nullptr, 0, pantheon::DeduplicationPolicy::DontCare,               \
+            pantheon::storage::column_function_factory<unsigned>::dedup_nested_loop(),                      \
             pantheon::LockHandling::Auto, pantheon::ReuseOfTupletIdsPolicy::ForceNewTupletIdCreation,       \
             pantheon::AutoIncAndNullConflictPolicy::conflict_policy)
 
@@ -85,11 +86,13 @@ TEST (HostVectorColumn, AppendKeyConstraintHandling)
     for (unsigned i = 0; i < 10; i++)
         values[i] = i;
     expl_pri_key_col->append(nullptr, nullptr, values, 10, pantheon::DeduplicationPolicy::DontCare,
+                        pantheon::storage::column_function_factory<unsigned>::dedup_nested_loop(),
                         pantheon::LockHandling::Auto, pantheon::ReuseOfTupletIdsPolicy::ForceNewTupletIdCreation,
                         pantheon::AutoIncAndNullConflictPolicy::IncrementValues);
     for (unsigned i = 0; i < 10; i++)
         values[i] = i + 10;
     expl_pri_key_col->append(nullptr, nullptr, values, 10, pantheon::DeduplicationPolicy::DontCare,
+                             pantheon::storage::column_function_factory<unsigned>::dedup_nested_loop(),
                              pantheon::LockHandling::Auto, pantheon::ReuseOfTupletIdsPolicy::ForceNewTupletIdCreation,
                              pantheon::AutoIncAndNullConflictPolicy::IncrementValues);
     delete values;

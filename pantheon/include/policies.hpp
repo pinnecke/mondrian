@@ -82,6 +82,16 @@ namespace pantheon
     {
         UseLocks, DontUseLocks
     };
+
+    enum class NullDuplicateHandlingPolicy
+    {
+        TreatAsRegularValue, AllowDuplicateNullValues, RemoveNullValues
+    };
+
+    enum class ValueOrderPolicy
+    {
+        Stable, Instable
+    };
 }
 
 #endif //PANTHEON_POLICIES_HPP

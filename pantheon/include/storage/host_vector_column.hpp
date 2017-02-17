@@ -133,6 +133,36 @@ namespace pantheon
                     return ErrorType::ValueConstraintNotSatisfied;
                 }
 
+                ///                   <b>Duplication handling</b>. If this column is configured to behave like a set
+                ///                   (see constructor), a deduplication on \p values is executed if \p deduplication_policy
+                ///                   is set to <code>RunDeduplicationIfNeeded</code>. If this column is configured to
+                ///                   behave like a bag (see constructor), <i>no</i> deduplication is executed (in this
+                ///                   case the method <code>contains_only_unique_values()</code> will return
+                ///                   <code>Unknown</code>). A deduplication can be forced independent of whether this
+                ///                   column is a set or a bag, if \p deduplication_policy is set to
+                ///                   <code>ForceDeduplication</code> (in this case the method
+                ///                   <code>contains_only_unique_values()</code> will return <code>True</code> if all
+                ///                   calls to this method were configured with <code>ForceDeduplication</code> or
+                ///                   if this column is a set and all calls to this method were configured with
+                ///                   <code>RunDeduplicationIfNeeded</code> or <code>ForceDeduplication</code>. Otherwise,
+                ///                   the method <code>contains_only_unique_values()</code> will return
+                ///                   <code>Unknown</code>). In case this column behaves like a set and all calls to this
+                ///                   method run on <code>RunDeduplicationIfNeeded</code>, the values stored in this column
+                ///                   are guaranteed to be unique (in this case the method
+                ///                   <code>contains_only_unique_values()</code> will return <code>True</code>).
+                ///                   If at least one call to this method was not configured with
+                ///                   <code>RunDeduplicationIfNeeded</code> (or <code>ForceDeduplication</code>) for a
+                ///                   set-behaving column, the values are not guaranteed to be unique (in this case the
+                ///                   method <code>contains_only_unique_values()</code> will return <code>Unknown</code>).
+                ///                   Since deduplication might be expensive (depending on the column implementation), the
+                ///                   duplication-free guarantee required for a set-behaving column can be managed outside
+                ///                   this column, i.e., the column assumes that \p values is duplication-free and no
+                ///                   deduplication is executed. This behavior is activated if \p deduplication_policy is
+                ///                   set to <code>DontCare</code> (in this case the method
+                ///                   <code>contains_only_unique_values()</code> will return <code>Unknown</code>). In case
+                ///                   this column is configured to be a non-compound (explicit) primary key, all calls
+                ///                   to this method which are configured with <code>DontCare</code> are rejected.
+
                 return ErrorType::OK;
             }
 
@@ -189,12 +219,10 @@ namespace pantheon
                                CollectionBehaviorPolicy collection_behavior_policy = CollectionBehaviorPolicy::Bag,
                                KeyPolicy key_policy = KeyPolicy::NoRestriction,
                                AutoIncrementPolicy auto_increment_policy = AutoIncrementPolicy::NoAutoIncrement,
-                               function<bool(const value_t *value, size_t num_of_values)> foreign_value_exists_check = column_function_factory<value_t>::any_value_exists(),
-                               function<value_t()> default_value_supplier = column_function_factory<value_t>::default_constructor(),
-                               function<char *(bool *all_satisfy, const value_t *values_contained, size_t num_of_values, bool values_might_be_null,
-                                             const value_t *values_to_be_added, size_t num_of_values_to_be_added,
-                                             const vector<bool> *values_contained_null_mask)> value_constraints = column_function_factory<value_t>::no_constraints(),
-                               function<ValueType(ValueType *value)> increment_function = column_function_factory<value_t>::numeric_increment()) :
+                               foreign_value_exists_checks::function_t<value_t> foreign_value_exists_check = foreign_value_exists_checks::any_value_exists<value_t>(),
+                               default_value_suppliers::function_t<value_t> default_value_supplier = default_value_suppliers::default_constructor<value_t>(),
+                               value_constraints::function_t<value_t> value_constraints = value_constraints::no_constraints<value_t>(),
+                               increment_functions::function_t<value_t> increment_function = increment_functions::numeric_increment<value_t>()) :
                       Base(column_name, lock_policy, update_policy, access_policy, null_policy, collection_behavior_policy, key_policy,
                            auto_increment_policy, foreign_value_exists_check, default_value_supplier, value_constraints, increment_function),
                       capacity(capacity), num_elements(0)
