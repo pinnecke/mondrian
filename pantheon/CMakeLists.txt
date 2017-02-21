@@ -17,12 +17,13 @@ endif()
 set(CMAKE_CXX_STANDARD 14)
 include_directories("include")
 
-set(
-        SOURCE_FILES main.cpp
+file(GLOB_RECURSE SOURCE_FILES
+        "include/*.hpp"
+        "include/*.cpp"
 )
 
 add_executable(
-        pantheon ${SOURCE_FILES}
+        pantheon ${SOURCE_FILES} main.cpp
 )
 
 if(Boost_FOUND)

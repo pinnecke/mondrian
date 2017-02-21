@@ -7,14 +7,14 @@
 using namespace std;
 
 #include <logger.hpp>
-#include <storage/base_column.hpp>
+#include "base_column.hpp"
 
 namespace pantheon
 {
     namespace storage
     {
         template <typename ValueType, typename TupletIdType = unsigned>
-        class host_vector_column : public base_column<ValueType, TupletIdType>
+        class host_vector_column : public xbase_column<ValueType, TupletIdType>
         {
             using Base = base_column<ValueType, TupletIdType>;
         public:

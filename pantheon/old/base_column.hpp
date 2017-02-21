@@ -7,257 +7,38 @@
 #include <policies.hpp>
 #include <error.hpp>
 #include <utils/strings.hpp>
+#include <storage/value_constraints.hpp>
+#include <storage/default_value_suppliers.hpp>
+#include <storage/increment_functions.hpp>
+#include <storage/foreign_value_exists_checks.hpp>
 
 using namespace std;
 
 namespace pantheon
 {
-    namespace functional
-    {
-        namespace comparators
-        {
-            template <class ValueType>
-            using function_t = function<bool(const ValueType lhs, const ValueType rhs)>;
 
-            template <class ValueType>
-            struct less
-            {
-                bool operator()(const ValueType lhs, const ValueType rhs) const {
-                    return lhs < rhs;
-                }
-            };
-        }
-    }
 
-    namespace collections
-    {
-        namespace operations
-        {
-            namespace dedup
-            {
-                using namespace pantheon::functional;
 
-                /// Runs a deduplication on an array starting at \p begin and ending at \p end using
-                /// a sorting-based approach. If required, a custom comparator \p comp can be used to compare
-                /// elements. The parameter \p dest must be a non-value pointer that is capable to contain
-                /// at least (\p end - \p begin) elements (if no duplication was contained in the array).
-                /// The function returns a pointer to the element after the last element in the desintation array.
-                ///
-                /// \tparam ValueType type of array for both source and destination array
-                /// \param begin begin of array that should be deduped
-                /// \param end pointer to element after last element array that should be deduped
-                /// \param dest pointer to an array that should contain the deduplicated content of the
-                ///                          source array. Must be capable to contain at least as many elements as the
-                ///                          source array.
-                /// \return A pointer to the element after the last element of the destination array
-                template<class ValueType, class Compare = comparators::function_t<ValueType>>
-                ValueType *sort_based(const ValueType *begin, const ValueType *end, ValueType *dest,
-                                 Compare comp = comparators::less<ValueType>()) {
-                    assert (begin != nullptr);
-                    assert (end != nullptr);
-                    assert (dest != nullptr);
-
-                    size_t n = 0;
-                    for (auto lhs = begin; lhs != end; ++lhs) {
-                        if (not binary_search(dest, dest + n, *lhs, comp)) {
-                            *(dest + (n++)) = *lhs;
-                            sort(dest, dest + n);
-                        }
-                    }
-                    return dest + n;
-                }
-            }
-        }
-    }
 
     namespace storage
     {
 
 
 
-        namespace value_constraints
-        {
-            template <class ValueType>
-            using function_t = function<char *(bool *all_satisfy, const ValueType *values_contained, size_t num_of_values, bool values_might_be_null,
-                                               const ValueType *values_to_be_added, size_t num_of_values_to_be_added,
-                                               const vector<bool> *values_contained_null_mask)>;
 
-            template <class ValueType>
-            struct no_constraints
-            {
-                char *operator()(bool *all_satisfy, const ValueType *values_contained, size_t num_of_values, bool values_might_be_null,
-                                 const ValueType *values_to_be_added, size_t num_of_values_to_be_added,
-                                 const vector<bool> *values_contained_null_mask) {
-                    if (num_of_values == 0) {
-                        assert (all_satisfy != nullptr);
-                        *all_satisfy = true;
-                        return nullptr;
-                    } else {
-                        *all_satisfy = false;
-                        char *m = (char *) malloc(100 * sizeof(char));
-                        strcpy(m, "Too many ;D");
-                        return m;
-                    }
-                }
-            };
-        }
 
-        namespace default_value_suppliers
-        {
-            template <class ValueType>
-            using function_t = function<ValueType()>;
 
-            template <class ValueType>
-            struct default_constructor
-            {
-                ValueType operator()() {
-                    return ValueType();
-                }
-            };
-        }
 
-        namespace increment_functions
-        {
-            template <class ValueType>
-            using function_t = function<ValueType(ValueType *value)>;
 
-            template <class ValueType>
-            struct numeric_increment
-            {
-                ValueType operator()(ValueType *value) {
-                    return (*value)++;
-                }
-            };
-        }
 
-        namespace foreign_value_exists_checks
-        {
-            template <class ValueType>
-            using function_t = function<bool(const ValueType *value, size_t num_of_values)>;
 
-            template <class ValueType>
-            struct any_value_exists
-            {
-                bool operator()(const ValueType *value, size_t num_of_values) {
-                    return true;
-                }
-            };
-        }
 
-        namespace dedup_functions
-        {
-            template <class ValueType>
-            struct sort_based
-            {
-                ValueType *operator()(size_t *num_of_dedup_values, vector<bool> *null_mask_out,
-                                      bool *free_on_retval_required,
-                                      ValueOrderPolicy value_order_policy,
-                                      const ValueType *contained_values, size_t num_of_contained_values,
-                                      Trilean contained_values_are_duplicate_free,
-                                      bool contained_values_are_nullable,
-                                      const vector<bool> *contained_values_null_mask,
-                                      const ValueType *new_values, size_t num_of_new_values,
-                                      bool new_values_are_nullable,
-                                      const vector<bool> *new_values_null_mask,
-                                      function<bool(const ValueType lhs, const ValueType rhs)> comp,
-                                      NullDuplicateHandlingPolicy null_handling)
-                {
-                    assert (num_of_dedup_values != nullptr);
-                    assert (!new_values_are_nullable || null_mask_out != nullptr);
-                    assert (free_on_retval_required != nullptr);
-                    assert (num_of_contained_values == 0 || contained_values != nullptr);
-                    assert (!contained_values_are_nullable || contained_values_null_mask != nullptr);
-                    assert (new_values != nullptr);
 
-                    using namespace pantheon::collections::operations;
-
-                    size_t num_final_deduped_values = 0;
-                    vector<bool> new_values_deduped_null_mask;
-
-                    if (num_of_new_values == 0 || new_values == nullptr) {
-                        *free_on_retval_required = false;
-                        return nullptr;
-                    } else {
-
-                        // Dedup new values, only
-                        ValueType *new_values_deduped = (ValueType *) malloc (num_of_new_values * sizeof(ValueType));
-                        ValueType *new_values_deduped_end;
-
-                        assert (new_values_deduped != nullptr);
-
-                        if (new_values_are_nullable) {
-                            new_values_deduped_null_mask.reserve(num_of_new_values);
-
-                         /*   for (const ValueType *lhs = new_values; lhs != new_values + num_of_new_values; ++lhs) {
-                                for (const ValueType *rhs = new_values_deduped; rhs != new_values_deduped + num_new_values_deduped; ++rhs) {
-                                    if (lhs != rhs) {
-                                        if (new_values_null_mask->at(lhs - new_values)) {
-                                            if (new_values_deduped_null_mask[rhs - new_values_deduped]) {
-                                                // the value for lhs is NULL and the value for rhs is NULL
-                                                if (null_handling == NullDuplicateHandlingPolicy::AllowDuplicateNullValues) {
-                                                    new_values_deduped_null_mask[num_new_values_deduped++] = true;
-                                                }
-                                            } else {
-                                                // the value for lhs is NULL and the value for rhs is non-NULL
-                                                continue;
-                                            }
-                                        } else {
-                                            if (new_values_deduped_null_mask[rhs - new_values_deduped]) {
-                                                // the value for lhs is non-NULL and the value for rhs is NULL
-                                                new_values_deduped[num_new_values_deduped] = *lhs;
-                                                new_values_deduped_null_mask[num_new_values_deduped++] = true;
-                                            } else {
-                                                // the value for lhs is non-NULL and the value for rhs is non-NULL
-                                                if (*lhs != *rhs) {
-                                                    new_values_deduped[num_new_values_deduped] = *lhs;
-                                                    new_values_deduped_null_mask[num_new_values_deduped++] = false;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }*/
-                        } else {
-                            //if (value_order_policy == ValueOrderPolicy::Instable) {
-                                new_values_deduped_end = dedup::sort_based<ValueType>(new_values, new_values + num_of_new_values, new_values_deduped, comp);
-                           // } else {
-                                // TODO:...
-                           // }
-
-                            std::for_each(new_values_deduped, new_values_deduped_end, [] (auto x) { std::cout << x << std::endl; });
-                        }
-
-                        // TODO: set difference
-
-                        // Dedup new values considering existing values
-                        size_t num_new_values_deduped = new_values_deduped_end - new_values_deduped;
-                        ValueType *final_input_values = (ValueType *) malloc (num_new_values_deduped * sizeof(ValueType));
-                        assert (final_input_values != nullptr);
-
-                        /*
-                        for (const ValueType *lhs = new_values_deduped; lhs != new_values_deduped + num_new_values_deduped; ++lhs) {
-                            for (const ValueType *rhs = contained_values; rhs != contained_values + num_of_contained_values; ++rhs) {
-                                if (lhs != rhs && *lhs != *rhs) {
-                                    final_input_values[num_final_deduped_values++] = *lhs;
-                                }
-                            }
-                        }*/
-
-                        // free(new_values_deduped);
-
-                        *num_of_dedup_values = num_final_deduped_values;
-                        *free_on_retval_required = true;
-
-                        return final_input_values;
-                    }
-                }
-            };
-        }
 
         template <typename ValueType, typename TupletIdType = unsigned>
-        class base_column
+        class xbase_column
         {
-            using Self = base_column<ValueType, TupletIdType>;
+            using Self = xbase_column<ValueType, TupletIdType>;
 
         public:
             using value_t = ValueType;

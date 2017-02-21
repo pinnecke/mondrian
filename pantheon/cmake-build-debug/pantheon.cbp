@@ -82,6 +82,48 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/Users/marcus/git/pantheon/pantheon/include/collections/operations/dedup.hpp">
+			<Option target="pantheon"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/pantheon/include/error.hpp">
+			<Option target="pantheon"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/pantheon/include/functional/comparators.hpp">
+			<Option target="pantheon"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/pantheon/include/logger.hpp">
+			<Option target="pantheon"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/pantheon/include/old/base_column.hpp">
+			<Option target="pantheon"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/pantheon/include/old/host_vector_column.hpp">
+			<Option target="pantheon"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/pantheon/include/policies.hpp">
+			<Option target="pantheon"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/pantheon/include/storage/dedup_functions.hpp">
+			<Option target="pantheon"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/pantheon/include/storage/default_value_suppliers.hpp">
+			<Option target="pantheon"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/pantheon/include/storage/foreign_value_exists_checks.hpp">
+			<Option target="pantheon"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/pantheon/include/storage/host/column_store.hpp">
+			<Option target="pantheon"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/pantheon/include/storage/increment_functions.hpp">
+			<Option target="pantheon"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/pantheon/include/storage/value_constraints.hpp">
+			<Option target="pantheon"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/pantheon/pantheon/include/utils/strings.hpp">
+			<Option target="pantheon"/>
+		</Unit>
 		<Unit filename="/Users/marcus/git/pantheon/pantheon/main.cpp">
 			<Option target="pantheon"/>
 		</Unit>
