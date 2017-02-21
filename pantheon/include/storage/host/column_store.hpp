@@ -9,6 +9,7 @@
 
 #include <utils/strings.hpp>
 #include <logger.hpp>
+#include <queue>
 
 using namespace std;
 
@@ -20,11 +21,12 @@ namespace pantheon
         {
             namespace column_store
             {
-                template <class ValueType, class TupletIdType = size_t>
+                template <class ValueType, class LocalTupletIdType = size_t, class GlobalTupletIdType = size_t>
                 class base_column
                 {
                 public:
-                    using tuplet_id_t = TupletIdType;
+                    using local_tuplet_id_t = LocalTupletIdType;
+                    using global_tuplet_id_t = GlobalTupletIdType;
                     using value_t = ValueType;
                     using to_string_function_t = pantheon::utils::strings::to_string::function_t <value_t>;
 
@@ -40,7 +42,7 @@ namespace pantheon
 
                     constexpr size_t get_maximum_tuplet_id()
                     {
-                        return std::numeric_limits<tuplet_id_t>::max();
+                        return std::numeric_limits<local_tuplet_id_t>::max();
                     }
 
                     struct mem_info
@@ -59,16 +61,49 @@ namespace pantheon
 
                     struct record
                     {
-                        TupletIdType tid;
+                        LocalTupletIdType tid;
                         ValueType payload;
                     };
 
+                    local_tuplet_id_t request_next_free_tuplet_id() {
+                        if (not this->tuplet_id_free_queue.empty()) {
+                            auto next_id = this->tuplet_id_free_queue.front();
+                            this->tuplet_id_free_queue.pop();
+
+                            LOG_INFO("Recycled tuplet id %zu, num of recyclable tuplet ids=%zu",
+                                     size_t(next_id), this->tuplet_id_free_queue.size());
+
+                            return next_id;
+                        } else {
+                            LOG_INFO("Created new tuplet id: %zu", size_t(next_tuplet_id + 1));
+
+                            return next_tuplet_id++;
+                        }
+                    }
+
+                    void recycle_tuplet_id(local_tuplet_id_t tuplet_id) {
+                        assert (tuplet_id >= get_local_tuplet_id_start());
+                        assert (tuplet_id < get_local_tuplet_id_end());
+                        this->tuplet_id_free_queue.push(tuplet_id);
+                        LOG_INFO("Add %zu to recyclable tuplet ids, num of recyclable tuplet ids=%zu",
+                                 size_t(tuplet_id), this->tuplet_id_free_queue.size());
+                    }
+
+
+
                     struct data_page
                     {
+                        struct data_page_ref
+                        {
+                            data_page *page;
+                            data_page_ref *prev, *next;
+                        };
+
                         struct push_result
                         {
                             const value_t *tail;
-                            tuplet_id_t start, end;
+                            local_tuplet_id_t *used_tuplet_ids;
+                            size_t num_of_used_tuplet_ids;
                             value_t **value_ptr;
                         };
 
@@ -84,15 +119,17 @@ namespace pantheon
                                 char is_readable : 1;
                                 char is_writeable : 1;
                                 char is_locked : 1;
-                                char reserved : 6;
+                                char is_in_free_list_1st_tier : 1;
+                                char reserved : 5;
                             } flags;
                         } header;
 
                         mutex page_mutex;
-                        base_column<value_t, tuplet_id_t> *parent;
+                        base_column<value_t, local_tuplet_id_t> *parent;
                         record *content;
                         data_page *prev, *next;
                         size_t slots_in_use;
+                        data_page_ref *link_in_1st_tier;
 
                         void lock()
                         {
@@ -115,27 +152,53 @@ namespace pantheon
 
                            // lock();
 
-                            size_t position = 0;
+                            size_t position = 0, idx = 0;
                             size_t max_portion = min(parent->per_page_capacity, size_t(end - begin));
 
                             result->value_ptr = (value_t **) malloc(max_portion * sizeof(value_t *));
                             assert (result->value_ptr != nullptr);
-                            result->start = parent->next_tuplet_id;
+                            result->used_tuplet_ids = (local_tuplet_id_t *) malloc(max_portion * sizeof(local_tuplet_id_t));
+                            assert (result->used_tuplet_ids != nullptr);
 
                             while (position < max_portion) {
                                 if (!this->header.in_use_mask[position]) {
-                                    this->content[position].payload = begin[position];
-                                    this->content[position].tid = parent->next_tuplet_id++;
-                                    result->value_ptr[position] = &this->content[position].payload;
-
-                                    this->header.in_use_mask[position++] = true;
+                                    auto tuplet_id = parent->request_next_free_tuplet_id(); // TODO!
+                                    this->content[idx].payload = begin[position];
+                                    this->content[idx].tid = tuplet_id;
+                                    result->value_ptr[idx] = &this->content[position].payload;
+                                    result->used_tuplet_ids[idx] = tuplet_id;
+                                    this->header.in_use_mask[idx] = true;
                                     slots_in_use++;
+                                    idx++;
                                 }
+                                position++;
                             }
-                            result->end = parent->next_tuplet_id;
-                            result->tail = begin + position;
+                            result->num_of_used_tuplet_ids = idx;
+                            result->tail = begin + idx;
 
                             //    unlock();
+                        }
+
+                        template <typename LTid>
+                        void remove(LTid tuplet_id) {
+                            assert (this->header.flags.is_writeable);
+                            assert (not this->header.flags.is_locked);
+                            if (not this->header.flags.is_in_free_list_1st_tier) {
+                                parent->link_page_in_1st_tier(this);
+                            }
+
+
+                            // Linear scan to remove entry in slot (since currently there is no index over tuplet it)
+                            for (auto slot_idx = 0; slot_idx < this->parent->per_page_capacity; ++slot_idx) {
+                                if (this->header.in_use_mask[slot_idx] && this->content[slot_idx].tid == tuplet_id) {
+                                    this->header.in_use_mask[slot_idx] = false;
+                                    parent->recycle_tuplet_id(tuplet_id);
+                                    slots_in_use--;
+                                    parent->auto_move_page_from_1st_tier_to_2nd_tier(this);
+                                    return;
+                                }
+                            }
+                            assert (false); // this code should never reached if remove call was correctly configured
                         }
 
                         bool is_full()
@@ -143,42 +206,48 @@ namespace pantheon
                             return (slots_in_use == parent->per_page_capacity);
                         }
 
-                    };
+                        bool is_empty()
+                        {
+                            return (slots_in_use == 0);
+                        }
 
-                    struct data_page_ref
-                    {
-                        data_page *page;
-                        data_page_ref *prev, *next;
                     };
 
                     data_page *active_pages_head = nullptr, *active_pages_tail = nullptr;
-                    data_page_ref *free_list_1st_tier = nullptr;
+                    typename data_page::data_page_ref *free_list_1st_tier = nullptr;
                     data_page *free_list_2nd_tier = nullptr;
 
-                    struct invertex_page_index
+                    struct inverted_page_index
                     {
-                        value_t **tuplet_ids;
+                        struct value_reference
+                        {
+                            value_t *value;
+                            data_page *page;
+                        };
+
+                        value_reference *tuplet_ids;
                         size_t size = 0, capacity = 0;
 
                         enum IndexError { Okay, MallocFailed, LimitReached, TupletIdAlreadyRegistered,
                                           TupletNotRegistered};
 
-                        invertex_page_index(size_t capacity)
+                        inverted_page_index(size_t capacity)
                         {
                             assert (capacity > 0);
-                            tuplet_ids = (value_t **) malloc (capacity * sizeof(value_t *));
+                            tuplet_ids = (value_reference*) malloc (capacity * sizeof(value_reference));
                             assert (tuplet_ids != nullptr);
                             this->capacity = capacity;
                             for (size_t idx = 0; idx < capacity; ++idx) {
-                                tuplet_ids[idx] = nullptr;
+                                tuplet_ids[idx].value = nullptr;
+                                tuplet_ids[idx].page = nullptr;
                             }
                         }
 
-                        IndexError link(tuplet_id_t tuplet_id, value_t *value_in_page)
+                        IndexError link(local_tuplet_id_t tuplet_id, data_page *page, value_t *value_in_page)
                         {
                             assert (value_in_page != nullptr);
 
-                            if (tuplet_id == numeric_limits<tuplet_id_t>::max()) {
+                            if (tuplet_id == numeric_limits<local_tuplet_id_t>::max()) {
                                 LOG_WARNING("Link tuplet id %zu to value %p failed: tuplet id limit reached",
                                             size_t(tuplet_id), value_in_page);
                                 return IndexError::LimitReached;
@@ -187,7 +256,8 @@ namespace pantheon
                             if (tuplet_id >= capacity)
                             {
                                 size_t new_capacity = this->capacity * 1.4f;
-                                if ((tuplet_ids = (value_t **) realloc(tuplet_ids, new_capacity * sizeof(value_t *))) == nullptr) {
+                                if ((tuplet_ids = (value_reference *) realloc(tuplet_ids, new_capacity *
+                                                                              sizeof(value_reference))) == nullptr) {
                                     LOG_WARNING("Link tuplet id %zu to value %p failed: inverted index memory reallocation failed",
                                                 size_t(tuplet_id), value_in_page);
                                     return IndexError::MallocFailed;
@@ -195,14 +265,15 @@ namespace pantheon
                                 else {
                                     for (size_t idx = capacity; idx < new_capacity; ++idx)
                                     {
-                                        tuplet_ids[idx] = nullptr;
+                                        tuplet_ids[idx].page = nullptr;
+                                        tuplet_ids[idx].value = nullptr;
                                     }
                                     this->capacity = new_capacity;
                                     LOG_INFO("Resized inverted page index %p", this);
                                 }
                             }
 
-                            if (tuplet_ids[tuplet_id] != nullptr)
+                            if ((tuplet_ids[tuplet_id].page != nullptr) || (tuplet_ids[tuplet_id].value != nullptr))
                             {
                                 LOG_WARNING("Link tuplet id %zu to value %p failed: tuplet: collision",
                                             size_t(tuplet_id), value_in_page);
@@ -211,15 +282,18 @@ namespace pantheon
                             else {
                                 LOG_INFO("Created inverted page index for tuplet id %zu to value %p",
                                          size_t(tuplet_id), value_in_page);
-                                tuplet_ids[tuplet_id] = value_in_page;
+                                tuplet_ids[tuplet_id].page = page;
+                                tuplet_ids[tuplet_id].value = value_in_page;
                                 return IndexError::Okay;
                             }
                          }
 
-                        IndexError update(tuplet_id_t tuplet_id, value_t *value_in_page)
+                        template <class T, class LTid = size_t, class GTid = size_t>
+                        IndexError update(const base_column<T, LTid, GTid> *column,
+                                          local_tuplet_id_t tuplet_id, data_page *page, value_t *value_in_page)
                         {
                             IndexError result;
-                            if ((result = unlink(&tuplet_id, &tuplet_id + 1)) != IndexError::Okay) {
+                            if ((result = unlink<>(column, &tuplet_id, &tuplet_id + 1)) != IndexError::Okay) {
                                 LOG_WARNING("Update inverted page index for tuplet id %zu to value %p failed:"
                                             "unlink failed", size_t(tuplet_id), value_in_page);
                                 return result;
@@ -227,38 +301,50 @@ namespace pantheon
                             else {
                                 LOG_INFO("Invoke update for inverted page index for tuplet id %zu from value %p to value %p",
                                          size_t(tuplet_id), tuplet_ids[tuplet_id], value_in_page);
-                                return link(tuplet_id, value_in_page);
+                                return link(tuplet_id, page, value_in_page);
                             }
                         }
 
-                        IndexError unlink(const tuplet_id_t *begin, const tuplet_id_t *end)
+                        template <class T, class LTid = size_t, class GTid = size_t>
+                        IndexError unlink(const base_column<T, LTid, GTid> *column,
+                                          const local_tuplet_id_t *begin, const local_tuplet_id_t *end)
                         {
-                            for (const tuplet_id_t *it = begin; it != end; ++it) {
-                                tuplet_id_t tuplet_id = *it;
-                                assert (tuplet_id < capacity);
-                                if (tuplet_ids[tuplet_id] == nullptr) { LOG_WARNING(
-                                            "Unlink tuplet id %zu in inverted page index failed: "
-                                                    "not registered", size_t(tuplet_id));
+                            assert (column != nullptr);
+                            for (const local_tuplet_id_t *it = begin; it != end; ++it) {
+                                local_tuplet_id_t tuplet_id = *it;
+                                assert (tuplet_id >= column->get_local_tuplet_id_start());
+                                assert (tuplet_id < column->get_local_tuplet_id_end());
+                                if ((tuplet_ids[tuplet_id].value == nullptr) || (tuplet_ids[tuplet_id].page == nullptr)) {
+                                    LOG_WARNING("Unlink tuplet id %zu in inverted page index failed: "
+                                                "not registered", size_t(tuplet_id));
                                     return IndexError::TupletNotRegistered;
                                 } else { LOG_INFO( "Removed tuplet id %zu from inverted page index",
                                             size_t(tuplet_id));
 
-                                    tuplet_ids[tuplet_id] = nullptr;
-                                    return IndexError::Okay;
+                                    tuplet_ids[tuplet_id].page = nullptr;
+                                    tuplet_ids[tuplet_id].value = nullptr;
                                 }
                             }
+                            return IndexError::Okay;
                         }
 
-                        value_t *get_value_by_tuplet_id(tuplet_id_t tuplet_id)
+                        value_t *get_value_by_local_tuplet_id(local_tuplet_id_t tuplet_id)
                         {
                             assert (tuplet_id < capacity);
-                            assert (tuplet_ids[tuplet_id] != nullptr);
-                            return tuplet_ids[tuplet_id];
+                            assert (tuplet_ids[tuplet_id].value != nullptr);
+                            return tuplet_ids[tuplet_id].value;
+                        }
+
+                        data_page *get_page_by_local_tuplet_id(local_tuplet_id_t tuplet_id)
+                        {
+                            assert (tuplet_id < capacity);
+                            assert (tuplet_ids[tuplet_id].page != nullptr);
+                            return tuplet_ids[tuplet_id].page;
                         }
                     } inverted_index;
 
                     mutex mutex;
-                    tuplet_id_t next_tuplet_id;
+                    local_tuplet_id_t next_tuplet_id;
 
                     struct
                     {
@@ -270,11 +356,14 @@ namespace pantheon
                     size_t per_page_capacity, capacity;
                     to_string_function_t to_string_function;
                     size_t number_of_data_pages;
+                    global_tuplet_id_t offset;
+                    std::queue<local_tuplet_id_t> tuplet_id_free_queue;
 
                 public:
-                    base_column(const char *column_name, size_t per_page_capacity, size_t capacity,
+                    base_column(const char *column_name, global_tuplet_id_t offset, size_t per_page_capacity, size_t capacity,
                                 to_string_function_t to_string_function): to_string_function(to_string_function),
-                                                                          inverted_index(capacity)
+                                                                          inverted_index(capacity),
+                                                                          offset(offset)
                     {
                         using namespace pantheon::utils::strings;
 
@@ -299,6 +388,27 @@ namespace pantheon
 
                         if (this->free_list_1st_tier != nullptr)
                         { // use free slots in pages that are already in active pages space
+                            LOG_INFO("BUB %d", 4);
+                            typename data_page::data_page_ref *reference = this->free_list_1st_tier;
+                            data_page *page = reference->page;
+
+                            typename data_page::push_result result;
+                            page->push_payload(&result, values_begin, values_end);
+
+                            size_t value_idx = 0;
+                            for (auto it = result.used_tuplet_ids; it != result.used_tuplet_ids + result.num_of_used_tuplet_ids; ++it, ++value_idx)
+                            {
+                                local_tuplet_id_t id = *it;
+                                auto link_result = inverted_index.link(id, page, result.value_ptr[value_idx]);
+                                assert (link_result == inverted_page_index::IndexError::Okay);
+                            }
+                            std::free(result.value_ptr);
+
+                            auto_move_page_from_1st_tier_to_2nd_tier(page);
+                            if (result.tail != values_end) {
+                                values_begin = result.tail;
+                                goto next_step;
+                            }
 
                         } else if (this->free_list_2nd_tier != nullptr)
                         { // re-link existing but unused pages that are not in active pages space
@@ -307,10 +417,11 @@ namespace pantheon
                             page->push_payload(&result, values_begin, values_end);
 
                             size_t value_idx = 0;
-                            for (tuplet_id_t id = result.start; id != result.end; ++id, ++value_idx)
+                            for (auto it = result.used_tuplet_ids; it != result.used_tuplet_ids + result.num_of_used_tuplet_ids; ++it, ++value_idx)
                             {
-                                auto link_result = inverted_index.link(id, result.value_ptr[value_idx]);
-                                assert (link_result == invertex_page_index::IndexError::Okay);
+                                local_tuplet_id_t id = *it;
+                                auto link_result = inverted_index.link(id, page, result.value_ptr[value_idx]);
+                                assert (link_result == inverted_page_index::IndexError::Okay);
                             }
                             std::free(result.value_ptr);
 
@@ -329,26 +440,59 @@ namespace pantheon
                         unlock();
                     }
 
-                    void remove(const tuplet_id_t *begin, const tuplet_id_t *end)
+                    void remove(const local_tuplet_id_t *begin, const local_tuplet_id_t *end)
                     {
                         assert (begin != nullptr);
                         assert (end != nullptr);
                         assert (begin <= end);
-                        inverted_index.unlink(begin, end);
-                        // TODO:
+                        for(auto it = begin; it != end; ++it) {
+                            auto local_tuplet_id = *it;
+                            assert (local_tuplet_id >= get_local_tuplet_id_start());
+                            assert (local_tuplet_id < get_local_tuplet_id_end());
+                            auto page = inverted_index.get_page_by_local_tuplet_id(local_tuplet_id);
+                            page->template remove<local_tuplet_id_t>(local_tuplet_id);
+                        }
+                        inverted_index.template unlink<>(this, begin, end);
                     }
 
-                    void raw_print(FILE *file, const tuplet_id_t *begin, const tuplet_id_t *end)
+                    global_tuplet_id_t get_global_tuplet_id_start() const
+                    {
+                        return offset;
+                    }
+
+                    constexpr local_tuplet_id_t get_local_tuplet_id_start() const
+                    {
+                        return 0;
+                    }
+
+                    local_tuplet_id_t get_local_tuplet_id_end() const
+                    {
+                        return next_tuplet_id;
+                    }
+
+                    global_tuplet_id_t get_global_tuplet_id_end() const
+                    {
+                        return offset + next_tuplet_id;
+                    }
+
+                    void raw_print(FILE *file, const local_tuplet_id_t *begin, const local_tuplet_id_t *end)
                     {
                         assert (file != nullptr);
                         assert (begin != nullptr);
                         assert (end != nullptr);
 
-                        fprintf(file, "tuplet id | value\n");
+                        fprintf(file, "+-------------------+-------------------+-----------+\n");
+                        fprintf(file, "| global tuplet id\t| local tuplet id\t| value\t\t|\n");
+                        fprintf(file, "+-------------------+-------------------+-----------+\n");
                         for (auto it = begin; it != end; ++it) {
-                            auto value = inverted_index.get_value_by_tuplet_id(*it);
+                            auto local_id = *it;
+                            assert (local_id >= get_local_tuplet_id_start());
+                            assert (local_id < get_local_tuplet_id_end());
+
+                            auto value = inverted_index.get_value_by_local_tuplet_id(local_id);
                             char *str = nullptr;
-                            fprintf(file, "%zu | %s\n", *it, (value != nullptr ? (str = to_string_function(value)) : "(NULL)"));
+                            fprintf(file, "| %zu\t\t\t\t\t| %zu\t\t\t\t | %s\n", to_global(local_id), local_id,
+                                    (value != nullptr ? (str = to_string_function(value)) : "(NULL)"));
                             if (str != nullptr)
                                 std::free(str);
                         }
@@ -358,7 +502,7 @@ namespace pantheon
                     {
                         assert (info != nullptr);
                         lock();
-                        info->column_store_type_size = sizeof(base_column<value_t , tuplet_id_t >);
+                        info->column_store_type_size = sizeof(base_column<value_t , local_tuplet_id_t >);
                         info->number_of_data_pages = number_of_data_pages;
                         info->total_flags_size = info->total_mutex_size = info->total_approx_free_mask_size =
                             info->total_approx_null_mask_size = info->total_link_size = info->total_payload_size = 0;
@@ -389,6 +533,17 @@ namespace pantheon
                     }
 
                 protected:
+
+                    inline local_tuplet_id_t to_local(global_tuplet_id_t global_id)
+                    {
+                        return global_id - offset;
+                    }
+
+                    inline global_tuplet_id_t to_global(local_tuplet_id_t local_id)
+                    {
+                        return local_id + offset;
+                    }
+
                     void lock()
                     {
                         this->mutex.lock();
@@ -435,9 +590,11 @@ namespace pantheon
                         page->content = (record *) calloc(per_page_capacity, sizeof(record));
                         page->header.flags.is_readable = true;
                         page->header.flags.is_writeable = true;
-                        page->header.flags.is_locked = true;
+                        page->header.flags.is_locked = false;
+                        page->header.flags.is_in_free_list_1st_tier = false;
                         page->header.in_use_mask.reserve(per_page_capacity);
                         page->header.null_mask.reserve(per_page_capacity);
+                        page->link_in_1st_tier = nullptr;
                         page->prev = prev;
                         page->next = next;
 
@@ -467,6 +624,87 @@ namespace pantheon
                         number_of_data_pages = num_of_pages;
                     }
 
+                    void link_page_in_1st_tier(data_page *page)
+                    {
+                        using data_page_ref = typename data_page::data_page_ref;
+
+                        data_page_ref *ref = (data_page_ref *) malloc(sizeof(data_page_ref));
+                        page->header.flags.is_in_free_list_1st_tier = true;
+                        assert (page->link_in_1st_tier == nullptr);
+                        page->link_in_1st_tier = ref;
+                        ref->page = page;
+                        ref->prev = nullptr;
+                        ref->next = this->free_list_1st_tier;
+                        this->free_list_1st_tier = ref;
+                        LOG_INFO("Created link to page %p in 1st tier free store",
+                                 page);
+                    }
+
+                    void auto_move_page_from_1st_tier_to_2nd_tier(data_page *page)
+                    {
+                        assert (page != nullptr);
+                        if (page->is_empty()) {
+                            LOG_INFO("Page %p in column %p is empty and moved to 2nd tier free store", page, this);
+                            remove_page_from_1st_tier(page);
+                            remove_page_from_active_list(page);
+                            move_page_to_2nd_tier(page);
+                        } else if (page->is_full()) {
+
+                        }
+                    }
+
+                    void remove_page_from_active_list(data_page *page)
+                    {
+                        if (page->prev == nullptr) {
+                            this->active_pages_head = page->next;
+                        }
+                        if (page->next == nullptr) {
+                            this->active_pages_tail = page->prev;
+                        }
+                        if (page->prev != nullptr) {
+                            page->prev->next = page->next;
+                        }
+                        if (page->next != nullptr) {
+                            page->next->prev = page->prev;
+                        }
+                        page->prev = page->next = nullptr;
+
+                        LOG_INFO("Page %p in column %p was removed from active list", page, this);
+                    }
+
+                    void remove_page_from_1st_tier(data_page *page)
+                    {
+                        assert (page->header.flags.is_in_free_list_1st_tier);
+                        assert (page->link_in_1st_tier != nullptr);
+
+                        typename data_page::data_page_ref *ref = page->link_in_1st_tier;
+
+                        if (ref == this->free_list_1st_tier) {
+                            this->free_list_1st_tier = ref->next;
+                        }
+                        if (ref->next != nullptr) {
+                            ref->next->prev = ref->prev;
+                        }
+
+                        std::free(ref);
+                        page->link_in_1st_tier = nullptr;
+                        page->header.flags.is_in_free_list_1st_tier = false;
+
+                        LOG_INFO("Page %p in column %p was removed from 1st tier free store", page, this);
+                    }
+
+                    void move_page_to_2nd_tier(data_page *page)
+                    {
+                        assert (page->prev == nullptr);
+                        assert (page->next == nullptr);
+
+                        page->next = this->free_list_2nd_tier;
+                        this->free_list_2nd_tier->prev = page;
+                        this->free_list_2nd_tier = page;
+
+                        LOG_INFO("Page %p in column %p was added to 2nd tier free store", page, this);
+                    }
+
                     void move_page_from_2nd_tier(data_page *page)
                     {
                         assert (this->active_pages_head == nullptr || this->active_pages_tail != nullptr);
@@ -484,14 +722,8 @@ namespace pantheon
                             active_pages_tail = page;
                         }
 
-                        if (!page->is_full()) {
-                            data_page_ref *ref = (data_page_ref *) malloc(sizeof(data_page_ref));
-                            ref->page = page;
-                            ref->prev = nullptr;
-                            ref->next = this->free_list_1st_tier;
-                            this->free_list_1st_tier = ref;
-                            LOG_INFO("Created link to page %p in 1st tier free store",
-                                     page);
+                        if (not page->is_full()) {
+                            link_page_in_1st_tier(page);
                         } else {
                             LOG_INFO("Moved page %p from 2nd tier free store to 1st tier free store",
                                      page);

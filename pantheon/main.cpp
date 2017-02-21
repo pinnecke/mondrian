@@ -5,20 +5,24 @@
 
 int main() {
 
-    pantheon::storage::host::column_store::base_column<uint16_t> c1("Ho", 2, 10, pantheon::utils::strings::to_string::uint16_to_string);
+    size_t THIS_COLUMN_Y_OFFSET = 100;
+    pantheon::storage::host::column_store::base_column<uint16_t> c1("Ho", THIS_COLUMN_Y_OFFSET, 2, 10, pantheon::utils::strings::to_string::uint16_to_string);
     uint16_t *values = (uint16_t *) malloc(100 * sizeof(uint16_t));
     for (size_t i = 0; i < 100; i++)
         values[i] = 2*i;
 
-    c1.append(values, values + 100);
+    c1.append(values, values + 99);
     c1.to_string(stdout);
 
-    using tuplet_id_t = pantheon::storage::host::column_store::base_column<uint16_t>::tuplet_id_t;
-    tuplet_id_t *tuplet_ids = (tuplet_id_t *) malloc(10 * sizeof(tuplet_id_t));
-    for (int i = 9; i >= 0; --i)
-        tuplet_ids[i] = 10 - i;
+    using tuplet_id_t = pantheon::storage::host::column_store::base_column<uint16_t>::local_tuplet_id_t;
+    tuplet_id_t *tuplet_ids = (tuplet_id_t *) malloc(100 * sizeof(tuplet_id_t));
+    for (int i = 0; i < 99; ++i)
+        tuplet_ids[i] = i;
 
+    printf("\n");
     c1.raw_print(stdout, tuplet_ids, tuplet_ids + 10);
+
+    c1.remove(tuplet_ids, tuplet_ids + 10);
 
     pantheon::storage::host::column_store::base_column<uint16_t>::mem_info info;
     c1.get_memory_info(&info);
@@ -39,6 +43,10 @@ int main() {
             info.total_mutex_size,
             info.total_payload_size);
 
+    c1.to_string(stdout);
+
+    c1.append(values + 10, values + 20);
+    c1.raw_print(stdout, tuplet_ids, tuplet_ids + 30);
 
     return 0;
 }
