@@ -30,21 +30,30 @@ public:
 
 int main() {
 
+    std::cout << "Build successful!" << std::endl;
+    std::cout << "Allocate memory for column...";
+
     size_t num_of_values = 10000000;
     unsigned *values = (unsigned int *) malloc (num_of_values * sizeof(unsigned));
     unsigned *begin = values, *end = values + num_of_values;
+
+    std::cout << "Done" << std::endl;
+    std::cout << "Fill column with data...";
     std::iota (begin, end, 0);
+    std::cout << "Done" << std::endl;
 
-
+    std::cout << "Invoke query...";
 
     auto print = query_engine::operators::sinks::printer<unsigned>();
-
     auto scan = my_filter_less_than_five<unsigned>(&print, 10);
-
     auto read = query_engine::operators::sources::reader<unsigned>(&scan, begin, end, 10);
 
     read.produce();
 
+    std::cout << "Done" << std::endl;
+    std::cout << "Cleanup...";
     free (values);
+    std::cout << "Done" << std::endl;
+    std::cout << "Exit" << std::endl;
     return EXIT_SUCCESS;
 }
