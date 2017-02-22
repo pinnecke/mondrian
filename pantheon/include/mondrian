@@ -1,0 +1,10 @@
+#pragma
+
+#include <query_engine/operators/sql/sequential_scan.hpp>
+#include <query_engine/operators/sinks/printer.hpp>
+#include <query_engine/operators/sources/reader.hpp>
+#include <query_engine/operators/iterator.hpp>
+#include <query_engine/operators/push_operator.hpp>
+#include <query_engine/operators/sink_operator.hpp>
+#include <query_engine/operators/source_operator.hpp>
+#include <query_engine/operators/vector.hpp>
