@@ -15,7 +15,7 @@ namespace mondrian {
 
                     virtual void on_consume(const ValueType **begin, const ValueType **end) override {
                         for (auto it = begin; it != end; ++it)
-                            std::cout << **it << std::endl;
+                            std::cout << ">> " << **it << std::endl;
                     }
                 };
 

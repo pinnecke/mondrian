@@ -1,1 +1,8 @@
 tests/cmake-build-debug
+cmake_install.cmake
+CMakeCache.txt
+Makefile
+query_en.cbp
+query_engine
+query_engine.cbp
+student_project

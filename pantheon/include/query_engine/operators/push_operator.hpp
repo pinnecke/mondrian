@@ -35,7 +35,11 @@ namespace mondrian {
 
                 virtual void on_produce() { /* might be overridden */ };
 
-                virtual void yield(const ValueType **value) final {
+                virtual void on_close() { /* might be overridden */ };
+
+                virtual void on_cleanup() { /* might be overridden */ };
+
+                virtual void forward(const ValueType **value) final {
                     if (result->add(*value) == vector_t::state::full) {
                         send();
                         reset();
@@ -45,13 +49,21 @@ namespace mondrian {
                 virtual void close() final {
                     if (consumer != nullptr) {
                         send();
+                        reset();
+                        on_close();
+                        send();
                         consumer->close();
+                        on_cleanup();
                     }
                     cleanup();
                 }
 
                 virtual ValueType lookup(const ValueType **ptr) final {
                     return **ptr;
+                }
+
+                virtual const ValueType *as_reference(const ValueType **ptr) final {
+                    return *ptr;
                 }
 
             public:
@@ -64,7 +76,8 @@ namespace mondrian {
 
                 virtual void consume(vector <ValueType> *data) final {
                     auto iterator = data->get_iterator();
-                    on_consume(iterator.begin, iterator.end);
+                    if (!iterator.is_empty())
+                        on_consume(iterator.begin, iterator.end);
                 }
             };
 

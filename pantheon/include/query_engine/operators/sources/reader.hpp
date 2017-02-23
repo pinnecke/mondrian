@@ -19,7 +19,7 @@ namespace mondrian {
                         auto begin = super::get_begin();
                         auto end = super::get_end();
                         for (auto it = begin; it != end; ++it)
-                            super::yield(&it);
+                            super::forward(&it);
                         super::close();
                     };
                 };

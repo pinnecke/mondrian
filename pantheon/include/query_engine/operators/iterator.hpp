@@ -10,6 +10,7 @@ namespace mondrian {
                 const ValueType **end;
 
                 iterator(const ValueType **begin, const ValueType **end) : begin(begin), end(end) {}
+                bool is_empty() { return begin == end; }
             };
 
         }
