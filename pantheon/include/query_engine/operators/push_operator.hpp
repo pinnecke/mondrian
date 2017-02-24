@@ -41,8 +41,6 @@ namespace mondrian
             protected:
                 virtual void on_consume(const input_pointer_t *begin, const input_pointer_t *end) { };
 
-                virtual void on_produce() { };
-
                 virtual void on_close() { };
 
                 virtual void on_cleanup() { };
@@ -85,8 +83,6 @@ namespace mondrian
                 {
                     reset();
                 }
-
-                virtual void produce() final { on_produce(); }
 
                 virtual void consume(vector <input_t, input_pointer_t> *data) final
                 {

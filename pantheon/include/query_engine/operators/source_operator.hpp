@@ -19,6 +19,8 @@ namespace mondrian
                 const input_pointer_t begin, end;
 
             protected:
+                virtual void on_produce() = 0;
+
                 virtual const input_pointer_t get_begin() const final { return begin; }
 
                 virtual const input_pointer_t get_end() const final { return end; }
@@ -29,6 +31,8 @@ namespace mondrian
                                 super(consumer, vector_size), begin(begin), end(end) {};
 
                 virtual void on_consume(const input_pointer_t *begin, const input_pointer_t *end) override final {};
+
+                virtual void produce() final { on_produce(); }
             };
 
         }
