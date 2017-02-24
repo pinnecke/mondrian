@@ -9,15 +9,15 @@ namespace mondrian
     {
         namespace operators
         {
-            template<class ValueType, class ValuePointerType>
+            template<class ValueType, class ValueForwardIt>
             class vector
             {
             public:
                 using value_t = ValueType;
-                using value_pointer_t = ValuePointerType;
+                using value_iterator_t = ValueForwardIt;
 
             private:
-                value_pointer_t *data;
+                value_iterator_t *data;
                 size_t max_size, cursor;
 
             public:
@@ -28,19 +28,19 @@ namespace mondrian
 
                 vector(size_t num_of_elements) : max_size(num_of_elements), cursor(0)
                 {
-                    data = (value_pointer_t *) malloc(this->max_size * sizeof(value_pointer_t));
+                    data = (value_iterator_t *) malloc(this->max_size * sizeof(value_iterator_t));
                 }
 
-                state add(const value_pointer_t value)
+                state add(const value_iterator_t value)
                 {
                     assert(cursor < max_size);
                     data[cursor++] = value;
                     return (cursor == max_size ? state::full : state::non_full);
                 }
 
-                iterator <ValueType> get_iterator() const
+                iterator <value_t> get_iterator() const
                 {
-                    return iterator<ValueType>(data, data + cursor);
+                    return iterator<value_t>(data, data + cursor);
                 }
 
                 void release() { free(data); }

@@ -8,21 +8,20 @@ namespace mondrian
     {
         namespace operators
         {
-            template<class InputType, class OutputType, class InputPointerType = InputType *,
-                    class OutputPointerType = OutputType *>
-            class push_operator : public consumer<InputType, InputPointerType>
+            template<class Input, class Output, class InputForwardIt = Input*, class OutputForwardIt = Output*>
+            class push_operator : public consumer<Input, InputForwardIt>
             {
-                using super = consumer<InputType, InputPointerType>;
+                using super = consumer<Input, InputForwardIt>;
             public:
                 using typename super::input_t;
-                using typename super::input_pointer_t;
+                using typename super::input_iterator_t;
                 using typename super::input_vector_t;
 
-                using output_t = OutputType;
-                using output_pointer_t = OutputPointerType;
-                using consumer_t = consumer<output_t, output_pointer_t>;
+                using output_t = Output;
+                using output_iterator_t = OutputForwardIt;
+                using consumer_t = consumer<output_t, output_iterator_t>;
 
-                using output_vector_t = vector<output_t, output_pointer_t>;
+                using output_vector_t = vector<output_t, output_iterator_t>;
 
             private:
                 consumer_t *consumer;
@@ -48,13 +47,13 @@ namespace mondrian
 
             protected:
 
-                virtual void on_consume(const input_pointer_t *begin, const input_pointer_t *end) { };
+                virtual void on_consume(const input_iterator_t *begin, const input_iterator_t *end) { };
 
                 virtual void on_close() { };
 
                 virtual void on_cleanup() { };
 
-                virtual void forward(const output_pointer_t *value) final
+                virtual void forward(const output_iterator_t *value) final
                 {
                     if (result->add(*value) == output_vector_t::state::full) {
                         send();
@@ -76,12 +75,12 @@ namespace mondrian
                     cleanup();
                 }
 
-                virtual input_t lookup(const input_pointer_t *ptr) final
+                virtual input_t lookup(const input_iterator_t *ptr) final
                 {
                     return **ptr;
                 }
 
-                virtual const input_pointer_t as_reference(const input_pointer_t *ptr) final
+                virtual const input_iterator_t as_reference(const input_iterator_t *ptr) final
                 {
                     return *ptr;
                 }

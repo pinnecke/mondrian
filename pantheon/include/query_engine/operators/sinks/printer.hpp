@@ -10,19 +10,18 @@ namespace mondrian
         {
             namespace sinks
             {
-                template<class InputType, class OutputType, class InputPointerType = InputType *,
-                        class OutputPointerType = OutputType *>
-                class printer : public sink_operator<InputType, OutputType, InputPointerType, OutputPointerType>
+                template<class Input, class Output, class InputForwardIt = Input*, class OutputForwardIt = Output*>
+                class printer : public sink_operator<Input, Output, InputForwardIt, OutputForwardIt>
                 {
-                    using super = sink_operator<InputType, OutputType, InputPointerType, OutputPointerType>;
+                    using super = sink_operator<Input, Output, InputForwardIt, OutputForwardIt>;
 
                 public:
                     using typename super::input_t;
-                    using typename super::input_pointer_t;
+                    using typename super::input_iterator_t;
 
                     printer() : super() {};
 
-                    virtual void on_consume(const input_pointer_t *begin, const input_pointer_t *end) override
+                    virtual void on_consume(const input_iterator_t *begin, const input_iterator_t *end) override
                     {
                         for (auto it = begin; it != end; ++it)
                             std::cout << ">> " << **it << std::endl;

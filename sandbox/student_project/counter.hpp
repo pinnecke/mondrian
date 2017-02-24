@@ -8,19 +8,19 @@ class counter : public push_operator<InputType, OutputType, InputPointerType, Ou
     using super = push_operator<InputType, OutputType, InputPointerType, OutputPointerType>;
 public:
     using typename super::input_t;
-    using typename super::input_pointer_t;
+    using typename super::input_iterator_t;
 
 private:
-    input_pointer_t *list;
+    input_iterator_t *list;
     input_t count = 0;
 
 public:
     counter(super *consumer, unsigned vector_size) :
             super(consumer, vector_size) {
-        list = (input_pointer_t*) malloc(sizeof(input_pointer_t));
+        list = (input_iterator_t *) malloc(sizeof(input_iterator_t));
     }
 
-    virtual void on_consume(const input_pointer_t*begin, const input_pointer_t *end) override {
+    virtual void on_consume(const input_iterator_t *begin, const input_iterator_t *end) override {
         for (auto it = begin; it != end; ++it) {
             count++;
         }

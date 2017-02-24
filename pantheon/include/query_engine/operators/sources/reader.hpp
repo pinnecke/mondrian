@@ -10,21 +10,18 @@ namespace mondrian
         {
             namespace sources
             {
-                template<class InputType, class OutputType, class InputPointerType = InputType *,
-                        class OutputPointerType = OutputType *>
-                class reader : public source_operator<InputType, OutputType, InputPointerType,
-                        OutputPointerType>
+                template<class Input, class Output, class InputForwardIt = Input*, class OutputForwardsIt = Output*>
+                class reader : public source_operator<Input, Output, InputForwardIt, OutputForwardsIt>
                 {
-                    using super = source_operator<InputType, OutputType, InputPointerType, OutputPointerType>;
+                    using super = source_operator<Input, Output, InputForwardIt, OutputForwardsIt>;
 
                 public:
                     using typename super::input_t;
-                    using typename super::input_pointer_t;
+                    using typename super::input_iterator_t;
                     using typename super::consumer_t;
 
-                    reader(consumer_t *consumer, const input_pointer_t begin,
-                           const input_pointer_t end, unsigned vector_size) :
-                            super(consumer, begin, end, vector_size) {}
+                    reader(consumer_t *consumer, const input_iterator_t begin, const input_iterator_t end,
+                           unsigned vector_size): super(consumer, begin, end, vector_size) {}
 
                     virtual void on_produce() override
                     {

@@ -16,12 +16,12 @@ class sample_filter_is_even : public push_operator<InputType, OutputType, InputP
     using super = push_operator<InputType, OutputType, InputPointerType, OutputPointerType>;
 public:
     using typename super::input_t;
-    using typename super::input_pointer_t;
+    using typename super::input_iterator_t;
 
     sample_filter_is_even(super *consumer, unsigned vector_size) :
             super(consumer, vector_size) { }
 
-    virtual void on_consume(const input_pointer_t *begin, const input_pointer_t *end) override {
+    virtual void on_consume(const input_iterator_t *begin, const input_iterator_t *end) override {
         for (auto it = begin; it != end; ++it) {
             if (super::lookup(it) % 2 == 0)
                 super::forward(it);
