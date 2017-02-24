@@ -51,18 +51,22 @@ int main() {
 
     std::cout << "Invoke query..." << std::endl;
     auto exec_duration = measure<std::chrono::milliseconds>::execute([&begin, &end] () {
-              using namespace query_engine::operators::sources;
-              using namespace query_engine::operators::sql;
-              using namespace query_engine::operators::sinks;
+        using namespace query_engine::operators::sources;
+        using namespace query_engine::operators::sql;
+        using namespace query_engine::operators::sinks;
 
-              auto print   = printer<unsigned>();
-              auto sum     = sequential_sum<unsigned>(&print, 1000000);
-              auto count   = counter<unsigned>(&sum, 1000000);
-              auto filter2 = sample_filter_is_even<unsigned>(&count, 1000000);
-              auto filter1 = generic_filter<unsigned>(&filter2, 1000000,[] (const unsigned *x) { return (*x) < 100; });
-              auto read    = reader<unsigned>(&filter1, begin, end, 1000000);
+        auto x = sql::sequential_sum<unsigned>(nullptr, 10);
+        auto y = sql::sequential_count<unsigned>(nullptr, 10);
+        auto z = sql::sequential_filter<unsigned>(nullptr, 10, [] (const unsigned *x) { return (*x) < 100; });
 
-              read.produce();
+        auto print   = printer<unsigned>();
+        auto sum     = sequential_sum<unsigned>(&print, 1000000);
+        auto count   = counter<unsigned>(&sum, 1000000);
+        auto filter2 = sample_filter_is_even<unsigned>(&count, 1000000);
+        auto filter1 = generic_filter<unsigned>(&filter2, 1000000,[] (const unsigned *x) { return (*x) < 100; });
+        auto read    = reader<unsigned>(&filter1, begin, end, 1000000);
+
+        read.produce();
     });
     std::cout << "Done (" << exec_duration << "ms)" << std::endl;
 
