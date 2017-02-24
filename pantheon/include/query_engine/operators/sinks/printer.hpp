@@ -7,13 +7,16 @@ namespace mondrian {
         namespace operators {
             namespace sinks {
 
-                template<class ValueType>
-                class printer : public sink_operator<ValueType> {
-                    using super = sink_operator<ValueType>;
+                template<class InputType, class InputPointerType = InputType*>
+                class printer : public sink_operator<InputType, InputPointerType> {
+                    using super = sink_operator<InputType, InputPointerType>;
                 public:
+                    using typename super::input_t;
+                    using typename super::input_pointer_t;
+
                     printer() : super() {};
 
-                    virtual void on_consume(const ValueType **begin, const ValueType **end) override {
+                    virtual void on_consume(const input_pointer_t *begin, const input_pointer_t *end) override {
                         for (auto it = begin; it != end; ++it)
                             std::cout << ">> " << **it << std::endl;
                     }

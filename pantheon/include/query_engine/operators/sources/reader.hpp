@@ -7,12 +7,15 @@ namespace mondrian {
         namespace operators {
             namespace sources {
 
-                template<class ValueType>
-                class reader : public source_operator<ValueType> {
-                    using super = source_operator<ValueType>;
+                template<class InputType, class InputPointerType = InputType*>
+                class reader : public source_operator<InputType, InputPointerType> {
+                    using super = source_operator<InputType, InputPointerType>;
                 public:
-                    reader(push_operator <ValueType> *consumer, const ValueType *begin, const ValueType *end,
-                           unsigned vector_size) :
+                    using typename super::input_t;
+                    using typename super::input_pointer_t;
+
+                    reader(push_operator <input_t, input_pointer_t> *consumer, const input_pointer_t begin,
+                           const input_pointer_t end, unsigned vector_size) :
                             super(consumer, begin, end, vector_size) {}
 
                     virtual void on_produce() override {

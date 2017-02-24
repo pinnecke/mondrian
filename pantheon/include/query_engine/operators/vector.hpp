@@ -7,20 +7,27 @@ namespace mondrian {
     namespace query_engine {
         namespace operators {
 
-            template<class ValueType>
+            template<class ValueType, class ValuePointerType>
             class vector {
-                const ValueType **data;
+
+            public:
+                using value_t = ValueType;
+                using value_pointer_t = ValuePointerType;
+
+            private:
+                value_pointer_t *data;
                 size_t max_size, cursor;
+
             public:
                 enum class state {
                     full, non_full
                 };
 
                 vector(size_t num_of_elements) : max_size(num_of_elements), cursor(0) {
-                    data = (const ValueType **) malloc(this->max_size * sizeof(ValueType *));
+                    data = (value_pointer_t *) malloc(this->max_size * sizeof(value_pointer_t));
                 }
 
-                state add(const ValueType *value) {
+                state add(const value_pointer_t value) {
                     assert(cursor < max_size);
                     data[cursor++] = value;
                     return (cursor == max_size ? state::full : state::non_full);

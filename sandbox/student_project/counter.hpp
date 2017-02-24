@@ -2,19 +2,24 @@
 
 using namespace mondrian::query_engine::operators;
 
-template<class ValueType>
-class counter : public push_operator<ValueType> {
-    using super = push_operator<ValueType>;
+template<class InputType, class InputPointerType = InputType*>
+class counter : public push_operator<InputType, InputPointerType> {
+    using super = push_operator<InputType, InputPointerType>;
 public:
-    const ValueType **list;
-    ValueType count = 0;
+    using typename super::input_t;
+    using typename super::input_pointer_t;
 
+private:
+    input_pointer_t *list;
+    input_t count = 0;
+
+public:
     counter(super *consumer, unsigned vector_size) :
             super(consumer, vector_size) {
-        list = (const ValueType **) malloc(sizeof(ValueType*));
+        list = (input_pointer_t*) malloc(sizeof(input_pointer_t));
     }
 
-    virtual void on_consume(const ValueType **begin, const ValueType **end) override {
+    virtual void on_consume(const input_pointer_t*begin, const input_pointer_t *end) override {
         for (auto it = begin; it != end; ++it) {
             count++;
         }

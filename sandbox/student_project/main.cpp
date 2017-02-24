@@ -10,15 +10,17 @@ using namespace mondrian::utils::profiling;
 
 using namespace mondrian::query_engine::operators;
 
-template<class ValueType>
-class sample_filter_is_even : public push_operator<ValueType> {
-    using super = push_operator<ValueType>;
+template<class InputType, class InputPointerType = InputType*>
+class sample_filter_is_even : public push_operator<InputType, InputPointerType> {
+    using super = push_operator<InputType, InputPointerType>;
 public:
+    using typename super::input_t;
+    using typename super::input_pointer_t;
 
     sample_filter_is_even(super *consumer, unsigned vector_size) :
             super(consumer, vector_size) { }
 
-    virtual void on_consume(const ValueType **begin, const ValueType **end) override {
+    virtual void on_consume(const input_pointer_t *begin, const input_pointer_t *end) override {
         for (auto it = begin; it != end; ++it) {
             if (super::lookup(it) % 2 == 0)
                 super::forward(it);
