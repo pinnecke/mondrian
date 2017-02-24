@@ -10,11 +10,11 @@ namespace mondrian
         {
             namespace sinks
             {
-
-                template<class InputType, class InputPointerType = InputType*>
-                class printer : public sink_operator<InputType, InputPointerType>
+                template<class InputType, class OutputType, class InputPointerType = InputType *,
+                        class OutputPointerType = OutputType *>
+                class printer : public sink_operator<InputType, OutputType, InputPointerType, OutputPointerType>
                 {
-                    using super = sink_operator<InputType, InputPointerType>;
+                    using super = sink_operator<InputType, OutputType, InputPointerType, OutputPointerType>;
 
                 public:
                     using typename super::input_t;

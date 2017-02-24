@@ -10,17 +10,19 @@ namespace mondrian
         {
             namespace sources
             {
-
-                template<class InputType, class InputPointerType = InputType*>
-                class reader : public source_operator<InputType, InputPointerType>
+                template<class InputType, class OutputType, class InputPointerType = InputType *,
+                        class OutputPointerType = OutputType *>
+                class reader : public source_operator<InputType, OutputType, InputPointerType,
+                        OutputPointerType>
                 {
-                    using super = source_operator<InputType, InputPointerType>;
+                    using super = source_operator<InputType, OutputType, InputPointerType, OutputPointerType>;
 
                 public:
                     using typename super::input_t;
                     using typename super::input_pointer_t;
+                    using typename super::consumer_t;
 
-                    reader(push_operator <input_t, input_pointer_t> *consumer, const input_pointer_t begin,
+                    reader(consumer_t *consumer, const input_pointer_t begin,
                            const input_pointer_t end, unsigned vector_size) :
                             super(consumer, begin, end, vector_size) {}
 

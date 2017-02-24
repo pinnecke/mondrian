@@ -1,6 +1,6 @@
 #pragma once
 
-#include <query_engine/operators/vector.hpp>
+#include <query_engine/operators/consumer.hpp>
 
 namespace mondrian
 {
@@ -8,20 +8,28 @@ namespace mondrian
     {
         namespace operators
         {
-            template<class InputType, class InputPointerType = InputType*>
-            class push_operator
+            template<class InputType, class OutputType, class InputPointerType = InputType *,
+                    class OutputPointerType = OutputType *>
+            class push_operator : public consumer<InputType, InputPointerType>
             {
+                using super = consumer<InputType, InputPointerType>;
             public:
-                using input_t = InputType;
-                using input_pointer_t = InputPointerType;
+                using typename super::input_t;
+                using typename super::input_pointer_t;
+                using typename super::input_vector_t;
+
+                using output_t = OutputType;
+                using output_pointer_t = OutputPointerType;
+                using consumer_t = consumer<output_t, output_pointer_t>;
+
+                using output_vector_t = vector<output_t, output_pointer_t>;
 
             private:
-                using vector_t = vector<input_t, input_pointer_t>;
-                push_operator<input_t, input_pointer_t> *consumer;
-                vector <input_t, input_pointer_t> *result = nullptr;
+                consumer_t *consumer;
+                output_vector_t *result = nullptr;
                 size_t size;
 
-                void reset() { result = new vector<input_t, input_pointer_t>(size); }
+                void reset() { result = new output_vector_t(size); }
 
                 void cleanup()
                 {
@@ -39,21 +47,22 @@ namespace mondrian
                 }
 
             protected:
+
                 virtual void on_consume(const input_pointer_t *begin, const input_pointer_t *end) { };
 
                 virtual void on_close() { };
 
                 virtual void on_cleanup() { };
 
-                virtual void forward(const input_pointer_t *value) final
+                virtual void forward(const output_pointer_t *value) final
                 {
-                    if (result->add(*value) == vector_t::state::full) {
+                    if (result->add(*value) == output_vector_t::state::full) {
                         send();
                         reset();
                     }
                 }
 
-                virtual void close() final
+                virtual void close() override final
                 {
                     if (consumer != nullptr)
                     {
@@ -78,13 +87,13 @@ namespace mondrian
                 }
 
             public:
-                push_operator(push_operator<input_t, input_pointer_t> *consumer, unsigned vector_size) :
+                push_operator(consumer_t *consumer, unsigned vector_size) :
                         consumer(consumer), size(vector_size)
                 {
                     reset();
                 }
 
-                virtual void consume(vector <input_t, input_pointer_t> *data) final
+                virtual void consume(input_vector_t *data) override final
                 {
                     auto iterator = data->get_iterator();
                     if (!iterator.is_empty())

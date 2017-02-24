@@ -10,9 +10,10 @@ using namespace mondrian::utils::profiling;
 
 using namespace mondrian::query_engine::operators;
 
-template<class InputType, class InputPointerType = InputType*>
-class sample_filter_is_even : public push_operator<InputType, InputPointerType> {
-    using super = push_operator<InputType, InputPointerType>;
+template<class InputType, class OutputType, class InputPointerType = InputType *, class OutputPointerType = OutputType *>
+class sample_filter_is_even : public push_operator<InputType, OutputType, InputPointerType,
+        OutputPointerType> {
+    using super = push_operator<InputType, OutputType, InputPointerType, OutputPointerType>;
 public:
     using typename super::input_t;
     using typename super::input_pointer_t;
@@ -55,16 +56,16 @@ int main() {
         using namespace query_engine::operators::sql;
         using namespace query_engine::operators::sinks;
 
-        auto x = sql::sequential_sum<unsigned>(nullptr, 10);
-        auto y = sql::sequential_count<unsigned>(nullptr, 10);
-        auto z = sql::sequential_filter<unsigned>(nullptr, 10, [] (const unsigned *x) { return (*x) < 100; });
+        auto x = sql::sequential_sum<unsigned, unsigned>(nullptr, 10);
+        auto y = sql::sequential_count<unsigned, unsigned>(nullptr, 10);
+        auto z = sql::sequential_filter<unsigned, unsigned>(nullptr, 10, [] (const unsigned *x) { return (*x) < 100; });
 
-        auto print   = printer<unsigned>();
-        auto sum     = sequential_sum<unsigned>(&print, 1000000);
-        auto count   = counter<unsigned>(&sum, 1000000);
-        auto filter2 = sample_filter_is_even<unsigned>(&count, 1000000);
-        auto filter1 = generic_filter<unsigned>(&filter2, 1000000,[] (const unsigned *x) { return (*x) < 100; });
-        auto read    = reader<unsigned>(&filter1, begin, end, 1000000);
+        auto print   = printer<unsigned, unsigned>();
+        auto sum     = sequential_sum<unsigned, unsigned>(&print, 1000000);
+        auto count   = counter<unsigned, unsigned>(&sum, 1000000);
+        auto filter2 = sample_filter_is_even<unsigned, unsigned>(&count, 1000000);
+        auto filter1 = generic_filter<unsigned, unsigned>(&filter2, 1000000,[] (const unsigned *x) { return (*x) < 100; });
+        auto read    = reader<unsigned, unsigned>(&filter1, begin, end, 1000000);
 
         read.produce();
     });

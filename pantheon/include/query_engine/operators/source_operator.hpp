@@ -6,14 +6,16 @@ namespace mondrian
     {
         namespace operators
         {
-            template<class InputType, class InputPointerType = InputType*>
-            class source_operator : public push_operator<InputType, InputPointerType>
+            template<class InputType, class OutputType, class InputPointerType = InputType *,
+                    class OutputPointerType = OutputType *>
+            class source_operator : public push_operator<InputType, OutputType, InputPointerType, OutputPointerType>
             {
-                using super = push_operator<InputType, InputPointerType>;
+                using super = push_operator<InputType, OutputType, InputPointerType, OutputPointerType>;
 
             public:
                 using typename super::input_t;
                 using typename super::input_pointer_t;
+                using typename super::consumer_t;
 
             private:
                 const input_pointer_t begin, end;
@@ -26,7 +28,7 @@ namespace mondrian
                 virtual const input_pointer_t get_end() const final { return end; }
 
             public:
-                source_operator(push_operator <InputType, InputPointerType> *consumer, const input_pointer_t begin,
+                source_operator(consumer_t *consumer, const input_pointer_t begin,
                                 const input_pointer_t end, unsigned vector_size) :
                                 super(consumer, vector_size), begin(begin), end(end) {};
 
