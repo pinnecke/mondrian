@@ -1,6 +1,6 @@
 #pragma once
 
-#include <query_engine/operators/sink_operator.hpp>
+#include <query_engine/operators/pipe_tail.hpp>
 
 namespace mondrian
 {
@@ -11,9 +11,9 @@ namespace mondrian
             namespace sinks
             {
                 template<class Input, class Output, class InputForwardIt = Input*, class OutputForwardIt = Output*>
-                class printer : public sink_operator<Input, Output, InputForwardIt, OutputForwardIt>
+                class printer : public pipe_tail<Input, Output, InputForwardIt, OutputForwardIt>
                 {
-                    using super = sink_operator<Input, Output, InputForwardIt, OutputForwardIt>;
+                    using super = pipe_tail<Input, Output, InputForwardIt, OutputForwardIt>;
 
                 public:
                     using typename super::input_t;

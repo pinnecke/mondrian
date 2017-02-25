@@ -1,6 +1,6 @@
 #pragma once
 
-#include <query_engine/operators/source_operator.hpp>
+#include <query_engine/operators/pipe_head.hpp>
 
 namespace mondrian
 {
@@ -11,9 +11,9 @@ namespace mondrian
             namespace sources
             {
                 template<class Input, class Output, class InputForwardIt = Input*, class OutputForwardsIt = Output*>
-                class reader : public source_operator<Input, Output, InputForwardIt, OutputForwardsIt>
+                class reader : public pipe_head<Input, Output, InputForwardIt, OutputForwardsIt>
                 {
-                    using super = source_operator<Input, Output, InputForwardIt, OutputForwardsIt>;
+                    using super = pipe_head<Input, Output, InputForwardIt, OutputForwardsIt>;
 
                 public:
                     using typename super::input_t;

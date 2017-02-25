@@ -7,7 +7,7 @@
 #include <query_engine/operators/sources/reader.hpp>
 #include <query_engine/operators/iterator.hpp>
 #include <query_engine/operators/pipe.hpp>
-#include <query_engine/operators/sink_operator.hpp>
-#include <query_engine/operators/source_operator.hpp>
+#include <query_engine/operators/pipe_tail.hpp>
+#include <query_engine/operators/pipe_head.hpp>
 #include <query_engine/operators/vector.hpp>
 #include <utils/profiling.hpp>

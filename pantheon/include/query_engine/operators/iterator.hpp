@@ -6,7 +6,6 @@ namespace mondrian
     {
         namespace operators
         {
-
             template<class ValueType, class ValueForwardIt = ValueType*>
             struct iterator
             {
