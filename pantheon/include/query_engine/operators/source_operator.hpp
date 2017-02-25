@@ -7,9 +7,9 @@ namespace mondrian
         namespace operators
         {
             template<class Input, class Output, class InputForwardIt = Input*, class OutputForwardIt = Output*>
-            class source_operator : public push_operator<Input, Output, InputForwardIt, OutputForwardIt>
+            class source_operator : public pipe<Input, Output, InputForwardIt, OutputForwardIt>
             {
-                using super = push_operator<Input, Output, InputForwardIt, OutputForwardIt>;
+                using super = pipe<Input, Output, InputForwardIt, OutputForwardIt>;
 
             public:
                 using typename super::input_t;
