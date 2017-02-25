@@ -1,6 +1,10 @@
 #ifndef PANTHEON_DEDUP_HPP
 #define PANTHEON_DEDUP_HPP
 
+#include <functional/comparators.hpp>
+#include <cassert>
+#include <algorithm>
+
 namespace pantheon
 {
     namespace collections
@@ -33,9 +37,9 @@ namespace pantheon
 
                     size_t n = 0;
                     for (auto lhs = begin; lhs != end; ++lhs) {
-                        if (not binary_search(dest, dest + n, *lhs, comp)) {
+                        if (not std::binary_search(dest, dest + n, *lhs, comp)) {
                             *(dest + (n++)) = *lhs;
-                            sort(dest, dest + n);
+                            std::sort(dest, dest + n);
                         }
                     }
                     return dest + n;

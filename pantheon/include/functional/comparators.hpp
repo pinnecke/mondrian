@@ -1,6 +1,8 @@
 #ifndef PANTHEON_COMPARATORS_HPP
 #define PANTHEON_COMPARATORS_HPP
 
+#include <functional>
+
 namespace pantheon
 {
     namespace functional
@@ -8,7 +10,7 @@ namespace pantheon
         namespace comparators
         {
             template <class ValueType>
-            using function_t = function<bool(const ValueType lhs, const ValueType rhs)>;
+            using function_t = std::function<bool(const ValueType lhs, const ValueType rhs)>;
 
             template <class ValueType>
             struct less
