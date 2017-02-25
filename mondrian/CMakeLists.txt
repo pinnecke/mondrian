@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(pantheon)
+project(mondrian)
 
 find_package(Boost 1.57.0)
 include_directories(${Boost_INCLUDE_DIRS})
@@ -23,11 +23,11 @@ file(GLOB_RECURSE SOURCE_FILES
 )
 
 add_executable(
-        pantheon ${SOURCE_FILES} main.cpp
+        mondrian ${SOURCE_FILES} main.cpp
 )
 
 if(Boost_FOUND)
 
-    target_link_libraries(pantheon ${Boost_LIBRARIES})
+    target_link_libraries(mondrian ${Boost_LIBRARIES})
 
 endif()
