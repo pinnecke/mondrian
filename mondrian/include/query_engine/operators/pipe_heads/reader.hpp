@@ -10,10 +10,10 @@ namespace mondrian
         {
             namespace sources
             {
-                template<class Input, class Output, class InputForwardIt = Input*, class OutputForwardsIt = Output*>
-                class reader : public pipe_head<Input, Output, InputForwardIt, OutputForwardsIt>
+                template<class Output, class OutputForwardsIt = Output*>
+                class reader : public pipe_head<Output, OutputForwardsIt>
                 {
-                    using super = pipe_head<Input, Output, InputForwardIt, OutputForwardsIt>;
+                    using super = pipe_head<Output, OutputForwardsIt>;
 
                 public:
                     using typename super::input_t;

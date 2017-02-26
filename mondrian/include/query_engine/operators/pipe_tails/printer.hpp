@@ -10,7 +10,7 @@ namespace mondrian
         {
             namespace sinks
             {
-                template<class Input, class Output, class InputForwardIt = Input*, class OutputForwardIt = Output*>
+                template<class Input, class InputForwardIt = Input*>
                 class printer : public pipe_tail<Input, InputForwardIt>
                 {
                     using super = pipe_tail<Input, InputForwardIt>;

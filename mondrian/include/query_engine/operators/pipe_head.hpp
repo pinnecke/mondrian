@@ -1,15 +1,17 @@
 #pragma once
 
+#include <query_engine/operators/pipe.hpp>
+
 namespace mondrian
 {
     namespace query_engine
     {
         namespace operators
         {
-            template<class Input, class Output, class InputForwardIt = Input*, class OutputForwardIt = Output*>
-            class pipe_head : public pipe<Input, Output, InputForwardIt, OutputForwardIt>
+            template<class Output, class OutputForwardIt = Output*>
+            class pipe_head : public pipe<Output, Output, OutputForwardIt, OutputForwardIt>
             {
-                using super = pipe<Input, Output, InputForwardIt, OutputForwardIt>;
+                using super = pipe<Output, Output, OutputForwardIt, OutputForwardIt>;
 
             public:
                 using typename super::input_t;

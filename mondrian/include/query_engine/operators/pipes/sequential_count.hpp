@@ -22,11 +22,12 @@ namespace mondrian
                 public:
                     using typename super::input_t;
                     using typename super::input_iterator_t;
+                    using typename super::consumer_t;
 
                     input_iterator_t *list;
                     input_t count = 0;
 
-                    sequential_count(super *consumer, unsigned vector_size) :
+                    sequential_count(consumer_t *consumer, unsigned vector_size) :
                             super(consumer, vector_size)
                     {
                         list = (input_iterator_t *) malloc(sizeof(input_iterator_t));

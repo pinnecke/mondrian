@@ -24,11 +24,12 @@ namespace mondrian
                 public:
                     using typename super::input_t;
                     using typename super::input_iterator_t;
+                    using typename super::consumer_t;
 
                     function<bool(const input_iterator_t value)> predicate;
                 public:
 
-                    sequential_filter(super *consumer, unsigned vector_size,
+                    sequential_filter(consumer_t *consumer, unsigned vector_size,
                                       function<bool(const input_iterator_t value)> predicate) :
                             super(consumer, vector_size), predicate(predicate) { }
 
@@ -39,7 +40,6 @@ namespace mondrian
                                 super::forward(it);
                         }
                     }
-
                 };
 
             }

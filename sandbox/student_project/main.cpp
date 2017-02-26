@@ -17,8 +17,9 @@ class sample_filter_is_even : public pipe<InputType, OutputType, InputPointerTyp
 public:
     using typename super::input_t;
     using typename super::input_iterator_t;
+    using typename super::consumer_t;
 
-    sample_filter_is_even(super *consumer, unsigned vector_size) :
+    sample_filter_is_even(consumer_t *consumer, unsigned vector_size) :
             super(consumer, vector_size) { }
 
     virtual void on_consume(const input_iterator_t *begin, const input_iterator_t *end) override {
@@ -35,6 +36,7 @@ int main() {
     std::cout << "Program is starting..." << std::endl;
 
     size_t num_of_values = 1000000000;
+    size_t vector_size = 262144;
     unsigned *begin, *end;
 
     std::cout << "Allocate memory for column...";
@@ -51,7 +53,7 @@ int main() {
     std::cout << "Done (" << exec_fill << "ms)" << std::endl;
 
     std::cout << "Invoke query..." << std::endl;
-    auto exec_duration = measure<std::chrono::milliseconds>::execute([&begin, &end] () {
+    auto exec_duration = measure<std::chrono::milliseconds>::execute([&begin, &end, &vector_size] () {
         using namespace query_engine::operators::sources;
         using namespace query_engine::operators::sql;
         using namespace query_engine::operators::sinks;
@@ -60,12 +62,13 @@ int main() {
         auto y = sql::sequential_count<unsigned, unsigned>(nullptr, 10);
         auto z = sql::sequential_filter<unsigned, unsigned>(nullptr, 10, [] (const unsigned *x) { return (*x) < 100; });
 
-        auto print   = printer<unsigned, unsigned>();
-        auto sum     = sequential_sum<unsigned, unsigned>(&print, 1000000);
-        auto count   = counter<unsigned, unsigned>(&sum, 1000000);
-        auto filter2 = sample_filter_is_even<unsigned, unsigned>(&count, 1000000);
-        auto filter1 = generic_filter<unsigned, unsigned>(&filter2, 1000000,[] (const unsigned *x) { return (*x) < 100; });
-        auto read    = reader<unsigned, unsigned>(&filter1, begin, end, 1000000);
+        auto print   = printer<unsigned>();
+        auto sum     = sequential_sum<unsigned, unsigned>(&print, vector_size);
+        auto count   = counter<unsigned, unsigned>(&sum, vector_size);
+        auto filter2 = sample_filter_is_even<unsigned, unsigned>(&count, vector_size);
+        auto filter1 = generic_filter<unsigned, unsigned>(&filter2, vector_size,[] (const unsigned *x) { return (*x) < 100; });
+        auto collect = collector<unsigned>(&filter1);
+        auto read    = reader<unsigned>(&collect, begin, end, vector_size);
 
         read.produce();
     });
