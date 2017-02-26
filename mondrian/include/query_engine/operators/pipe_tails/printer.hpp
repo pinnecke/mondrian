@@ -11,9 +11,9 @@ namespace mondrian
             namespace sinks
             {
                 template<class Input, class Output, class InputForwardIt = Input*, class OutputForwardIt = Output*>
-                class printer : public pipe_tail<Input, Output, InputForwardIt, OutputForwardIt>
+                class printer : public pipe_tail<Input, InputForwardIt>
                 {
-                    using super = pipe_tail<Input, Output, InputForwardIt, OutputForwardIt>;
+                    using super = pipe_tail<Input, InputForwardIt>;
 
                 public:
                     using typename super::input_t;

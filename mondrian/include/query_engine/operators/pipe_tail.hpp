@@ -1,24 +1,35 @@
 #pragma once
 
+#include <query_engine/operators/vector.hpp>
+
 namespace mondrian
 {
     namespace query_engine
     {
         namespace operators
         {
-            template<class Input, class Output, class InputForwardIt = Input*, class OutputForwardIt = Output*>
-            class pipe_tail : public pipe<Input, Output, InputForwardIt, OutputForwardIt>
+            template<class Input, class InputForwardIt = Input*>
+            class pipe_tail
             {
-                using super = pipe<Input, Output, InputForwardIt, OutputForwardIt>;
+            public:
+                using input_t = Input;
+                using input_iterator_t = InputForwardIt;
+                using input_vector_t = vector<input_t, input_iterator_t>;
+
+            protected:
+                virtual void on_consume(const input_iterator_t *begin, const input_iterator_t *end) { };
 
             public:
-                using typename super::input_t;
-                using typename super::input_iterator_t;
+                virtual void close() { };
 
-                pipe_tail() : super(nullptr, 0) {};
+                virtual void consume(const input_vector_t *data) final
+                {
+                    auto iterator = data->get_iterator();
+                    if (!iterator.is_empty())
+                        on_consume(iterator.begin, iterator.end);
+                }
             };
 
         }
     }
 }
-

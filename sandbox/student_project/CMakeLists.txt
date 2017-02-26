@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(query_engine)
 
-include_directories("../../pantheon/include")
+include_directories("../../mondrian/include")
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS -O3)

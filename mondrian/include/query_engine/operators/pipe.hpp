@@ -1,6 +1,6 @@
 #pragma once
 
-#include <query_engine/operators/consumer.hpp>
+#include <query_engine/operators/pipe_tail.hpp>
 
 namespace mondrian
 {
@@ -9,9 +9,9 @@ namespace mondrian
         namespace operators
         {
             template<class Input, class Output, class InputForwardIt = Input*, class OutputForwardIt = Output*>
-            class pipe : public consumer<Input, InputForwardIt>
+            class pipe : public pipe_tail<Input, InputForwardIt>
             {
-                using super = consumer<Input, InputForwardIt>;
+                using super = pipe_tail<Input, InputForwardIt>;
             public:
                 using typename super::input_t;
                 using typename super::input_iterator_t;
@@ -19,7 +19,7 @@ namespace mondrian
 
                 using output_t = Output;
                 using output_iterator_t = OutputForwardIt;
-                using consumer_t = consumer<output_t, output_iterator_t>;
+                using consumer_t = pipe_tail<output_t, output_iterator_t>;
 
                 using output_vector_t = vector<output_t, output_iterator_t>;
 
@@ -46,8 +46,6 @@ namespace mondrian
                 }
 
             protected:
-
-                virtual void on_consume(const input_iterator_t *begin, const input_iterator_t *end) { };
 
                 virtual void on_close() { };
 
@@ -90,13 +88,6 @@ namespace mondrian
                         consumer(consumer), size(vector_size)
                 {
                     reset();
-                }
-
-                virtual void consume(const input_vector_t *data) override final
-                {
-                    auto iterator = data->get_iterator();
-                    if (!iterator.is_empty())
-                        on_consume(iterator.begin, iterator.end);
                 }
             };
 

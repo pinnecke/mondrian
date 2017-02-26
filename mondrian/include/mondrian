@@ -3,8 +3,8 @@
 #include <query_engine/operators/pipes/sequential_filter.hpp>
 #include <query_engine/operators/pipes/sequential_sum.hpp>
 #include <query_engine/operators/pipes/sequential_count.hpp>
-#include <query_engine/operators/sinks/printer.hpp>
-#include <query_engine/operators/sources/reader.hpp>
+#include <query_engine/operators/pipe_tails/printer.hpp>
+#include <query_engine/operators/pipe_heads/reader.hpp>
 #include <query_engine/operators/iterator.hpp>
 #include <query_engine/operators/pipe.hpp>
 #include <query_engine/operators/pipe_tail.hpp>
