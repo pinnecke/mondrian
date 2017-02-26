@@ -11,4 +11,5 @@
 #include <query_engine/operators/pipe_tail.hpp>
 #include <query_engine/operators/pipe_head.hpp>
 #include <query_engine/operators/vector.hpp>
+#include <query_engine/query.hpp>
 #include <utils/profiling.hpp>

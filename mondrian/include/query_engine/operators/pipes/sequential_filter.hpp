@@ -17,20 +17,20 @@ namespace mondrian
                 /* Congratualtions, you find the solution for one task. Take this as a help for further tasks     *
                  *   - Marcus                                                                                     */
 
-                template<class Input, class Output, class InputForwardIt = Input*, class OutputForwardIt = Output*>
-                class sequential_filter : public pipe<Input, Output, InputForwardIt, OutputForwardIt>
+                template<class Type, class ForwardIt = Type*>
+                class sequential_filter : public pipe<Type, Type, ForwardIt, ForwardIt>
                 {
-                    using super = pipe<Input, Output, InputForwardIt, OutputForwardIt>;
+                    using super = pipe<Type, Type, ForwardIt, ForwardIt>;
                 public:
                     using typename super::input_t;
                     using typename super::input_iterator_t;
                     using typename super::consumer_t;
 
-                    function<bool(const input_iterator_t value)> predicate;
+                    std::function<bool(const input_iterator_t)> predicate;
                 public:
 
                     sequential_filter(consumer_t *consumer, unsigned vector_size,
-                                      function<bool(const input_iterator_t value)> predicate) :
+                                      function<bool(const input_iterator_t)> predicate) :
                             super(consumer, vector_size), predicate(predicate) { }
 
                     virtual void on_consume(const input_iterator_t *begin, const input_iterator_t *end) override

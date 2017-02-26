@@ -60,17 +60,18 @@ int main() {
 
         auto x = sql::sequential_sum<unsigned, unsigned>(nullptr, 10);
         auto y = sql::sequential_count<unsigned, unsigned>(nullptr, 10);
-        auto z = sql::sequential_filter<unsigned, unsigned>(nullptr, 10, [] (const unsigned *x) { return (*x) < 100; });
+        auto z = sql::sequential_filter<unsigned>(nullptr, 10, [] (const unsigned *x) { return (*x) < 100; });
 
         auto print   = printer<unsigned>();
         auto sum     = sequential_sum<unsigned, unsigned>(&print, vector_size);
         auto count   = counter<unsigned, unsigned>(&sum, vector_size);
         auto filter2 = sample_filter_is_even<unsigned, unsigned>(&count, vector_size);
         auto filter1 = generic_filter<unsigned, unsigned>(&filter2, vector_size,[] (const unsigned *x) { return (*x) < 100; });
-        auto collect = collector<unsigned>(&filter1);
-        auto read    = reader<unsigned>(&collect, begin, end, vector_size);
+        auto read    = reader<unsigned>(&filter1, begin, end, vector_size);
 
         read.produce();
+
+        query(100).filter([] (const unsigned *x) { return (*x) < 100; });
     });
     std::cout << "Done (" << exec_duration << "ms)" << std::endl;
 

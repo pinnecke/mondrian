@@ -1,5 +1,8 @@
 #pragma once
 
+#include <functional>
+
+using namespace std;
 using namespace mondrian::query_engine::operators;
 
 template<class InputType, class OutputType, class InputPointerType = InputType *,
@@ -11,11 +14,11 @@ public:
     using typename super::input_iterator_t;
 
 private:
-    function<bool(const input_iterator_t value)> predicate;
+    function<bool(const input_iterator_t)> predicate;
 
 public:
 
-    generic_filter(super *consumer, unsigned vector_size, function<bool(const input_iterator_t value)> predicate) :
+    generic_filter(super *consumer, unsigned vector_size, function<bool(const input_iterator_t)> predicate) :
             super(consumer, vector_size), predicate(predicate) { }
 
     virtual void on_consume(const input_iterator_t *begin, const input_iterator_t *end) override {
