@@ -1,7 +1,7 @@
 #pragma once
 
 #include <functional>
-#include <operators/pipes/sequential_filter.hpp>
+#include <query_engine/operators/pipes/sequential_filter.hpp>
 
 using namespace std;
 

@@ -7,6 +7,9 @@
 
 using namespace mondrian;
 using namespace mondrian::utils::profiling;
+using namespace query_engine::operators::sources;
+using namespace query_engine::operators::sql;
+using namespace query_engine::operators::sinks;
 
 using namespace mondrian::query_engine::operators;
 
@@ -52,11 +55,9 @@ int main() {
     });
     std::cout << "Done (" << exec_fill << "ms)" << std::endl;
 
-    std::cout << "Invoke query..." << std::endl;
+    std::cout << "Invoke query #1..." << std::endl;
     auto exec_duration = measure<std::chrono::milliseconds>::execute([&begin, &end, &vector_size] () {
-        using namespace query_engine::operators::sources;
-        using namespace query_engine::operators::sql;
-        using namespace query_engine::operators::sinks;
+
 
         auto x = sql::sequential_sum<unsigned, unsigned>(nullptr, 10);
         auto y = sql::sequential_count<unsigned, unsigned>(nullptr, 10);
@@ -70,10 +71,22 @@ int main() {
         auto read    = reader<unsigned>(&filter1, begin, end, vector_size);
 
         read.produce();
-
-        query(100).filter([] (const unsigned *x) { return (*x) < 100; });
     });
     std::cout << "Done (" << exec_duration << "ms)" << std::endl;
+
+    std::cout << "Invoke query #2..." << std::endl;
+    auto exec_duration2 = measure<std::chrono::milliseconds>::execute([&begin, &end, &vector_size] () {
+
+        auto print   = printer<unsigned>();
+        auto join    = test_bi_pipe<unsigned, unsigned, unsigned>(&print, vector_size);
+
+        auto read1    = reader<unsigned>(join.get_left_port(), begin, end, vector_size);
+        auto read2    = reader<unsigned>(join.get_right_port(), begin, end, vector_size);
+
+        read1.produce();
+        read2.produce();
+    });
+    std::cout << "Done (" << exec_duration2 << "ms)" << std::endl;
 
     std::cout << "Cleanup...";
     auto exec_free = measure<std::chrono::milliseconds>::execute([&begin] () {

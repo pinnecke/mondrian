@@ -1,15 +1,17 @@
 #pragma
 
+#include <query_engine/operators/bi_pipe.hpp>
+#include <query_engine/operators/bi_pipes/test_bi_pipe.hpp>
+#include <query_engine/operators/iterator.hpp>
+#include <query_engine/operators/pipe_head.hpp>
+#include <query_engine/operators/pipe_heads/reader.hpp>
+#include <query_engine/operators/pipe_tail.hpp>
+#include <query_engine/operators/pipe_tails/printer.hpp>
+#include <query_engine/operators/pipe.hpp>
+#include <query_engine/operators/pipes/collector.hpp>
+#include <query_engine/operators/pipes/sequential_count.hpp>
 #include <query_engine/operators/pipes/sequential_filter.hpp>
 #include <query_engine/operators/pipes/sequential_sum.hpp>
-#include <query_engine/operators/pipes/sequential_count.hpp>
-#include <query_engine/operators/pipes/collector.hpp>
-#include <query_engine/operators/pipe_tails/printer.hpp>
-#include <query_engine/operators/pipe_heads/reader.hpp>
-#include <query_engine/operators/iterator.hpp>
-#include <query_engine/operators/pipe.hpp>
-#include <query_engine/operators/pipe_tail.hpp>
-#include <query_engine/operators/pipe_head.hpp>
 #include <query_engine/operators/vector.hpp>
 #include <query_engine/query.hpp>
 #include <utils/profiling.hpp>

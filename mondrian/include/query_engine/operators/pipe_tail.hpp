@@ -17,11 +17,25 @@ namespace mondrian
                 using input_iterator_t = InputForwardIt;
                 using input_vector_t = vector<input_t, input_iterator_t>;
 
+                template<class IL, class IR, class ILF, class IRF>
+                friend class bi_pipe_tail;
+
             protected:
                 virtual void on_consume(const input_iterator_t *begin, const input_iterator_t *end) { };
 
+                virtual input_t lookup(const input_iterator_t *ptr) final
+                {
+                    return **ptr;
+                }
+
+                virtual const input_iterator_t as_reference(const input_iterator_t *ptr) final
+                {
+                    return *ptr;
+                }
+
+
             public:
-                virtual void close() { };
+                virtual void close() { }
 
                 virtual void consume(const input_vector_t *data) final
                 {
