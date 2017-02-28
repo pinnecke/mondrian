@@ -6,7 +6,7 @@
 
 using namespace std;
 
-#define DEFINE_DELEGATE_DELEATE(FieldName, InputType, ForwardType, Method)                                             \
+#define DEFINE_DELEGATE(FieldName, InputType, ForwardType, Method)                                                     \
 template<class Input, class InputForwardIt>                                                                            \
 class consume_delegate_##FieldName : public pipe_tail<Input, InputForwardIt>                                           \
 {                                                                                                                      \
@@ -30,8 +30,8 @@ namespace mondrian
                     class InputLeftForwardIt = InputLeft*, class InputRightForwardIt = InputRight*>
             class bi_pipe_tail
             {
-                DEFINE_DELEGATE_DELEATE(left_port, InputLeft, InputLeftForwardIt, on_consume_left);
-                DEFINE_DELEGATE_DELEATE(right_port, InputRight, InputRightForwardIt, on_consume_right);
+                DEFINE_DELEGATE(left_port, InputLeft, InputLeftForwardIt, on_consume_left);
+                DEFINE_DELEGATE(right_port, InputRight, InputRightForwardIt, on_consume_right);
 
             public:
                 using input_left_t = InputLeft;
