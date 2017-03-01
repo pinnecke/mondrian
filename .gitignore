@@ -5,3 +5,12 @@ Makefile
 query_en.cbp
 query_engine.cbp
 mondrian/cmake-build-debug
+student_project.cbp
+sandbox/student_project/query_engine
+sandbox/student_project/task1
+sandbox/student_project/task2
+sandbox/student_project/task3
+sandbox/student_project/task4
+sandbox/student_project/task5
+sandbox/student_project/task6
+sandbox/student_project/task7
