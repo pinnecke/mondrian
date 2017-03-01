@@ -49,13 +49,10 @@ namespace mondrian
 
                 virtual void forward(output_iterator_t *value) final
                 {
-                    if (result->add(*value) == output_vector_t::state::full) {
-                        send();
-                        reset();
-                    }
+                    forward(value, value + 1);
                 }
 
-                virtual void forward(output_iterator_t *begin, output_iterator_t *end) final
+                virtual inline void forward(output_iterator_t *begin, output_iterator_t *end) final
                 {
                     do {
                         typename output_vector_t::state vector_state;
