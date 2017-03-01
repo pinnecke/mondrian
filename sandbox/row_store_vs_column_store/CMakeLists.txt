@@ -13,7 +13,7 @@ include_directories(
 )
 
 set(
-	CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-gencode arch=compute_50,code=sm_50;--std=c++11;-O3
+	CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};--std=c++11; -gencode arch=compute_50,code=sm_50;-O3
 )
 
 set(
@@ -33,7 +33,7 @@ CUDA_ADD_LIBRARY(
 )
 
 set(
-	CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -std=c++11 -Wall"
+	CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 --std=c++11 -Wall"
 )
 
 add_executable(
