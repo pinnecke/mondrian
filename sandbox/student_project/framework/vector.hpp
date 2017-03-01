@@ -38,6 +38,16 @@ namespace mondrian
                     return (cursor == max_size ? state::full : state::non_full);
                 }
 
+                value_iterator_t *add(state *out, value_iterator_t *begin, value_iterator_t *end)
+                {
+                    auto append_max_len = std::min(max_size - cursor, size_t(end - begin));
+                    for (auto it = begin; it != begin + append_max_len; ++it) {
+                        data[cursor++] = *it;
+                    }
+                    *out = (cursor == max_size ? state::full : state::non_full);
+                    return begin + append_max_len;
+                }
+
                 iterator <value_t> get_iterator()
                 {
                     return iterator<value_t>(data, data + cursor);

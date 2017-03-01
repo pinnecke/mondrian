@@ -55,6 +55,18 @@ namespace mondrian
                     }
                 }
 
+                virtual void forward(output_iterator_t *begin, output_iterator_t *end) final
+                {
+                    do {
+                        typename output_vector_t::state vector_state;
+                        begin = result->add(&vector_state, begin, end);
+                        if (vector_state == output_vector_t::state::full) {
+                            send();
+                            reset();
+                        }
+                    } while (begin != end);
+                }
+
             public:
                 forwarder(consumer_t *consumer, unsigned vector_size):
                         consumer(consumer), size(vector_size)

@@ -31,13 +31,13 @@ int random_number(int lower_bound = numeric_limits<int>::min(), int upper_bound 
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int *create_column(unsigned long num_of_elements, bool fill_with_random = true)
+int *create_column(unsigned long num_of_elements, bool fill_with_random = true, bool fill = true)
 {
     assert (num_of_elements > 0);
     auto result = (int *) malloc (num_of_elements * sizeof(int));
-    if (fill_with_random) {
+    if (fill) {
         for (auto i = 0; i < num_of_elements; ++i)
-            result[i] = random_number();
+            result[i] = fill_with_random ? random_number() : i;
     }
     return result;
 }
@@ -100,10 +100,11 @@ public:
 
         size_t result_size;
         predicate(&result_buffer, &result_size, begin, end);
+        super::forward(result_buffer, result_buffer + result_size);
 
-        for (auto it = result_buffer; it != result_buffer + result_size; ++it) {
-                super::forward(it);
-        }
+        //for (auto it = result_buffer; it != result_buffer + result_size; ++it) {
+        //    super::forward(it);
+        //}
     }
 
     virtual void on_cleanup() override

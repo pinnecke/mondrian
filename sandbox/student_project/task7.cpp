@@ -3,6 +3,7 @@
 #include "framework/pipes/sequential_filter.hpp"
 #include "framework/pipe_tails/materialize.hpp"
 #include "tasks.hpp"
+#include "framework/pipe_tails/printer.hpp"
 
 using namespace std;
 using namespace mondrian::query_engine::operators::sql;
@@ -23,10 +24,10 @@ using namespace mondrian::query_engine::operators::sinks;
 int main() {
     size_t num_elements = 20000000;
     size_t vector_size  = 72864;
-    auto column = create_column(num_elements);
+    auto column = create_column(num_elements, true, true);
 
     auto d1 = measure<>::execute([&num_elements, &column] () {
-        auto result = create_column(num_elements, false);
+        auto result = create_column(num_elements, false, false);
         int mod_values[] = { 2, 5, 7, 11, 13, 17, 19, 23};
         size_t idx_last = num_elements;
         for (int mod_value_idx = 0; mod_value_idx < 8; ++mod_value_idx) {
@@ -36,14 +37,20 @@ int main() {
                     result[idx_current++] = value;
             });
             idx_last = idx_current;
+            auto temp = column;
+            *column = *result;
+            *result = *temp;
         }
         delete_column(result);
     });
 
+    delete_column(column);
+    column = create_column(num_elements, true, true);
+
     cout << "STL filter w/ for_each:\t" << d1 << "ms" << endl;
 
     auto d2 = measure<>::execute([&num_elements, &column, &vector_size] () {
-        auto result = create_column(num_elements, false);
+        auto result = create_column(num_elements, false, false);
         auto mat = materialize<int>(result);
         auto filter9 = sequential_filter<int>(&mat, vector_size, [] (int *x)     { return *x % 23 == 0; });
         auto filter8 = sequential_filter<int>(&filter9, vector_size, [] (int *x) { return *x % 19 == 0; });
@@ -62,10 +69,11 @@ int main() {
     cout << "Push-based vectorized:\t" << d2 << "ms" << endl;
 
     auto d3 = measure<>::execute([&num_elements, &column, &vector_size] () {
-        auto result = create_column(num_elements, false);
+        auto result = create_column(num_elements, false, false);
         auto mat = materialize<int>(result);
 
-     /*   auto filter9 = sequential_filter2<int>(&mat, vector_size, PREDICATE(23));
+        auto print = printer<int>();
+        auto filter9 = sequential_filter2<int>(&mat, vector_size, PREDICATE(23));
         auto filter8 = sequential_filter2<int>(&filter9, vector_size, PREDICATE(19));
         auto filter7 = sequential_filter2<int>(&filter8, vector_size, PREDICATE(17));
         auto filter6 = sequential_filter2<int>(&filter7, vector_size, PREDICATE(13));
@@ -73,8 +81,7 @@ int main() {
         auto filter4 = sequential_filter2<int>(&filter5, vector_size, PREDICATE(7));
         auto filter3 = sequential_filter2<int>(&filter4, vector_size, PREDICATE(5));
         auto filter2 = sequential_filter2<int>(&filter3, vector_size, PREDICATE(3));
-        auto filter1 = sequential_filter2<int>(&filter2, vector_size, PREDICATE(2));*/
-        auto filter1 = sequential_filter2<int>(&mat, vector_size, PREDICATE(2));
+        auto filter1 = sequential_filter2<int>(&filter2, vector_size, PREDICATE(2));
         auto read = reader<int>(&filter1, column, column + num_elements, vector_size);
         read.produce();
         delete_column(result);

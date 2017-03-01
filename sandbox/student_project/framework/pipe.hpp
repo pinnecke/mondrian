@@ -10,7 +10,7 @@ namespace mondrian
         namespace operators
         {
             template<class Input, class Output, class InputForwardIt = Input*, class OutputForwardIt = Output*>
-            class pipe : public pipe_tail<Input, InputForwardIt>, forwarder<Output, OutputForwardIt>
+            class pipe : public pipe_tail<Input, InputForwardIt>, public forwarder<Output, OutputForwardIt>
             {
                 using input_super = pipe_tail<Input, InputForwardIt>;
                 using output_super = forwarder<Output, OutputForwardIt>;
