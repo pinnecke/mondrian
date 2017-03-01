@@ -22,7 +22,7 @@ namespace mondrian
                 input_iterator_t begin, end;
 
             protected:
-                virtual void on_produce() = 0;
+                virtual void on_start() = 0;
 
                 virtual input_iterator_t get_begin() final { return begin; }
 
@@ -35,7 +35,7 @@ namespace mondrian
 
                 virtual void on_consume(input_iterator_t *begin, input_iterator_t *end) override final {};
 
-                virtual void produce() final { on_produce(); }
+                virtual void start() final { on_start(); }
             };
 
         }

@@ -23,12 +23,12 @@ namespace mondrian
                     reader(consumer_t *consumer, input_iterator_t begin, input_iterator_t end,
                            unsigned vector_size): super(consumer, begin, end, vector_size) {}
 
-                    virtual void on_produce() override
+                    virtual void on_start() override
                     {
                         auto begin = super::get_begin();
                         auto end = super::get_end();
                         for (auto it = begin; it != end; ++it)
-                            super::forward(&it);
+                            super::produce(&it);
                         super::close();
                     };
                 };

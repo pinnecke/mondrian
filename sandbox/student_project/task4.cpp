@@ -1,6 +1,6 @@
 #include <iostream>
 #include "framework/pipe_heads/reader.hpp"
-#include "framework/pipes/sequential_filter.hpp"
+#include "framework/pipes/filters.hpp"
 #include "framework/pipe_tails/printer.hpp"
 #include "tasks.hpp"
 
@@ -16,7 +16,7 @@ int main() {
 
     auto print = printer<int>();
     auto read = reader<int>(&print, column, column + num_elements, vector_size);
-    read.produce();
+    read.start();
 
     delete_column(column);
 

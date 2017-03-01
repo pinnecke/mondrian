@@ -40,6 +40,7 @@ namespace mondrian
 
                 value_iterator_t *add(state *out, value_iterator_t *begin, value_iterator_t *end)
                 {
+                    assert (cursor + 1 <= max_size);
                     auto append_max_len = std::min(max_size - cursor, size_t(end - begin));
                     for (auto it = begin; it != begin + append_max_len; ++it) {
                         data[cursor++] = *it;

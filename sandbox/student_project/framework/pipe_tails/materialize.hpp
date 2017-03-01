@@ -11,9 +11,9 @@ namespace mondrian
             namespace sinks
             {
                 template<class Input, class InputForwardIt = Input *>
-                class materialize : public pipe_tail<Input, InputForwardIt>
+                class materialize : public consumer<Input, InputForwardIt>
                 {
-                    using super = pipe_tail<Input, InputForwardIt>;
+                    using super = consumer<Input, InputForwardIt>;
                     size_t i;
                     InputForwardIt destination;
 

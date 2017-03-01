@@ -1,6 +1,6 @@
 #include <iostream>
 #include "framework/pipe_heads/reader.hpp"
-#include "framework/pipes/sequential_filter.hpp"
+#include "framework/pipes/filters.hpp"
 #include "framework/pipe_tails/materialize.hpp"
 #include "tasks.hpp"
 
@@ -42,7 +42,7 @@ int main() {
         auto filter2 = sequential_filter<int>(&filter3, vector_size, [] (int *x) { return *x % 3 == 0; });
         auto filter1 = sequential_filter<int>(&filter2, vector_size, [] (int *x) { return *x % 2 == 0; });
         auto read = reader<int>(&filter1, column, column + num_elements, vector_size);
-        read.produce();
+        read.start();
         delete_column(result);
     });
 

@@ -9,12 +9,12 @@ namespace mondrian
         namespace operators
         {
             template<class Output, class OutputForwardIt = Output*>
-            class forwarder
+            class producer
             {
             public:
                 using output_t = Output;
                 using output_iterator_t = OutputForwardIt;
-                using consumer_t = pipe_tail<output_t, output_iterator_t>;
+                using consumer_t = consumer<output_t, output_iterator_t>;
                 using output_vector_t = vector<output_t, output_iterator_t>;
 
             private:
@@ -47,12 +47,12 @@ namespace mondrian
 
                 virtual void on_cleanup() { };
 
-                virtual void forward(output_iterator_t *value) final
+                virtual void produce(output_iterator_t *value) final
                 {
-                    forward(value, value + 1);
+                    produce(value, value + 1);
                 }
 
-                virtual inline void forward(output_iterator_t *begin, output_iterator_t *end) final
+                virtual inline void produce(output_iterator_t *begin, output_iterator_t *end) final
                 {
                     do {
                         typename output_vector_t::state vector_state;
@@ -65,7 +65,7 @@ namespace mondrian
                 }
 
             public:
-                forwarder(consumer_t *consumer, unsigned vector_size):
+                producer(consumer_t *consumer, unsigned vector_size):
                         consumer(consumer), size(vector_size)
                 {
                     reset();

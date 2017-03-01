@@ -1,6 +1,6 @@
 #include <iostream>
 #include "framework/pipe_heads/reader.hpp"
-#include "framework/pipes/sequential_filter.hpp"
+#include "framework/pipes/filters.hpp"
 #include "framework/pipe_tails/materialize.hpp"
 #include "tasks.hpp"
 #include "framework/pipe_tails/printer.hpp"
@@ -70,16 +70,16 @@ int main() {
 
 
 //        auto filter9 = sequential_filter<int>(&print, vector_size, [] (int *x)     { return *x % 23 == 0; });
-        auto filter8 = sequential_filter<int>(&mat, vector_size, [] (int *x)   { return *x > 99999990; });
-        auto filter7 = sequential_filter<int>(&filter8, vector_size, [] (int *x) { return *x > 2000000; });
-        auto filter6 = sequential_filter<int>(&filter7, vector_size, [] (int *x) { return *x > 1000000; });
-        auto filter5 = sequential_filter<int>(&filter6, vector_size, [] (int *x) { return *x > 100000; });
-        auto filter4 = sequential_filter<int>(&filter5, vector_size, [] (int *x) { return *x > 10000; });
-        auto filter3 = sequential_filter<int>(&filter4, vector_size, [] (int *x) { return *x > 1000; });
-        auto filter2 = sequential_filter<int>(&filter3, vector_size, [] (int *x) { return *x > 100; });
-        auto filter1 = sequential_filter<int>(&filter2, vector_size, [] (int *x) { return *x > 10; });
+        auto filter8 = simple_filter<int>(&mat, vector_size, [] (int *x)   { return *x > 99999990; });
+        auto filter7 = simple_filter<int>(&filter8, vector_size, [] (int *x) { return *x > 2000000; });
+        auto filter6 = simple_filter<int>(&filter7, vector_size, [] (int *x) { return *x > 1000000; });
+        auto filter5 = simple_filter<int>(&filter6, vector_size, [] (int *x) { return *x > 100000; });
+        auto filter4 = simple_filter<int>(&filter5, vector_size, [] (int *x) { return *x > 10000; });
+        auto filter3 = simple_filter<int>(&filter4, vector_size, [] (int *x) { return *x > 1000; });
+        auto filter2 = simple_filter<int>(&filter3, vector_size, [] (int *x) { return *x > 100; });
+        auto filter1 = simple_filter<int>(&filter2, vector_size, [] (int *x) { return *x > 10; });
         auto read = reader<int>(&filter1, column, column + num_elements, vector_size);
-        read.produce();
+        read.start();
         delete_column(result);
     });
 
@@ -90,16 +90,16 @@ int main() {
         auto mat = materialize<int>(result);
 
        // auto print = printer<int>();
-        auto filter8 = sequential_filter2<int>(&mat, vector_size, PREDICATE(99999990));
-        auto filter7 = sequential_filter2<int>(&filter8, vector_size, PREDICATE(2000000));
-        auto filter6 = sequential_filter2<int>(&filter7, vector_size, PREDICATE(1000000));
-        auto filter5 = sequential_filter2<int>(&filter6, vector_size, PREDICATE(100000));
-        auto filter4 = sequential_filter2<int>(&filter5, vector_size, PREDICATE(10000));
-        auto filter3 = sequential_filter2<int>(&filter4, vector_size, PREDICATE(1000));
-        auto filter2 = sequential_filter2<int>(&filter3, vector_size, PREDICATE(100));
-        auto filter1 = sequential_filter2<int>(&filter2, vector_size, PREDICATE(10));
+        auto filter8 = batched_pred_filter<int>(&mat, vector_size, PREDICATE(99999990));
+        auto filter7 = batched_pred_filter<int>(&filter8, vector_size, PREDICATE(2000000));
+        auto filter6 = batched_pred_filter<int>(&filter7, vector_size, PREDICATE(1000000));
+        auto filter5 = batched_pred_filter<int>(&filter6, vector_size, PREDICATE(100000));
+        auto filter4 = batched_pred_filter<int>(&filter5, vector_size, PREDICATE(10000));
+        auto filter3 = batched_pred_filter<int>(&filter4, vector_size, PREDICATE(1000));
+        auto filter2 = batched_pred_filter<int>(&filter3, vector_size, PREDICATE(100));
+        auto filter1 = batched_pred_filter<int>(&filter2, vector_size, PREDICATE(10));
         auto read = reader<int>(&filter1, column, column + num_elements, vector_size);
-        read.produce();
+        read.start();
         delete_column(result);
     });
 

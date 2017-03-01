@@ -1,6 +1,6 @@
 #pragma once
 
-#include "forwarder.hpp"
+#include "producer.hpp"
 #include "pipe_tail.hpp"
 
 namespace mondrian
@@ -10,10 +10,10 @@ namespace mondrian
         namespace operators
         {
             template<class Input, class Output, class InputForwardIt = Input*, class OutputForwardIt = Output*>
-            class pipe : public pipe_tail<Input, InputForwardIt>, public forwarder<Output, OutputForwardIt>
+            class pipe : public consumer<Input, InputForwardIt>, public producer<Output, OutputForwardIt>
             {
-                using input_super = pipe_tail<Input, InputForwardIt>;
-                using output_super = forwarder<Output, OutputForwardIt>;
+                using input_super = consumer<Input, InputForwardIt>;
+                using output_super = producer<Output, OutputForwardIt>;
 
             public:
                 using typename input_super::input_t;
@@ -26,7 +26,7 @@ namespace mondrian
                 using typename output_super::consumer_t;
 
             protected:
-                using output_super::forward;
+                using output_super::produce;
                 using input_super::lookup;
                 using input_super::as_reference;
 

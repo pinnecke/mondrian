@@ -9,7 +9,7 @@ namespace mondrian
         namespace operators
         {
             template<class Input, class InputForwardIt = Input*>
-            class pipe_tail
+            class consumer
             {
             public:
                 using input_t = Input;

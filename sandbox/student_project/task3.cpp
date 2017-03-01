@@ -1,6 +1,6 @@
 #include <iostream>
 #include "framework/pipe_heads/reader.hpp"
-#include "framework/pipes/sequential_filter.hpp"
+#include "framework/pipes/filters.hpp"
 #include "framework/pipe_tails/printer.hpp"
 #include "tasks.hpp"
 
