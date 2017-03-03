@@ -1,16 +1,11 @@
 #include <iostream>
 
-#include <vector-pipes/toolkit/reader.hpp>
-#include <vector-pipes/toolkit/printer.hpp>
-#include <vector-pipes/toolkit/filters.hpp>
-#include <vector-pipes/toolkit/materialize.hpp>
+#include <vpipes.hpp>
 
 #include "tasks.hpp"
 
 using namespace std;
-using namespace mondrian::query_engine::operators::sql;
-using namespace mondrian::query_engine::operators::sources;
-using namespace mondrian::query_engine::operators::sinks;
+using namespace mondrian::vpipes;
 
 #define PREDICATE(x)                                                                    \
 [] (int ***result, size_t *result_size, int **begin, int **end) {        \
@@ -24,7 +19,7 @@ using namespace mondrian::query_engine::operators::sinks;
 }
 
 int main() {
-    size_t num_elements = 100000000;
+    size_t num_elements = 1000000;
     size_t vector_size  = 72864;
     auto column = create_column(num_elements, false, true);
     size_t idx_last = num_elements;
@@ -67,20 +62,20 @@ int main() {
 
     auto d2 = measure<>::execute([&num_elements, &column, &vector_size] () {
         auto result = create_column(num_elements, false, false);
-        auto mat = materialize<int>(result);
-        auto print = printer<int>();
+        auto mat = toolkit::materialize<int>(result);
+        auto print = toolkit::printer<int>();
 
 
 //        auto filter9 = sequential_filter<int>(&print, vector_size, [] (int *x)     { return *x % 23 == 0; });
-        auto filter8 = simple_filter<int>(&mat, vector_size, [] (int *x)   { return *x > 99999990; });
-        auto filter7 = simple_filter<int>(&filter8, vector_size, [] (int *x) { return *x > 2000000; });
-        auto filter6 = simple_filter<int>(&filter7, vector_size, [] (int *x) { return *x > 1000000; });
-        auto filter5 = simple_filter<int>(&filter6, vector_size, [] (int *x) { return *x > 100000; });
-        auto filter4 = simple_filter<int>(&filter5, vector_size, [] (int *x) { return *x > 10000; });
-        auto filter3 = simple_filter<int>(&filter4, vector_size, [] (int *x) { return *x > 1000; });
-        auto filter2 = simple_filter<int>(&filter3, vector_size, [] (int *x) { return *x > 100; });
-        auto filter1 = simple_filter<int>(&filter2, vector_size, [] (int *x) { return *x > 10; });
-        auto read = reader<int>(&filter1, column, column + num_elements, vector_size);
+        auto filter8 = toolkit::simple_filter<int>(&mat, vector_size, [] (int *x)   { return *x > 99999990; });
+        auto filter7 = toolkit::simple_filter<int>(&filter8, vector_size, [] (int *x) { return *x > 2000000; });
+        auto filter6 = toolkit::simple_filter<int>(&filter7, vector_size, [] (int *x) { return *x > 1000000; });
+        auto filter5 = toolkit::simple_filter<int>(&filter6, vector_size, [] (int *x) { return *x > 100000; });
+        auto filter4 = toolkit::simple_filter<int>(&filter5, vector_size, [] (int *x) { return *x > 10000; });
+        auto filter3 = toolkit::simple_filter<int>(&filter4, vector_size, [] (int *x) { return *x > 1000; });
+        auto filter2 = toolkit::simple_filter<int>(&filter3, vector_size, [] (int *x) { return *x > 100; });
+        auto filter1 = toolkit::simple_filter<int>(&filter2, vector_size, [] (int *x) { return *x > 10; });
+        auto read = toolkit::reader<int>(&filter1, column, column + num_elements, vector_size);
         read.start();
         delete_column(result);
     });
@@ -89,18 +84,18 @@ int main() {
 
     auto d3 = measure<>::execute([&num_elements, &column, &vector_size] () {
         auto result = create_column(num_elements, false, false);
-        auto mat = materialize<int>(result);
+        auto mat = toolkit::materialize<int>(result);
 
        // auto print = printer<int>();
-        auto filter8 = batched_pred_filter<int>(&mat, vector_size, PREDICATE(99999990));
-        auto filter7 = batched_pred_filter<int>(&filter8, vector_size, PREDICATE(2000000));
-        auto filter6 = batched_pred_filter<int>(&filter7, vector_size, PREDICATE(1000000));
-        auto filter5 = batched_pred_filter<int>(&filter6, vector_size, PREDICATE(100000));
-        auto filter4 = batched_pred_filter<int>(&filter5, vector_size, PREDICATE(10000));
-        auto filter3 = batched_pred_filter<int>(&filter4, vector_size, PREDICATE(1000));
-        auto filter2 = batched_pred_filter<int>(&filter3, vector_size, PREDICATE(100));
-        auto filter1 = batched_pred_filter<int>(&filter2, vector_size, PREDICATE(10));
-        auto read = reader<int>(&filter1, column, column + num_elements, vector_size);
+        auto filter8 = toolkit::batched_pred_filter<int>(&mat, vector_size, PREDICATE(99999990));
+        auto filter7 = toolkit::batched_pred_filter<int>(&filter8, vector_size, PREDICATE(2000000));
+        auto filter6 = toolkit::batched_pred_filter<int>(&filter7, vector_size, PREDICATE(1000000));
+        auto filter5 = toolkit::batched_pred_filter<int>(&filter6, vector_size, PREDICATE(100000));
+        auto filter4 = toolkit::batched_pred_filter<int>(&filter5, vector_size, PREDICATE(10000));
+        auto filter3 = toolkit::batched_pred_filter<int>(&filter4, vector_size, PREDICATE(1000));
+        auto filter2 = toolkit::batched_pred_filter<int>(&filter3, vector_size, PREDICATE(100));
+        auto filter1 = toolkit::batched_pred_filter<int>(&filter2, vector_size, PREDICATE(10));
+        auto read = toolkit::reader<int>(&filter1, column, column + num_elements, vector_size);
         read.start();
         delete_column(result);
     });

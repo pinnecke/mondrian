@@ -1,13 +1,9 @@
 #include <iostream>
-#include "framework/pipe_heads/reader.hpp"
-#include "framework/pipes/filters.hpp"
-#include "framework/pipe_tails/materialize.hpp"
+#include <vpipes.hpp>
 #include "tasks.hpp"
 
 using namespace std;
-using namespace mondrian::query_engine::operators::sinks;
-using namespace mondrian::query_engine::operators::sources;
-using namespace mondrian::query_engine::operators::sql;
+using namespace mondrian::vpipes;
 
 int main() {
     size_t num_elements = 2000000;
@@ -31,17 +27,17 @@ int main() {
 
     auto d2 = measure<>::execute([&num_elements, &column, &vector_size] () {
         auto result = create_column(num_elements, false);
-        auto mat = materialize<int>(result);
-        auto filter9 = sequential_filter<int>(&mat, vector_size, [] (int *x)     { return *x % 23 == 0; });
-        auto filter8 = sequential_filter<int>(&filter9, vector_size, [] (int *x) { return *x % 19 == 0; });
-        auto filter7 = sequential_filter<int>(&filter8, vector_size, [] (int *x) { return *x % 17 == 0; });
-        auto filter6 = sequential_filter<int>(&filter7, vector_size, [] (int *x) { return *x % 13 == 0; });
-        auto filter5 = sequential_filter<int>(&filter6, vector_size, [] (int *x) { return *x % 11 == 0; });
-        auto filter4 = sequential_filter<int>(&filter5, vector_size, [] (int *x) { return *x % 7 == 0; });
-        auto filter3 = sequential_filter<int>(&filter4, vector_size, [] (int *x) { return *x % 5 == 0; });
-        auto filter2 = sequential_filter<int>(&filter3, vector_size, [] (int *x) { return *x % 3 == 0; });
-        auto filter1 = sequential_filter<int>(&filter2, vector_size, [] (int *x) { return *x % 2 == 0; });
-        auto read = reader<int>(&filter1, column, column + num_elements, vector_size);
+        auto mat = toolkit::materialize<int>(result);
+        auto filter9 = toolkit::simple_filter<int>(&mat, vector_size, [] (int *x)     { return *x % 23 == 0; });
+        auto filter8 = toolkit::simple_filter<int>(&filter9, vector_size, [] (int *x) { return *x % 19 == 0; });
+        auto filter7 = toolkit::simple_filter<int>(&filter8, vector_size, [] (int *x) { return *x % 17 == 0; });
+        auto filter6 = toolkit::simple_filter<int>(&filter7, vector_size, [] (int *x) { return *x % 13 == 0; });
+        auto filter5 = toolkit::simple_filter<int>(&filter6, vector_size, [] (int *x) { return *x % 11 == 0; });
+        auto filter4 = toolkit::simple_filter<int>(&filter5, vector_size, [] (int *x) { return *x % 7 == 0; });
+        auto filter3 = toolkit::simple_filter<int>(&filter4, vector_size, [] (int *x) { return *x % 5 == 0; });
+        auto filter2 = toolkit::simple_filter<int>(&filter3, vector_size, [] (int *x) { return *x % 3 == 0; });
+        auto filter1 = toolkit::simple_filter<int>(&filter2, vector_size, [] (int *x) { return *x % 2 == 0; });
+        auto read = toolkit::reader<int>(&filter1, column, column + num_elements, vector_size);
         read.start();
         delete_column(result);
     });

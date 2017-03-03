@@ -1,11 +1,8 @@
 #include <iostream>
-#include "framework/pipe_heads/reader.hpp"
-#include "framework/pipes/filters.hpp"
-#include "framework/pipe_tails/printer.hpp"
+
 #include "tasks.hpp"
 
 using namespace std;
-using namespace mondrian::query_engine::operators::sources;
 
 int main() {
     size_t num_elements = 2e6;
