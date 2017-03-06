@@ -42,7 +42,7 @@ struct modules_context
 };
 
 #define begin_modules() \
-    int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
 
 #define end_modules()        \
     }

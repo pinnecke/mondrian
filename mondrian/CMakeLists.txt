@@ -30,14 +30,21 @@ set(SOURCE_FILES
         modules/version/main.c
         include/modules/version/main.h
         include/utils/alg.h
-        utils/alg.c include/utils/debug_build.h)
+        utils/alg.c include/utils/debug_build.h
+        include/modules/show/main.h
+        include/modules/show/w/main.h
+        include/modules/show/c/main.h
+        modules/show/main.c
+        modules/show/w/main.c
+        modules/show/c/main.c)
 
 add_executable(
         mondrian ${SOURCE_FILES} main.cpp
-        include/modules/modules.h include/modules/version/main.h modules/version/main.c include/modules/modules.h include/modules/manifest.h include/utils/result.h include/utils/alg.h modules/modules.c utils/alg.c include/utils/kernel.h include/utils/sconfig.h include/utils/log.h include/utils/ntsid.h)
+        include/modules/modules.h include/modules/version/main.h modules/version/main.c include/modules/modules.h include/modules/manifest.h include/utils/result.h include/utils/alg.h modules/modules.c utils/alg.c include/utils/kernel.h include/utils/sconfig.h include/utils/log.h include/utils/ntsid.h include/modules/show/main.h include/modules/show/w/main.h include/modules/show/c/main.h modules/show/main.c modules/show/w/main.c modules/show/c/main.c)
 
 if(Boost_FOUND)
 
     target_link_libraries(mondrian ${Boost_LIBRARIES})
 
 endif()
+

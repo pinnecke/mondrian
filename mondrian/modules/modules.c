@@ -19,9 +19,17 @@ unsigned next_man_page_references_id = 0;
 void show_help(struct modules_context *context);
 void show_unknown_command(struct modules_context *context, const char *command);
 
+void mod_header(){
+    printf("\nMondrianDB, Copyright (C) 2017 Marcus Pinnecke, University of Magdeburg\n"
+                   "MondrianDB comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\n"
+                   "This is free software, and you are welcome to redistribute it\n"
+                   "under certain conditions; type `show c' for details.\n\n");
+}
 enum MND_RESULT mod_init_modules(struct modules_context *context, const char *error_msg, const char *usage_args,
                                   const char *command_list_desc)
 {
+    mod_header();
+
     if ((error_msg == NULL) || (usage_args == NULL) || (command_list_desc == NULL))
         return_failure(MND_ILLEGAL_ARGUMENT);
 

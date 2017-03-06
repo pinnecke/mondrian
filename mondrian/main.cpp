@@ -9,9 +9,9 @@ begin_module_context("<command> <args>",
 
 begin_group("Information about the system and the systems environment")
 install_module(version, "version", "Displays version information about the current build");
-//   install_module(show, "show", "Lists current configurations and settings");
-//       install_man_page("show dynamic-config", "rcn_dynamic_config");
-//      install_man_page("show static-config", "rcn_static_config");
+   install_module(show, "show", "Lists information about the license.");
+       install_man_page("c", "mnd_c");
+      install_man_page("w", "mnd_w");
 end_group()
 
 //begin_group("Experimental, and research related features")
