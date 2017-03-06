@@ -1,4 +1,37 @@
-#include <iostream>
+extern "C" {
+#include <modules/manifest.h>
+}
+
+begin_modules()
+begin_module_context("<command> <args>",
+"You must specify a command to run. See the command list below.",
+"These are common MondrianDB commands used in various situations:");
+
+begin_group("Information about the system and the systems environment")
+install_module(version, "version", "Displays version information about the current build");
+//   install_module(show, "show", "Lists current configurations and settings");
+//       install_man_page("show dynamic-config", "rcn_dynamic_config");
+//      install_man_page("show static-config", "rcn_static_config");
+end_group()
+
+//begin_group("Experimental, and research related features")
+//    install_module(exp, "exp", "Experimental features which are work-in-progress");
+//end_group()
+
+
+
+//install_man_page("exp cnshell", "rcn_cnshell");
+
+/*begin_group("Displays configuration settings, monitor and more.")
+    install_module(show);
+end_group()*/
+
+
+
+end_module_context();
+end_modules()
+
+/*#include <iostream>
 
 #include <storage/host/column_store.hpp>
 
@@ -34,4 +67,4 @@ int main() {
 
 
     return 0;
-}
+}*/
