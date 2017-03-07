@@ -4,6 +4,8 @@
 
 using namespace std;
 
+//
+
 int main() {
     size_t num_elements = 2e6;
     int *column = create_column(num_elements);

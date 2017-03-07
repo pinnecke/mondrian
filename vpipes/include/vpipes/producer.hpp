@@ -34,7 +34,6 @@ namespace mondrian
             consumer_t *consumer;
             output_vector_t *result = nullptr;
             size_t size;
-
         protected:
 
             void reset() { result = new output_vector_t(size); }
@@ -65,6 +64,8 @@ namespace mondrian
                 produce(value, value + 1);
             }
 
+        protected:
+
             virtual inline void produce(output_iterator_t *begin, output_iterator_t *end) final
             {
                 do {
@@ -93,9 +94,9 @@ namespace mondrian
                     on_close();
                     send();
                     consumer->close();
-                    on_cleanup();
                 }
                 cleanup();
+                on_cleanup();
             }
         };
     }
