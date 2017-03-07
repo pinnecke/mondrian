@@ -4,7 +4,7 @@
 #include "Device/Query.cuh"
 #include <unistd.h>
 
-const size_t ITEMS_BOUGTH_BY_CUSTOMER_AVG = 150;
+const size_t ITEMS_BOUGHT_BY_CUSTOMER_AVG = 150;
 const size_t BESTSELLING_ITEM_NUMBER_OF_CUSTOMERS = 40000;
 
 #define NANO_TO_SEC(x)   ( x / (float)1e9 )
@@ -121,7 +121,7 @@ void SampleColumnStoreHost(size_t NumberOfCustomers, size_t NumberOfItems, size_
 
     /* Query Q1 */
     ResultSetQ1 result1st, result1mt;
-    size_t itemsBougth = ITEMS_BOUGTH_BY_CUSTOMER_AVG;
+    size_t itemsBougth = ITEMS_BOUGHT_BY_CUSTOMER_AVG;
     auto queryParamsQ1 = CreateQueryParamsQ1(NumberOfCustomers, itemsBougth, NumberOfItems);
 
     auto durationQ1st = measure<>::run(QueryForDataQ1ColumnStore(&result1st, &itemTable, queryParamsQ1, ThreadingPolicy::SingleThreaded));
@@ -175,7 +175,7 @@ void SampleRowStoreHost(size_t NumberOfCustomers, size_t NumberOfItems, size_t C
 
     /* Query Q1 */
     ResultSetQ1 result1st, result1mt;
-    size_t itemsBougth = ITEMS_BOUGTH_BY_CUSTOMER_AVG;
+    size_t itemsBougth = ITEMS_BOUGHT_BY_CUSTOMER_AVG;
     auto queryParamsQ1 = CreateQueryParamsQ1(NumberOfCustomers, itemsBougth, NumberOfItems);
 
     auto durationQ1st = measure<>::run(QueryForDataQ1RowStore(&result1st, &itemTable, queryParamsQ1, ThreadingPolicy::SingleThreaded));
@@ -228,7 +228,7 @@ void SampleColumnStoreDevice(size_t NumberOfCustomers, size_t NumberOfItems, siz
     FillItemsTable(&itemTable, NumberOfItems);
 
 
-   	size_t itemsBougth = ITEMS_BOUGTH_BY_CUSTOMER_AVG;
+   	size_t itemsBougth = ITEMS_BOUGHT_BY_CUSTOMER_AVG;
 
 
     /* Device Query Q2: Sum 10 price column */
@@ -277,70 +277,6 @@ void SampleColumnStoreDevice(size_t NumberOfCustomers, size_t NumberOfItems, siz
     DisposeTables(&customerTable, &itemTable);
 }
 
-void SampleRowStoreDevice(size_t NumberOfCustomers, size_t NumberOfItems, size_t CurrentRepetition)
-{
-    srand(0);
-
-    /* Setup */
-    CustomerTableDSM customerTable;
-    ItemTableDSM itemTable;
-
-    CreateOrdersTables(&customerTable, NumberOfCustomers);
-    CreateItemsTables(&itemTable, NumberOfItems);
-    FillOrdersTable(&customerTable, NumberOfCustomers);
-    FillItemsTable(&itemTable, NumberOfItems);
-
-
-   	size_t itemsBougth = ITEMS_BOUGTH_BY_CUSTOMER_AVG;
-
-
-    /* Device Query Q2: Sum 10 price column */
-	ResultSetQ1 result2st, result2mt;
-	auto queryParamsQ2 = CreateQueryParamsQ1(NumberOfCustomers, itemsBougth, NumberOfItems);
-
-	auto Query2st = DeviceQueryForDataQ2RowStore(&result2st, &itemTable, queryParamsQ2, ThreadingPolicy::SingleThreaded, NumberOfItems);
-	auto durationQ2st_to   = measure<>::run([&Query2st] () { Query2st.CopyToDevice(); });
-	auto durationQ2st_opp  = measure<>::run(Query2st);
-	auto durationQ2st_from = measure<>::run([&Query2st] () { Query2st.ReceiveFromDevice(); });
-	Query2st.CleanUp();
-
-	auto Query2mt = DeviceQueryForDataQ2RowStore(&result2mt, &itemTable, queryParamsQ2, ThreadingPolicy::MultiThreaded, NumberOfItems);
-	auto durationQ2mt_to   = measure<>::run([&Query2mt] () { Query2mt.CopyToDevice(); });
-	auto durationQ2mt_opp  = measure<>::run(Query2mt);
-	auto durationQ2mt_from = measure<>::run([&Query2mt] () { Query2mt.ReceiveFromDevice(); });
-	Query2mt.CleanUp();
-
-   	DisposeQueryParamsQ1(&queryParamsQ2);
-
-
-
-	/* Device Query Q3: Sum single price column */
-   	ResultSetQ1 result3st, result3mt;
-	auto queryParamsQ3 = CreateQueryParamsQ1(NumberOfCustomers, itemsBougth, NumberOfItems);
-
-	auto Query3st = DeviceQueryForDataQ2RowStore(&result3st, &itemTable, queryParamsQ3, ThreadingPolicy::SingleThreaded, NumberOfItems);
-	auto durationQ3st_to   = measure<>::run([&Query3st] () { Query3st.CopyToDevice(); });
-	auto durationQ3st_opp  = measure<>::run(Query3st);
-	auto durationQ3st_from = measure<>::run([&Query3st] () { Query3st.ReceiveFromDevice(); });
-	Query3st.CleanUp();
-
-	auto Query3mt = DeviceQueryForDataQ2RowStore(&result3mt, &itemTable, queryParamsQ3, ThreadingPolicy::MultiThreaded, NumberOfItems);
-	auto durationQ3mt_to   = measure<>::run([&Query3mt] () { Query3mt.CopyToDevice(); });
-	auto durationQ3mt_opp  = measure<>::run(Query3mt);
-	auto durationQ3mt_from = measure<>::run([&Query3mt] () { Query3mt.ReceiveFromDevice(); });
-	Query3mt.CleanUp();
-
-	DisposeQueryParamsQ1(&queryParamsQ3);
-
-
-
-	WriteOberservation(NumberOfCustomers, NumberOfItems, NumberOfItems, CurrentRepetition,
-	                       false,
-	                       0, durationQ2st_opp, durationQ3st_opp, 0, durationQ2mt_opp, durationQ3mt_opp,
-	                       false, strat.resident);
-
-    DisposeTables(&customerTable, &itemTable);
-}
 
 void Sample(size_t N, size_t NumberOfRepetitions) {
     size_t NUMBER_OF_ITEMS = 0.7f * N;
@@ -348,7 +284,6 @@ void Sample(size_t N, size_t NumberOfRepetitions) {
         SampleColumnStoreHost(N, NUMBER_OF_ITEMS, currentRepetition);
     	SampleRowStoreHost(N, NUMBER_OF_ITEMS, currentRepetition);
         SampleColumnStoreDevice(N, NUMBER_OF_ITEMS, currentRepetition);
-        //SampleRowStoreDevice(N, NUMBER_OF_ITEMS, currentRepetition);
     }
 }
 
@@ -362,7 +297,6 @@ int main() {
 
     printf("timestamp;NumberOfCustomers;CurrentRepetition;DurationQ1SingleThreaded;DurationQ2SingleThreaded;DurationQ3SingleThreaded;DurationQ1MultiThreaded;DurationQ2MultiThreaded;DurationQ3MultiThreaded;dataSetSizeCustomersInByte;dataSetSizeItemsInByte;dataSetSizeJoinTableInByte;NumberOfRecordsToProcess;Q1NumRecordsToProcess;Unset1;Q1NumRecordToProcessedDeRefSize;Q2NumRecordsToProcess;Unset2;Q2NumRecordToProcessedDeRefSize;Q3NumRecordsToProcess;Unset3;Q3NumRecordToProcessedDeRefSize;Q1GBpsecSingleThreaded;Q2GBpsecSingleThreaded;Q3GBpsecSingleThreaded;Q1GBpsecMultiThreaded;Q2GBpsecMultiThreaded;Q3GBpsecMultiThreaded;Type;Platform;ProcessVmSize\n");
 
-    //for (size_t N = numberOfCustomersStart; N <= numberOfRecordsEnd; N += stepSize) {
     for (size_t N = numberOfCustomersStart; true; N += stepSize) {
         Sample(N, numberOfRepititions);
     }
