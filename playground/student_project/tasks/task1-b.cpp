@@ -1,10 +1,8 @@
 #include <iostream>
 
-using namespace std;
-
-int random_number(int lower_bound /* ... ? */, int upper_bound /* ... ? */)
+int random_number(int lower_bound /* ... ? */, int upper_bound /* ...? */)
 {
-    // TODO: add code here
+    // TODO: Add your code here
 };
 
 int main() {

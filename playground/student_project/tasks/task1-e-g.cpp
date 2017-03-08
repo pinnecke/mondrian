@@ -1,24 +1,22 @@
 #include <iostream>
 
-using namespace std;
-
-int random_number(int lower_bound /* ... ? */, int upper_bound /* ... ? */)
+int random_number()
 {
-    // TODO: add code here
+    // TODO: Add your code here
 };
 
 int *create_column(unsigned long num_of_elements, bool fill_with_random = true, bool fill = true)
 {
-    // TODO: add code here
+    // TODO: Add your code here
 }
 
 void delete_column(int *column)
 {
-    // TODO: add code here
+    // TODO: Add your code here
 }
 
 int main() {
-    // TODO: add code here
+    // TODO: Add your code here
     return EXIT_SUCCESS;
 }
 

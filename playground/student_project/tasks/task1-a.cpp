@@ -4,7 +4,7 @@ using namespace std;
 
 int random_number()
 {
-    // TODO: add code here
+    // TODO: Add your code here
 };
 
 int main() {
