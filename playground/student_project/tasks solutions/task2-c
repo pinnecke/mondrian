@@ -1,0 +1,12 @@
+- Difference:
+    Pull: The current operator input data is the result of a call to the previous operator's next() method.
+          The current operator controls the control-flow, i.e., whether and when next() is called is in responsibility
+          of the current operator. Typically, the next() has some kind of return value.
+    Push: The current operator input data is given from the previous operator. The previous operator controls the
+          control-flow, i.e., the current operator does not know whether and when further input data is send by
+          the previous operator (since that might introduce some issues if the current operator must wait for the
+          previous operator to finish the output (e.g., hash-join): when the previous operator has no data to
+          send anymore, the previous operator can send a message to the current operator to indicate this. See
+          Appendix 1 on how we solved that.)
+- Data-Flow: No, the data flows from the previous operator to the current operator (i.e., from the current operator
+          the next operator); see dashed arrowed lines go from right to left ;)
