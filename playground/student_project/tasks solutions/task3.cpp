@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vpipes.hpp>
 #include <random>
+#include "profiling.hpp"
 
 using namespace std;
 using namespace mondrian::vpipes;

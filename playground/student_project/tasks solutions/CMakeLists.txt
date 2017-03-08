@@ -11,7 +11,7 @@ add_definitions(-DNINFO)
 add_executable(task1-a task1-a.cpp)
 add_executable(task1-b task1-b.cpp)
 add_executable(task1-c task1-c.cpp)
-add_executable(task1-e task1-e-g.cpp)
+add_executable(task1-e-g task1-e-g.cpp)
 add_executable(task1-i task1-i.cpp)
 add_executable(task3 task3.cpp)
 
