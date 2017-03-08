@@ -42,7 +42,7 @@ void delete_column(int *column)
 }
 
 int main() {
-    size_t num_elements = 120000000;
+    size_t num_elements = 12000000;
     size_t num_of_samples = 3;
 
     auto column = create_column(num_elements);
