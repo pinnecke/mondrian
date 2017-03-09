@@ -12,4 +12,4 @@
 #include "vpipes/pipe_head.hpp"
 #include "vpipes/pipe_tail.hpp"
 #include "vpipes/producer.hpp"
-#include "vpipes/vector.hpp"
+#include "vpipes/chunk.hpp"

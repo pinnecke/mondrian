@@ -17,7 +17,7 @@
 
 #include <functional>
 #include "pipe_tail.hpp"
-#include "vector.hpp"
+#include "chunk.hpp"
 
 using namespace std;
 
