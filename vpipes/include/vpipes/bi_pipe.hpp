@@ -34,15 +34,15 @@ namespace mondrian
         public:
             using typename input_super::input_left_t;
             using typename input_super::input_left_iterator_t;
-            using typename input_super::input_left_vector_t;
+            using typename input_super::input_left_chunk_t;
             using typename input_super::input_right_t;
             using typename input_super::input_right_iterator_t;
-            using typename input_super::input_right_vector_t;
+            using typename input_super::input_right_chunk_t;
 
             using typename output_super::output_t;
             using typename output_super::output_iterator_t;
             using typename output_super::consumer_t;
-            using typename output_super::output_vector_t;
+            using typename output_super::output_chunk_t;
 
             using output_super::forward;
             using input_super::lookup_left;
@@ -51,8 +51,8 @@ namespace mondrian
             using input_super::as_reference_right;
 
         public:
-            bi_pipe(consumer_t *consumer, unsigned vector_size):
-                    output_super(consumer, vector_size) { }
+            bi_pipe(consumer_t *consumer, unsigned chunk_size):
+                    output_super(consumer, chunk_size) { }
         };
     }
 }

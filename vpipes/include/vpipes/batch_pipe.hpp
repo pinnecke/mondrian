@@ -28,7 +28,7 @@ namespace mondrian
         public:
             using typename super::input_t;
             using typename super::input_iterator_t;
-            using typename super::input_vector_t;
+            using typename super::input_chunk_t;
 
             using output_t = Output;
             using output_iterator_t = OutputForwardIt;

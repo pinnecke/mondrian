@@ -28,15 +28,15 @@ namespace mondrian
             using output_t = Output;
             using output_iterator_t = OutputForwardIt;
             using consumer_t = consumer<output_t, output_iterator_t>;
-            using output_vector_t = vector<output_t, output_iterator_t>;
+            using output_chunk_t = chunk<output_t, output_iterator_t>;
 
         private:
             consumer_t *consumer;
-            output_vector_t *result = nullptr;
+            output_chunk_t *result = nullptr;
             size_t size;
         protected:
 
-            void reset() { result = new output_vector_t(size); }
+            void reset() { result = new output_chunk_t(size); }
 
             void cleanup()
             {
@@ -69,9 +69,9 @@ namespace mondrian
             virtual inline void produce(output_iterator_t *begin, output_iterator_t *end) final
             {
                 do {
-                    typename output_vector_t::state vector_state;
-                    begin = result->add(&vector_state, begin, end);
-                    if (vector_state == output_vector_t::state::full) {
+                    typename output_chunk_t::state chunk_state;
+                    begin = result->add(&chunk_state, begin, end);
+                    if (chunk_state == output_chunk_t::state::full) {
                         send();
                         reset();
                     }
@@ -79,8 +79,8 @@ namespace mondrian
             }
 
         public:
-            producer(consumer_t *consumer, unsigned vector_size):
-                    consumer(consumer), size(vector_size)
+            producer(consumer_t *consumer, unsigned chunk_size):
+                    consumer(consumer), size(chunk_size)
             {
                 reset();
             }

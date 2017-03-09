@@ -31,11 +31,11 @@ namespace mondrian
         public:
             using typename input_super::input_t;
             using typename input_super::input_iterator_t;
-            using typename input_super::input_vector_t;
+            using typename input_super::input_chunk_t;
 
             using typename output_super::output_t;
             using typename output_super::output_iterator_t;
-            using typename output_super::output_vector_t;
+            using typename output_super::output_chunk_t;
             using typename output_super::consumer_t;
 
         protected:
@@ -44,8 +44,8 @@ namespace mondrian
             using input_super::as_reference;
 
         public:
-            pipe(consumer_t *consumer, unsigned vector_size):
-                    output_super(consumer, vector_size) { }
+            pipe(consumer_t *consumer, unsigned chunk_size):
+                    output_super(consumer, chunk_size) { }
 
             virtual void close() final
             {

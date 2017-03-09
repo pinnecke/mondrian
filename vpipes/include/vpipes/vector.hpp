@@ -16,6 +16,7 @@
 #pragma once
 
 #include <cassert>
+#include <algorithm>
 #include "iterator.hpp"
 
 namespace mondrian
@@ -23,7 +24,7 @@ namespace mondrian
     namespace vpipes
     {
         template<class ValueType, class ValueForwardIt>
-        class vector
+        class chunk
         {
         public:
             using value_t = ValueType;
@@ -39,7 +40,7 @@ namespace mondrian
                 full, non_full
             };
 
-            vector(size_t num_of_elements) : max_size(num_of_elements), cursor(0)
+            chunk(size_t num_of_elements) : max_size(num_of_elements), cursor(0)
             {
                 data = (value_iterator_t *) malloc(this->max_size * sizeof(value_iterator_t));
             }

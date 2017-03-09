@@ -49,11 +49,11 @@ namespace mondrian
         public:
             using input_left_t = InputLeft;
             using input_left_iterator_t = InputLeftForwardIt;
-            using input_left_vector_t = vector<input_left_t, input_left_iterator_t>;
+            using input_left_chunk_t = chunk<input_left_t, input_left_iterator_t>;
 
             using input_right_t = InputRight;
             using input_right_iterator_t = InputRightForwardIt;
-            using input_right_vector_t = vector<input_right_t, input_right_iterator_t>;
+            using input_right_chunk_t = chunk<input_right_t, input_right_iterator_t>;
 
         protected:
             virtual void on_consume_left(input_left_iterator_t *begin, input_left_iterator_t *end) = 0;

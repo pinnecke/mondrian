@@ -27,7 +27,7 @@ namespace mondrian
         public:
             using input_t = Input;
             using input_iterator_t = InputForwardIt;
-            using input_vector_t = vector<input_t, input_iterator_t>;
+            using input_chunk_t = chunk<input_t, input_iterator_t>;
 
             template<class IL, class IR, class ILF, class IRF>
             friend class bi_pipe_tail;
@@ -49,7 +49,7 @@ namespace mondrian
         public:
             virtual void close() { }
 
-            virtual void consume(input_vector_t *data) final
+            virtual void consume(input_chunk_t *data) final
             {
                 auto iterator = data->get_iterator();
                 if (!iterator.is_empty()) {

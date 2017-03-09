@@ -34,7 +34,7 @@ namespace mondrian
                 using typename super::consumer_t;
 
                 reader(consumer_t *consumer, input_iterator_t begin, input_iterator_t end,
-                       unsigned vector_size): super(consumer, begin, end, vector_size) {}
+                       unsigned chunk_size): super(consumer, begin, end, chunk_size) {}
 
                 virtual void on_start() override
                 {

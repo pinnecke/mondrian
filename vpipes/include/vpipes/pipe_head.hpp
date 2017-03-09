@@ -43,8 +43,8 @@ namespace mondrian
 
         public:
             pipe_head(consumer_t *consumer, input_iterator_t begin, input_iterator_t end,
-                            unsigned vector_size) :
-                            super(consumer, vector_size), begin(begin), end(end) {};
+                            unsigned chunk_size) :
+                            super(consumer, chunk_size), begin(begin), end(end) {};
 
             virtual void on_consume(input_iterator_t *begin, input_iterator_t *end) override final {};
 

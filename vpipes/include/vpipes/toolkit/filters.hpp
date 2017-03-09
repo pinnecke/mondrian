@@ -44,13 +44,13 @@ namespace mondrian
                 predicate_function_t predicate;
             public:
 
-                batched_pred_filter(consumer_t *consumer, unsigned vector_size, predicate_function_t predicate) :
-                        super(consumer, vector_size), predicate(predicate)
+                batched_pred_filter(consumer_t *consumer, unsigned chunk_size, predicate_function_t predicate) :
+                        super(consumer, chunk_size), predicate(predicate)
                 {
                     // Note here: The operator is unaware of the vector size of the input. The assignment
                     // of the vector size of this operator as the vector size of the preceding operator
                     // just a best guess and must be corrected afterwards if it was wrong
-                    result_buffer_size = vector_size;
+                    result_buffer_size = chunk_size;
                     result_buffer = (input_iterator_t *) malloc(result_buffer_size * sizeof(input_iterator_t));
                     assert (result_buffer != nullptr);
                 }
@@ -87,9 +87,9 @@ namespace mondrian
                 std::function<bool(input_iterator_t)> predicate;
             public:
 
-                simple_filter(consumer_t *consumer, unsigned vector_size,
+                simple_filter(consumer_t *consumer, unsigned chunk_size,
                                   function<bool(input_iterator_t)> predicate) :
-                        super(consumer, vector_size), predicate(predicate) { }
+                        super(consumer, chunk_size), predicate(predicate) { }
 
                 virtual void on_consume(input_iterator_t *begin, input_iterator_t *end) override
                 {
