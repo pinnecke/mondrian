@@ -40,42 +40,48 @@ namespace mondrian
 
             private:
                 input_tupletid_t *result_buffer;
-                size_t result_buffer_size;
-                predicate_t evaluate_predicate;
+                input_t *value_buffer;
+                size_t buffer_size;
+
+                predicate_t predicate;
             public:
 
                 batched_pred_filter(consumer_t *consumer, materializer_t materializer, predicate_t predicate, unsigned chunk_size) :
-                        super(consumer, materializer, chunk_size), evaluate_predicate(predicate)
+                        super(consumer, materializer, chunk_size), predicate(predicate)
                 {
                     // Note here: The operator is unaware of the vector size of the input. The assignment
                     // of the vector size of this operator as the vector size of the preceding operator
                     // just a best guess and must be corrected afterwards if it was wrong
-                    result_buffer_size = chunk_size;
-                    result_buffer = (input_tupletid_t *) malloc(result_buffer_size * sizeof(input_tupletid_t));
+                    buffer_size = chunk_size;
+                    result_buffer = (input_tupletid_t *) malloc(buffer_size * sizeof(input_tupletid_t));
+                    value_buffer = (input_t *) malloc(buffer_size * sizeof(input_t));
                     assert (result_buffer != nullptr);
+                    assert (value_buffer != nullptr);
                 }
 
                 virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override
                 {
-                    auto prec_vec_size = (end - begin);
-                    if (prec_vec_size > result_buffer_size) {
-                        result_buffer_size = prec_vec_size;
-                        result_buffer = (input_tupletid_t *) realloc(result_buffer, prec_vec_size *
-                                sizeof(input_tupletid_t));
+                    auto input_chunk_size = (end - begin);
+
+                    if (input_chunk_size > buffer_size) {
+                        buffer_size = input_chunk_size;
+                        result_buffer = (input_tupletid_t *) realloc(result_buffer, input_chunk_size *
+                                                                     sizeof(input_tupletid_t));
+                        value_buffer = (input_t *) realloc(value_buffer, input_chunk_size *
+                                                                     sizeof(input_t));
                         assert (result_buffer != nullptr);
+                        assert (value_buffer != nullptr);
                     }
                     size_t result_size = 0;
-                    input_t *values_begin = (input_t *) malloc (prec_vec_size * sizeof(input_t));
-                    input_t *values_end = values_begin + prec_vec_size;
-                    super::lookup(values_begin, values_end, begin, end);
-                    evaluate_predicate(result_buffer, &result_size, begin, end, values_begin, values_end);
+                    super::lookup(value_buffer, value_buffer + input_chunk_size, begin, end);
+                    predicate(result_buffer, &result_size, begin, end, value_buffer, value_buffer + input_chunk_size);
                     super::produce(result_buffer, result_buffer + result_size);
-                    free(values_begin);
                 }
 
                 virtual void on_cleanup() override
                 {
                     free (result_buffer);
+                    free (value_buffer);
                 }
             };
 
