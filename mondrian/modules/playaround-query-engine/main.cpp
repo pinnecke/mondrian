@@ -2,17 +2,18 @@
 #include <vpipes.hpp>
 #include <vpipes/functional.hpp>
 #include <storage/column.hpp>
+#include <utils/profiling.hpp>
 
 using namespace mondrian;
 using namespace mondrian::storage;
 
 int main()
 {
-    size_t num_elements = 100;
-    size_t vector_size = 120;
+    size_t num_elements = 60000000;
+    size_t vector_size = 8;
     unsigned *data = (unsigned *) malloc (num_elements * sizeof(unsigned));
     for (size_t i = 0; i < num_elements; ++i) {
-        data [i] = 2*i;
+        data [i] = 2*i+1;
     }
 
 
@@ -29,19 +30,19 @@ int main()
         }
     };
 
-    using pred_t = vpipes::functional::batched_predicates<unsigned>;
-    pred_t::func_t predicate = [] (pred_t::tupletid_t *result_buffer, size_t *result_size, const pred_t::value_t *begin,
-                                   const pred_t::value_t *end)
-    {
-        for (pred_t::tupletid_t tid = 0; tid != (end - begin); ++tid) {
-            if (begin[tid] % 2 == 0)
-                result_buffer[(*result_size)++] = tid;
-        }
-    };
 
     vpipes::toolkit::printer<unsigned> print(materialize);
-    auto table_scan = col.table_scan(&print, predicate, vector_size);
-    table_scan->start();
+    using pred = vpipes::functional::batched_predicates<unsigned>;
+
+    for (size_t i = 0; i < 100; i++) {
+        auto d = utils::profiling::measure<std::chrono::milliseconds>::execute([&col, &print, &vector_size]() {
+            auto table_scan = col.table_scan(nullptr, pred::equal_to::straightforward_impl(25), vector_size);
+            table_scan->start();
+        });
+
+        cout << d << "ms" << endl;
+    }
+
 
     return EXIT_SUCCESS;
 }

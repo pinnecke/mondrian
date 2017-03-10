@@ -68,7 +68,7 @@ namespace mondrian
                     input_t *values_begin = (input_t *) malloc (prec_vec_size * sizeof(input_t));
                     input_t *values_end = values_begin + prec_vec_size;
                     super::lookup(values_begin, values_end, begin, end);
-                    evaluate_predicate(result_buffer, &result_size, values_begin, values_end);
+                    evaluate_predicate(result_buffer, &result_size, begin, end, values_begin, values_end);
                     super::produce(result_buffer, result_buffer + result_size);
                     free(values_begin);
                 }
