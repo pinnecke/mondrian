@@ -24,7 +24,7 @@ namespace mondrian
         namespace functional {
 
             template <class ValueType, class TupletIdType = size_t>
-            struct batched_materialize {
+            struct batched_materializes {
                 using value_t = ValueType;
                 using tupletid_t = TupletIdType;
                 using func_t = std::function<void(value_t *out_begin, value_t *out_end,
@@ -32,7 +32,7 @@ namespace mondrian
             };
 
             template<class ValueType, class TupletIdType = size_t>
-            struct batched_predicate {
+            struct batched_predicates {
                 using value_t = ValueType;
                 using tupletid_t = TupletIdType;
                 using func_t = std::function<void(tupletid_t *result_buffer, size_t *result_size,

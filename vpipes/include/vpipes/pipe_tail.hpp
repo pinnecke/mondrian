@@ -30,7 +30,7 @@ namespace mondrian
             using input_t = Input;
             using input_tupletid_t = InputTupletIdType;
             using input_chunk_t = chunk<input_t, input_tupletid_t>;
-            using materializer_t = typename functional::batched_materialize<input_t, input_tupletid_t>::func_t;
+            using materializer_t = typename functional::batched_materializes<input_t, input_tupletid_t>::func_t;
 
             template<class IL, class IR, class ILTID, class IRTID>
             friend class bi_pipe_tail;

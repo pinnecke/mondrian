@@ -18,7 +18,7 @@ namespace mondrian
         public:
             using value_t = ValueType;
             using tupletid_t = size_t;
-            using predicate_t = typename vpipes::functional::batched_predicate<value_t>::func_t;
+            using predicate_t = typename vpipes::functional::batched_predicates<value_t>::func_t;
 
         private:
             value_t *data;

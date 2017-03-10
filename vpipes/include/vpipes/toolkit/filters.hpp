@@ -36,7 +36,7 @@ namespace mondrian
                 using typename super::consumer_t;
                 using typename super::materializer_t;
                 using iterator_t = vpipes::iterator<input_tupletid_t *>;
-                using predicate_t = typename vpipes::functional::batched_predicate<input_t>::func_t;
+                using predicate_t = typename vpipes::functional::batched_predicates<input_t>::func_t;
 
             private:
                 input_tupletid_t *result_buffer;

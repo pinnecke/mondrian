@@ -19,7 +19,7 @@ int main()
 
     column<unsigned> col(data, data + num_elements);
 
-    vpipes::functional::batched_materialize<unsigned>::func_t materialize = [&data] (unsigned *out_begin, unsigned *out_end,
+    vpipes::functional::batched_materializes<unsigned>::func_t materialize = [&data] (unsigned *out_begin, unsigned *out_end,
                                                                        const size_t *begin, const size_t*end)
     {
         assert (out_end - out_begin >= end - begin);
@@ -29,7 +29,7 @@ int main()
         }
     };
 
-    using pred_t = vpipes::functional::batched_predicate<unsigned>;
+    using pred_t = vpipes::functional::batched_predicates<unsigned>;
     pred_t::func_t predicate = [] (pred_t::tupletid_t *result_buffer, size_t *result_size, const pred_t::value_t *begin,
                                    const pred_t::value_t *end)
     {
