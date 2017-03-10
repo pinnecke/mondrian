@@ -34,18 +34,18 @@ namespace mondrian
                 using typename super::input_t;
                 using typename super::input_tupletid_t;
                 using typename super::consumer_t;
+                using typename super::materializer_t;
                 using iterator_t = vpipes::iterator<input_tupletid_t *>;
-                using predicate_t = function<void(input_tupletid_t **result, size_t *result_size,
-                                                           input_tupletid_t *begin, input_tupletid_t *end)>;
+                using predicate_t = typename vpipes::functional::batched_predicate<input_t>::func_t;
 
             private:
                 input_tupletid_t *result_buffer;
                 size_t result_buffer_size;
-                predicate_t predicate;
+                predicate_t evaluate_predicate;
             public:
 
-                batched_pred_filter(consumer_t *consumer, unsigned chunk_size, predicate_t predicate) :
-                        super(consumer, chunk_size), predicate(predicate)
+                batched_pred_filter(consumer_t *consumer, materializer_t materializer, predicate_t predicate, unsigned chunk_size) :
+                        super(consumer, materializer, chunk_size), evaluate_predicate(predicate)
                 {
                     // Note here: The operator is unaware of the vector size of the input. The assignment
                     // of the vector size of this operator as the vector size of the preceding operator
@@ -64,9 +64,13 @@ namespace mondrian
                                 sizeof(input_tupletid_t));
                         assert (result_buffer != nullptr);
                     }
-                    size_t result_size;
-                    predicate(&result_buffer, &result_size, begin, end);
+                    size_t result_size = 0;
+                    input_t *values_begin = (input_t *) malloc (prec_vec_size * sizeof(input_t));
+                    input_t *values_end = values_begin + prec_vec_size;
+                    super::lookup(values_begin, values_end, begin, end);
+                    evaluate_predicate(result_buffer, &result_size, values_begin, values_end);
                     super::produce(result_buffer, result_buffer + result_size);
+                    free(values_begin);
                 }
 
                 virtual void on_cleanup() override

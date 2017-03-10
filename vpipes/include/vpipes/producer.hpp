@@ -80,14 +80,7 @@ namespace mondrian
                 } while (begin != end);
             }
 
-        public:
-            producer(consumer_t *consumer, unsigned chunk_size):
-                    consumer(consumer), size(chunk_size)
-            {
-                reset();
-            }
-
-            virtual void close()
+            virtual void close() final
             {
                 if (consumer != nullptr)
                 {
@@ -101,7 +94,19 @@ namespace mondrian
                 on_cleanup();
             }
 
-            virtual void start() final { on_start(); }
+        public:
+            producer(consumer_t *consumer, unsigned chunk_size):
+                    consumer(consumer), size(chunk_size)
+            {
+                reset();
+            }
+
+
+
+            virtual void start() final {
+                on_start();
+                close();
+            }
         };
     }
 }

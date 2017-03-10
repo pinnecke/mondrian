@@ -8,8 +8,8 @@ using namespace mondrian::storage;
 
 int main()
 {
-    size_t num_elements = 2e6;
-    size_t vector_size = 4096;
+    size_t num_elements = 100;
+    size_t vector_size = 120;
     unsigned *data = (unsigned *) malloc (num_elements * sizeof(unsigned));
     for (size_t i = 0; i < num_elements; ++i) {
         data [i] = 2*i;
@@ -33,7 +33,6 @@ int main()
     pred_t::func_t predicate = [] (pred_t::tupletid_t *result_buffer, size_t *result_size, const pred_t::value_t *begin,
                                    const pred_t::value_t *end)
     {
-        *result_size = 0;
         for (pred_t::tupletid_t tid = 0; tid != (end - begin); ++tid) {
             if (begin[tid] % 2 == 0)
                 result_buffer[(*result_size)++] = tid;
