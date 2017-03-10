@@ -15,34 +15,33 @@
 
 #pragma once
 
-#include "../pipe_tail.hpp"
+#include <functional>
 
 namespace mondrian
 {
     namespace vpipes
     {
-        namespace toolkit
-        {
-            template<class Input, class InputTupletIdType = size_t>
-            class materialize : public consumer<Input, InputTupletIdType>
-            {
-                using super = consumer<Input, InputTupletIdType>;
-                size_t i;
-                Input *destination;
+        namespace functional {
 
-            public:
-                using typename super::input_t;
-                using typename super::input_tupletid_t;
-
-                materialize(Input *destination) : super(), destination(destination), i(0) {};
-
-                virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override
-                {
-                    for (auto it = begin; it != end; ++it)
-                        destination[i] = super::lookup(it);
-                }
+            template <class ValueType, class TupletIdType = size_t>
+            struct batched_materialize {
+                using value_t = ValueType;
+                using tupletid_t = TupletIdType;
+                using func_t = std::function<void(value_t *out_begin, value_t *out_end,
+                                                  const tupletid_t *begin, const tupletid_t *end)>;
             };
+
+            template<class ValueType, class TupletIdType = size_t>
+            struct batched_predicate {
+                using value_t = ValueType;
+                using tupletid_t = TupletIdType;
+                using func_t = std::function<void(tupletid_t *result_buffer, size_t *result_size,
+                                                  const value_t *begin, const value_t *end)>;
+            };
+
         }
+
+
     }
 }
 

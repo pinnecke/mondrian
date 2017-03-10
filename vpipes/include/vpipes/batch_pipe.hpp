@@ -21,22 +21,22 @@ namespace mondrian
 {
     namespace vpipes
     {
-        template<class Input, class Output, class InputForwardIt = Input*, class OutputForwardIt = Output*>
-        class batch_pipe : public consumer<Input, InputForwardIt>
+        template<class Input, class Output, class InputTupletIdType = size_t, class OutputTupletIdType = size_t>
+        class batch_pipe : public consumer<Input, InputTupletIdType>
         {
-            using super = consumer<Input, InputForwardIt>;
+            using super = consumer<Input, InputTupletIdType>;
         public:
             using typename super::input_t;
-            using typename super::input_iterator_t;
+            using typename super::input_tupletid_t;
             using typename super::input_chunk_t;
 
             using output_t = Output;
-            using output_iterator_t = OutputForwardIt;
-            using consumer_t = consumer<output_t, output_iterator_t>;
+            using output_tupletid_t = OutputTupletIdType;
+            using consumer_t = consumer<output_t, output_tupletid_t>;
 
         private:
             consumer_t *consumer;
-            input_iterator_t *batch = nullptr;
+            input_tupletid_t *batch = nullptr;
             size_t size, capacity;
 
             void cleanup()
@@ -46,14 +46,14 @@ namespace mondrian
             }
 
         protected:
-            virtual void on_consume(input_iterator_t *begin, input_iterator_t *end) final override
+            virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) final override
             {
                 auto dist = distance(begin, end);
                 auto next_size = dist + size + 1;
                 if (next_size >= capacity) {
                     while (next_size >= capacity)
                         capacity *= 1.4f;
-                    batch = (input_iterator_t *) realloc(batch, capacity * sizeof(input_iterator_t));
+                    batch = (input_tupletid_t *) realloc(batch, capacity * sizeof(input_tupletid_t));
                     assert (batch != nullptr);
                 }
                 for (auto it = begin; it < end; ++it) {
@@ -61,8 +61,8 @@ namespace mondrian
                 }
             }
 
-            virtual void on_batch_process(output_iterator_t **output_begin, output_iterator_t **output_end,
-                                          input_iterator_t *begin, input_iterator_t *end) = 0;
+            virtual void on_batch_process(output_tupletid_t **output_begin, output_tupletid_t **output_end,
+                                          input_tupletid_t *begin, input_tupletid_t *end) = 0;
 
             virtual void on_cleanup() { };
 
@@ -72,7 +72,7 @@ namespace mondrian
                 {
                     auto input_begin = batch;
                     auto input_end = input_begin + size;
-                    output_iterator_t *output_begin, *output_end;
+                    output_tupletid_t *output_begin, *output_end;
 
                     on_batch_process(&output_begin, &output_end, input_begin, input_end);
                     assert (output_begin != nullptr);
@@ -90,7 +90,7 @@ namespace mondrian
             batch_pipe(consumer_t *consumer, unsigned initial_capacity):
                     consumer(consumer), capacity(initial_capacity), size(0)
             {
-                batch = (input_iterator_t *) malloc (initial_capacity * sizeof(input_iterator_t));
+                batch = (input_tupletid_t *) malloc (initial_capacity * sizeof(input_tupletid_t));
                 assert (batch != nullptr);
             }
         };

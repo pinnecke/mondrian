@@ -25,18 +25,18 @@ namespace mondrian
     {
         namespace toolkit
         {
-            template<class Input, class InputForwardIt = Input*>
-            class collector : public batch_pipe<Input, Input, InputForwardIt, InputForwardIt>
+            template<class Input, class InputTupletIdType = size_t>
+            class collector : public batch_pipe<Input, Input, InputTupletIdType, InputTupletIdType>
             {
-                using super = batch_pipe<Input, Input, InputForwardIt, InputForwardIt>;
+                using super = batch_pipe<Input, Input, InputTupletIdType, InputTupletIdType>;
             public:
                 using typename super::input_t;
-                using typename super::input_iterator_t;
+                using typename super::input_tupletid_t;
                 using typename super::consumer_t;
 
             protected:
-                virtual void on_batch_process(input_iterator_t **output_begin, input_iterator_t **output_end,
-                                              input_iterator_t *begin, input_iterator_t *end) override
+                virtual void on_batch_process(input_tupletid_t **output_begin, input_tupletid_t **output_end,
+                                              input_tupletid_t *begin, input_tupletid_t *end) override
                 {
                     assert (begin != nullptr);
                     assert (end != nullptr);

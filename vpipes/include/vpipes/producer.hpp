@@ -21,14 +21,14 @@ namespace mondrian
 {
     namespace vpipes
     {
-        template<class Output, class OutputForwardIt = Output*>
+        template<class Output, class OutputTupletIdType = size_t>
         class producer
         {
         public:
             using output_t = Output;
-            using output_iterator_t = OutputForwardIt;
-            using consumer_t = consumer<output_t, output_iterator_t>;
-            using output_chunk_t = chunk<output_t, output_iterator_t>;
+            using output_tupletid_t = OutputTupletIdType;
+            using consumer_t = consumer<output_t, output_tupletid_t>;
+            using output_chunk_t = chunk<output_t, output_tupletid_t>;
 
         private:
             consumer_t *consumer;
@@ -59,14 +59,16 @@ namespace mondrian
 
             virtual void on_cleanup() { };
 
-            virtual void produce(output_iterator_t *value) final
+            virtual void on_start() { };
+
+            virtual void produce(output_tupletid_t *value) final
             {
                 produce(value, value + 1);
             }
 
         protected:
 
-            virtual inline void produce(output_iterator_t *begin, output_iterator_t *end) final
+            virtual inline void produce(output_tupletid_t *begin, output_tupletid_t *end) final
             {
                 do {
                     typename output_chunk_t::state chunk_state;
@@ -98,6 +100,8 @@ namespace mondrian
                 cleanup();
                 on_cleanup();
             }
+
+            virtual void start() final { on_start(); }
         };
     }
 }

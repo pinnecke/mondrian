@@ -21,32 +21,32 @@ namespace mondrian
 {
     namespace vpipes
     {
-        template<class Output, class OutputForwardIt = Output*>
-        class pipe_head : public pipe<Output, Output, OutputForwardIt, OutputForwardIt>
+        template<class Output, class OutputTupletIdType = size_t>
+        class pipe_head : public pipe<Output, Output, OutputTupletIdType, OutputTupletIdType>
         {
-            using super = pipe<Output, Output, OutputForwardIt, OutputForwardIt>;
+            using super = pipe<Output, Output, OutputTupletIdType, OutputTupletIdType>;
 
         public:
             using typename super::input_t;
-            using typename super::input_iterator_t;
+            using typename super::input_tupletid_t;
             using typename super::consumer_t;
 
         private:
-            input_iterator_t begin, end;
+            input_tupletid_t *begin, *end;
 
         protected:
             virtual void on_start() = 0;
 
-            virtual input_iterator_t get_begin() final { return begin; }
+            virtual const input_tupletid_t *get_begin() final { return begin; }
 
-            virtual input_iterator_t get_end() final { return end; }
+            virtual const input_tupletid_t *get_end() final { return end; }
 
         public:
-            pipe_head(consumer_t *consumer, input_iterator_t begin, input_iterator_t end,
+            pipe_head(consumer_t *consumer, input_tupletid_t *begin, input_tupletid_t *end,
                             unsigned chunk_size) :
                             super(consumer, chunk_size), begin(begin), end(end) {};
 
-            virtual void on_consume(input_iterator_t *begin, input_iterator_t *end) override final {};
+            virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override final {};
 
             virtual void start() final { on_start(); }
         };

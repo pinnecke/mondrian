@@ -19,16 +19,16 @@ namespace mondrian
 {
     namespace vpipes
     {
-        template<class ValueType, class ValueForwardIt = ValueType*>
+        template<class ValueType, class TupletIdType = size_t>
         struct iterator
         {
             using value_t = ValueType;
-            using value_iterator_t = ValueForwardIt;
+            using tupletid_t = TupletIdType;
 
-            value_iterator_t *begin;
-            value_iterator_t *end;
+            tupletid_t *begin;
+            tupletid_t *end;
 
-            iterator(value_iterator_t *begin, value_iterator_t *end) : begin(begin), end(end) {}
+            iterator(tupletid_t *begin, tupletid_t *end) : begin(begin), end(end) {}
 
             bool is_empty() { return begin == end; }
         };

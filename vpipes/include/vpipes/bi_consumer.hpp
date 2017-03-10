@@ -26,9 +26,10 @@ template<class Input, class InputForwardIt>                                     
 class consume_delegate_##FieldName : public consumer<Input, InputForwardIt>                                            \
 {                                                                                                                      \
     using typename consumer<Input, InputForwardIt>::input_iterator_t;                                                  \
-    bi_consumer<InputLeft, InputRight, InputLeftForwardIt, InputRightForwardIt> *owner;                                \
+    bi_consumer<InputLeft, InputRight, InputLeftTupletIdType, InputRightTupletIdType> *owner;                          \
 public:                                                                                                                \
-    consume_delegate_##FieldName(bi_consumer<InputLeft, InputRight, InputLeftForwardIt, InputRightForwardIt> *owner):  \
+    consume_delegate_##FieldName(bi_consumer<InputLeft, InputRight,                                                    \
+                                              InputLeftTupletIdType, InputRightTupletIdType> *owner):                  \
         owner(owner) { }                                                                                               \
     virtual void on_consume(const input_iterator_t *begin, const input_iterator_t *end) override                       \
     {   owner->Method(begin, end);  }                                                                                  \
@@ -40,54 +41,44 @@ namespace mondrian
     namespace vpipes
     {
         template<class InputLeft, class InputRight,
-                    class InputLeftForwardIt = InputLeft*, class InputRightForwardIt = InputRight*>
+                class InputLeftTupletIdType = size_t, class InputRightTupletIdType = size_t>
         class bi_consumer
         {
-            DEFINE_DELEGATE(left_port, InputLeft, InputLeftForwardIt, on_consume_left);
-            DEFINE_DELEGATE(right_port, InputRight, InputRightForwardIt, on_consume_right);
+            DEFINE_DELEGATE(left_port, InputLeft, InputLeftTupletIdType, on_consume_left);
+            DEFINE_DELEGATE(right_port, InputRight, InputRightTupletIdType, on_consume_right);
 
         public:
             using input_left_t = InputLeft;
-            using input_left_iterator_t = InputLeftForwardIt;
-            using input_left_chunk_t = chunk<input_left_t, input_left_iterator_t>;
+            using input_left_tupletid_t = InputLeftTupletIdType;
+            using input_left_chunk_t = chunk<input_left_t, input_left_tupletid_t>;
 
             using input_right_t = InputRight;
-            using input_right_iterator_t = InputRightForwardIt;
-            using input_right_chunk_t = chunk<input_right_t, input_right_iterator_t>;
+            using input_right_tupletid_t = InputRightTupletIdType;
+            using input_right_chunk_t = chunk<input_right_t, input_right_tupletid_t>;
 
         protected:
-            virtual void on_consume_left(input_left_iterator_t *begin, input_left_iterator_t *end) = 0;
-            virtual void on_consume_right(input_right_iterator_t *begin, input_right_iterator_t *end) = 0;
+            virtual void on_consume_left(input_left_tupletid_t *begin, input_left_tupletid_t *end) = 0;
+            virtual void on_consume_right(input_right_tupletid_t *begin, input_right_tupletid_t *end) = 0;
 
-            virtual input_left_t lookup_left(input_left_iterator_t *ptr) final
+            virtual input_left_t lookup_left(input_left_tupletid_t tid) final
             {
-                return left_port.lookup(ptr);
+                return left_port.lookup(tid);
             }
 
-            virtual input_left_iterator_t as_reference_left(input_left_iterator_t *ptr) final
+            virtual input_right_t lookup_right(input_right_tupletid_t tid) final
             {
-                return left_port.as_reference(ptr);
-            }
-
-            virtual input_right_t lookup_right(input_right_iterator_t *ptr) final
-            {
-                return right_port.lookup(ptr);
-            }
-
-            virtual input_right_iterator_t as_reference_right(input_right_iterator_t *ptr) final
-            {
-                return right_port.as_reference(ptr);
+                return right_port.lookup(tid);
             }
 
         public:
             bi_consumer(): left_port(this), right_port(this) { }
 
-            bi_consumer<input_left_t, input_left_iterator_t> *get_left_port()
+            bi_consumer<input_left_t, input_left_tupletid_t> *get_left_port()
             {
                 return &left_port;
             };
 
-            bi_consumer<input_right_t, input_right_iterator_t> *get_right_port()
+            bi_consumer<input_right_t, input_right_tupletid_t> *get_right_port()
             {
                 return &right_port;
             };

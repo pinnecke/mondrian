@@ -23,15 +23,15 @@ namespace mondrian
 {
     namespace vpipes
     {
-        template<class ValueType, class ValueForwardIt>
+        template<class ValueType, class TupletIdType = size_t>
         class chunk
         {
         public:
             using value_t = ValueType;
-            using value_iterator_t = ValueForwardIt;
+            using tupletid_t = TupletIdType;
 
         private:
-            value_iterator_t *data;
+            tupletid_t *data;
             size_t max_size, cursor;
 
         public:
@@ -42,17 +42,17 @@ namespace mondrian
 
             chunk(size_t num_of_elements) : max_size(num_of_elements), cursor(0)
             {
-                data = (value_iterator_t *) malloc(this->max_size * sizeof(value_iterator_t));
+                data = (tupletid_t *) malloc(this->max_size * sizeof(tupletid_t));
             }
 
-            state add(value_iterator_t value)
+            state add(tupletid_t value)
             {
                 assert(cursor < max_size);
                 data[cursor++] = value;
                 return (cursor == max_size ? state::full : state::non_full);
             }
 
-            value_iterator_t *add(state *out, value_iterator_t *begin, value_iterator_t *end)
+            tupletid_t *add(state *out, tupletid_t *begin, tupletid_t *end)
             {
                 assert (cursor + 1 <= max_size);
                 auto append_max_len = std::min(max_size - cursor, size_t(end - begin));

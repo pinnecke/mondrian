@@ -23,17 +23,17 @@ namespace mondrian
     {
         namespace toolkit
         {
-            template<class Output, class OutputForwardsIt = Output*>
-            class reader : public pipe_head<Output, OutputForwardsIt>
+            template<class Output, class OutputTupletIdType = size_t>
+            class reader : public pipe_head<Output, OutputTupletIdType>
             {
-                using super = pipe_head<Output, OutputForwardsIt>;
+                using super = pipe_head<Output, OutputTupletIdType>;
 
             public:
                 using typename super::input_t;
-                using typename super::input_iterator_t;
+                using typename super::input_tupletid_t;
                 using typename super::consumer_t;
 
-                reader(consumer_t *consumer, input_iterator_t begin, input_iterator_t end,
+                reader(consumer_t *consumer, input_tupletid_t *begin, input_tupletid_t *end,
                        unsigned chunk_size): super(consumer, begin, end, chunk_size) {}
 
                 virtual void on_start() override
