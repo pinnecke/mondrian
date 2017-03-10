@@ -39,7 +39,7 @@ namespace mondrian
                 virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override
                 {
                     for (auto it = begin; it != end; ++it)
-                        destination[i] = super::lookup(it);
+                        destination[i++] = super::lookup(it);
                 }
             };
         }
