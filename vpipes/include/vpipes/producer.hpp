@@ -80,7 +80,7 @@ namespace mondrian
                 } while (begin != end);
             }
 
-            virtual void close() final
+            virtual void close()
             {
                 if (consumer != nullptr)
                 {
