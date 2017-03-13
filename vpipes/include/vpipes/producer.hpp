@@ -31,7 +31,7 @@ namespace mondrian
             using output_chunk_t = chunk<output_t, output_tupletid_t>;
 
         private:
-            consumer_t *consumer;
+            consumer_t *next_operator;
             output_chunk_t *result = nullptr;
             size_t size;
         protected:
@@ -49,8 +49,8 @@ namespace mondrian
 
             void send()
             {
-                assert (consumer != nullptr);
-                consumer->consume(result);
+                assert (next_operator != nullptr);
+                next_operator->consume(result);
                 cleanup();
             }
 
@@ -97,21 +97,21 @@ namespace mondrian
 
             virtual void close()
             {
-                if (consumer != nullptr)
+                if (next_operator != nullptr)
                 {
                     send();
                     reset();
                     on_close();
                     send();
-                    consumer->close();
+                    next_operator->close();
                 }
                 cleanup();
                 on_cleanup();
             }
 
         public:
-            producer(consumer_t *consumer, unsigned chunk_size):
-                    consumer(consumer), size(chunk_size)
+            producer(consumer_t *next_operator, unsigned chunk_size):
+                    next_operator(next_operator), size(chunk_size)
             {
                 reset();
             }

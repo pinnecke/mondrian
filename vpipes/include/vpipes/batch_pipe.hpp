@@ -35,7 +35,7 @@ namespace mondrian
             using consumer_t = consumer<output_t, output_tupletid_t>;
 
         private:
-            consumer_t *consumer;
+            consumer_t *next_operator;
             input_tupletid_t *batch = nullptr;
             size_t size, capacity;
 
@@ -68,7 +68,7 @@ namespace mondrian
 
             virtual void close() override final
             {
-                if (consumer != nullptr)
+                if (next_operator != nullptr)
                 {
                     auto input_begin = batch;
                     auto input_end = input_begin + size;
@@ -79,16 +79,16 @@ namespace mondrian
                     assert (output_end != nullptr);
                     assert (output_begin <= output_end);
 
-                    consumer->consume(output_begin, output_end);
-                    consumer->close();
+                    next_operator->consume(output_begin, output_end);
+                    next_operator->close();
                 }
                 on_cleanup();
                 cleanup();
             }
 
         public:
-            batch_pipe(consumer_t *consumer, unsigned initial_capacity):
-                    consumer(consumer), capacity(initial_capacity), size(0)
+            batch_pipe(consumer_t *next_operator, unsigned initial_capacity):
+                    next_operator(next_operator), capacity(initial_capacity), size(0)
             {
                 batch = (input_tupletid_t *) malloc (initial_capacity * sizeof(input_tupletid_t));
                 assert (batch != nullptr);
