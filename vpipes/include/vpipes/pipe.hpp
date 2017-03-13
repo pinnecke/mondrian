@@ -16,7 +16,7 @@
 #pragma once
 
 #include "producer.hpp"
-#include "pipe_tail.hpp"
+#include "consumer.hpp"
 
 namespace mondrian
 {

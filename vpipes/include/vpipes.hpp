@@ -10,6 +10,6 @@
 #include "vpipes/bi_consumer.hpp"
 #include "vpipes/bi_pipe.hpp"
 #include "vpipes/pipe_head.hpp"
-#include "vpipes/pipe_tail.hpp"
+#include "vpipes/consumer.hpp"
 #include "vpipes/producer.hpp"
 #include "vpipes/chunk.hpp"

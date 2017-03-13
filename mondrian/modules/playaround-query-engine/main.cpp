@@ -10,7 +10,7 @@ using namespace mondrian::storage;
 int main()
 {
     size_t num_elements = 60000000;
-    size_t vector_size = 8;
+    size_t vector_size = 4000;
     unsigned *data = (unsigned *) malloc (num_elements * sizeof(unsigned));
     for (size_t i = 0; i < num_elements; ++i) {
         data [i] = 2*i+1;

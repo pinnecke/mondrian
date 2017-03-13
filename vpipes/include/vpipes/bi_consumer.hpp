@@ -16,7 +16,7 @@
 #pragma once
 
 #include <functional>
-#include "pipe_tail.hpp"
+#include "consumer.hpp"
 #include "chunk.hpp"
 
 using namespace std;

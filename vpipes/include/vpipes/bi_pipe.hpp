@@ -17,7 +17,7 @@
 
 #include "producer.hpp"
 #include "bi_consumer.hpp"
-#include "pipe_tail.hpp"
+#include "consumer.hpp"
 
 namespace mondrian
 {
