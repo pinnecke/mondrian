@@ -39,9 +39,6 @@ namespace mondrian
 
                 virtual void on_start() override
                 {
-                    /*size_t distance = (end - begin);
-                    for (size_t i = 0; i != distance; ++i)
-                        super::produce(&i);*/
                     super::produce_tupletid_range(0, (end - begin));
                 }
             };

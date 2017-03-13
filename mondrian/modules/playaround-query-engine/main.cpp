@@ -49,14 +49,30 @@ long get_file_size(std::string file_name)
 template <typename Type>
 std::vector<Type> read_from_file(std::string file_name)
 {
-    std::vector<Type> data;
-    long size = get_file_size(file_name) / sizeof(Type);
-    data.resize(size);
-    fstream reader;
-    reader.open(file_name, ios::in | ios::binary | ios::trunc);
-    reader.read((char *) data.data(), size * sizeof(Type));
-    reader.close();
-    return data;
+    struct stat info;
+    if (stat(file_name.c_str(), &info) != 0) {
+        cerr << "Unable to get infos of file '" << file_name << "'. \nSTOP." << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    Type *content = (Type *) malloc(info.st_size);
+    assert (content != nullptr);
+
+    FILE *fp = fopen(file_name.c_str(), "rb");
+    if (fp == NULL) {
+        cerr << "Unable to open file '" << file_name << "'. \nSTOP." << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if (fread( (char *) content, info.st_size / sizeof(Type), 1, fp) != 1) {
+        cerr << "Read failed for file '" << file_name << "'. \nSTOP." << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    fclose(fp);
+    std::vector<Type> container (content, content  + info.st_size / sizeof(Type));
+    free (content);
+    return container;
 }
 
 int main()
@@ -91,7 +107,8 @@ int main()
         assert (out_end - out_begin >= end - begin);
         size_t distance = (end - begin);
         for (size_t i = 0; i != distance; ++i) {
-            out_begin[i] = column_data_orderkey.data()[begin[i]];  /* accessing the ORDERKEY column via raw data is a workaround since the
+            uint32_t *data = column_data_orderkey.data();
+            out_begin[i] = data[begin[i]];  /* accessing the ORDERKEY column via raw data is a workaround since the
                                                  * column data structure does not support this opperation currently.
                                                  * Blame me for that, but it will be part of the vpipes query pipeline.
                                                  * Therefore, materialization will come in the later stages of the
@@ -102,12 +119,10 @@ int main()
     double last_duration = 2e6;
     size_t last_chunk_size = 0;
 
-   // for (size_t vector_size = 100; vector_size < num_elements; vector_size += 50) {
-    size_t vector_size = 2500;
+    for (size_t vector_size = 100; vector_size < num_elements; vector_size += 50)
     {
-
         long current_duration = 0;
-        size_t num_samples = 500;
+        size_t num_samples = 10;
         size_t result_set_size = 0;
 
         for (size_t i = 0; i < num_samples; i++) {
@@ -121,6 +136,9 @@ int main()
                                                              vector_size);
                         table_scan->start();
                     });
+
+           // for (size_t i = 0; i < result_set_size; i++)
+           //     cout << "pos: " << i << ", value: " << result_buffer[i] << endl;
         }
 
         double current_duration_d = current_duration/float(num_samples);
