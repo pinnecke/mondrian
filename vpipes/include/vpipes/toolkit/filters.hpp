@@ -59,7 +59,7 @@ namespace mondrian
                     assert (value_buffer != nullptr);
                 }
 
-                virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override
+                inline virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override final
                 {
                     auto input_chunk_size = (end - begin);
 
@@ -93,7 +93,7 @@ namespace mondrian
                 using typename super::input_t;
                 using typename super::input_tupletid_t;
                 using typename super::consumer_t;
-                using predicate_t = std::function<bool(input_t *value)>;
+                using predicate_t = std::function<bool(typename super::input_t *value)>;
 
             private:
                 predicate_t predicate;

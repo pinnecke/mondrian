@@ -37,18 +37,18 @@ namespace mondrian
         protected:
             virtual void on_start() = 0;
 
-            virtual const input_tupletid_t *get_begin() final { return begin; }
+            inline virtual const input_tupletid_t *get_begin() final { return begin; }
 
-            virtual const input_tupletid_t *get_end() final { return end; }
+            inline virtual const input_tupletid_t *get_end() final { return end; }
 
         public:
             pipe_head(consumer_t *consumer, input_tupletid_t *begin, input_tupletid_t *end,
                             unsigned chunk_size) :
                             super(consumer, chunk_size), begin(begin), end(end) {};
 
-            virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override final {};
+            inline virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override final {};
 
-            virtual void start() final { on_start(); }
+            inline virtual void start() final { on_start(); }
         };
     }
 }

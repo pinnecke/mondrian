@@ -48,7 +48,7 @@ namespace mondrian
                 };
 
             protected:
-                virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override
+                inline virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override final
                 {
                     size_t distance = (end - begin);
                     super::lookup(destination + i, destination + i + distance, begin, end);

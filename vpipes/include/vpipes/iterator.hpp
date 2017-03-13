@@ -30,7 +30,7 @@ namespace mondrian
 
             iterator(tupletid_t *begin, tupletid_t *end) : begin(begin), end(end) {}
 
-            bool is_empty() { return begin == end; }
+            inline bool is_empty() { return begin == end; }
         };
     }
 }

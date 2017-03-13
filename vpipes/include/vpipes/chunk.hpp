@@ -47,19 +47,19 @@ namespace mondrian
                 data = (tupletid_t *) malloc(this->max_size * sizeof(tupletid_t));
             }
 
-            void reset()
+            inline void reset()
             {
                 cursor = 0;
             }
 
-            state add(tupletid_t value)
+            inline state add(tupletid_t value)
             {
                 assert(cursor < max_size);
                 data[cursor++] = value;
                 return (cursor == max_size ? state::full : state::non_full);
             }
 
-            void iota(tupletid_t start, size_t num_of_values)
+            inline void iota(tupletid_t start, size_t num_of_values)
             {
                 assert (num_of_values <= max_size);
                 num_of_values = MIN(max_size, num_of_values);
@@ -67,7 +67,7 @@ namespace mondrian
                 cursor += num_of_values;
             }
 
-            tupletid_t *add(state *out, tupletid_t *begin, tupletid_t *end)
+            inline tupletid_t *add(state *out, tupletid_t *begin, tupletid_t *end)
             {
                 assert (cursor + 1 <= max_size);
                 auto append_max_len = std::min(max_size - cursor, size_t(end - begin));
@@ -78,7 +78,7 @@ namespace mondrian
                 return begin + append_max_len;
             }
 
-            iterator <value_t> get_iterator()
+            inline iterator <value_t> get_iterator()
             {
                 return iterator<value_t>(data, data + cursor);
             }

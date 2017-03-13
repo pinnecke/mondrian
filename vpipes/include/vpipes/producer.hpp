@@ -49,7 +49,7 @@ namespace mondrian
                 }
             }
 
-            void send()
+            inline void send()
             {
                 assert (next_operator != nullptr);
                 next_operator->consume(result);
@@ -64,12 +64,12 @@ namespace mondrian
 
             virtual void on_start() { };
 
-            virtual void produce(output_tupletid_t *value) final
+            inline virtual void produce(output_tupletid_t *value) final
             {
                 produce(value, value + 1);
             }
 
-            virtual void produce_tupletid_range(output_tupletid_t start, output_tupletid_t end) final
+            inline virtual void produce_tupletid_range(output_tupletid_t start, output_tupletid_t end) final
             {
                 assert (start <= end);
 
@@ -117,7 +117,7 @@ namespace mondrian
 
 
 
-            virtual void start() final {
+            inline virtual void start() final {
                 on_start();
                 close();
             }

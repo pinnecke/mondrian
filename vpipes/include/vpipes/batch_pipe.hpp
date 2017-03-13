@@ -46,7 +46,7 @@ namespace mondrian
             }
 
         protected:
-            virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) final override
+            inline virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) final override
             {
                 auto dist = distance(begin, end);
                 auto next_size = dist + size + 1;

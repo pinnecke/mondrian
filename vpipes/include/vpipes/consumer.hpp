@@ -46,13 +46,7 @@ namespace mondrian
 
             virtual void on_cleanup() { };
 
-            virtual void lookup(input_t *out_values_begin, input_t *out_values_end,
-                                const input_tupletid_t *tid_begin, const input_tupletid_t *tid_end) final
-            {
-                materialize_func(out_values_begin, out_values_end, tid_begin, tid_end);
-            }
-
-            virtual void lookup_and_copy(input_t *out_values_begin, input_t *out_values_end,
+            inline virtual void lookup(input_t *out_values_begin, input_t *out_values_end,
                                 const input_tupletid_t *tid_begin, const input_tupletid_t *tid_end) final
             {
                 materialize_func(out_values_begin, out_values_end, tid_begin, tid_end);
@@ -63,7 +57,7 @@ namespace mondrian
                 on_cleanup();
             }
 
-            virtual void consume(input_chunk_t *data) final
+            inline virtual void consume(input_chunk_t *data) final
             {
                 auto iterator = data->get_iterator();
                 if (!iterator.is_empty()) {
@@ -71,7 +65,7 @@ namespace mondrian
                 }
             }
 
-            virtual void consume(input_tupletid_t *begin, input_tupletid_t *end) final
+            inline virtual void consume(input_tupletid_t *begin, input_tupletid_t *end) final
             {
                 assert (begin != nullptr);
                 assert (end != nullptr);

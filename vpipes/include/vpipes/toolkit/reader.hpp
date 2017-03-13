@@ -36,7 +36,7 @@ namespace mondrian
                 reader(consumer_t *consumer, input_tupletid_t *begin, input_tupletid_t *end,
                        unsigned chunk_size): super(consumer, begin, end, chunk_size) {}
 
-                virtual void on_start() override
+                inline virtual void on_start() override final
                 {
                     auto begin = super::get_begin();
                     auto end = super::get_end();

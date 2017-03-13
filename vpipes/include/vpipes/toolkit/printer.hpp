@@ -36,7 +36,7 @@ namespace mondrian
 
                 printer(materializer_t materialize_func) : super(materialize_func) {};
 
-                virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override
+                inline virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override final
                 {
                     size_t distance = (end - begin);
                     input_t *values = (input_t *) malloc (distance * sizeof(input_t));
