@@ -139,7 +139,7 @@ namespace pantheon
                     data_page *active_pages_head = nullptr, *active_pages_tail = nullptr;
                     data_page_ref *free_list_1st_tier = nullptr;
                     data_page *free_list_2nd_tier = nullptr;
-                    mutex mutex;
+                    mutex column_mutex;
                     tuplet_id_t next_tuplet_id;
 
                     struct
@@ -237,13 +237,13 @@ namespace pantheon
                 protected:
                     void lock()
                     {
-                        this->mutex.lock();
+                        this->column_mutex.lock();
                         this->flags.is_locked = true;
                     }
 
                     void unlock()
                     {
-                        this->mutex.unlock();
+                        this->column_mutex.unlock();
                         this->flags.is_locked = false;
                     }
 
