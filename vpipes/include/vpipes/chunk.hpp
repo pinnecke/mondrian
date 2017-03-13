@@ -17,7 +17,9 @@
 
 #include <cassert>
 #include <algorithm>
+#include <numeric>
 #include "iterator.hpp"
+#include "macros.hpp"
 
 namespace mondrian
 {
@@ -50,6 +52,14 @@ namespace mondrian
                 assert(cursor < max_size);
                 data[cursor++] = value;
                 return (cursor == max_size ? state::full : state::non_full);
+            }
+
+            void iota(tupletid_t start, size_t num_of_values)
+            {
+                assert (num_of_values <= max_size);
+                num_of_values = MIN(max_size, num_of_values);
+                std::iota(data, data + num_of_values, start);
+                cursor += num_of_values;
             }
 
             tupletid_t *add(state *out, tupletid_t *begin, tupletid_t *end)

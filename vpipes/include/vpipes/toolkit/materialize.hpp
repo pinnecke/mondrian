@@ -27,19 +27,33 @@ namespace mondrian
             class materialize : public consumer<Input, InputTupletIdType>
             {
                 using super = consumer<Input, InputTupletIdType>;
-                size_t i;
-                Input *destination;
 
             public:
                 using typename super::input_t;
                 using typename super::input_tupletid_t;
+                using typename super::materializer_t;
 
-                materialize(Input *destination) : super(), destination(destination), i(0) {};
+            private:
+                size_t i;
+                input_t *destination;
+                size_t *result_set_size;
+                unsigned expected_chunk_size;
 
+            public:
+                materialize(Input *destination, size_t *result_set_size, materializer_t materialize_func, unsigned expected_chunk_size) :
+                        super(materialize_func), destination(destination), i(0), result_set_size(result_set_size),
+                        expected_chunk_size(expected_chunk_size)
+                {
+                    assert (expected_chunk_size > 0);
+                };
+
+            protected:
                 virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override
                 {
-                    for (auto it = begin; it != end; ++it)
-                        destination[i++] = super::lookup(it);
+                    size_t distance = (end - begin);
+                    super::lookup(destination + i, destination + i + distance, begin, end);
+                    i += distance;
+                    *result_set_size = i;
                 }
             };
         }

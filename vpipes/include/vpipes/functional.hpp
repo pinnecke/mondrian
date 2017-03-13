@@ -98,7 +98,7 @@ namespace mondrian
                     DEFINE_STD_BINARY_PREDICATE(straightforward_impl, >=);
                 };
 
-                struct greater
+                struct greater_than
                 {
                     DEFINE_STD_BINARY_PREDICATE(straightforward_impl, >);
                 };

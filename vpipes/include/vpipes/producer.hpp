@@ -49,6 +49,7 @@ namespace mondrian
 
             void send()
             {
+                assert (consumer != nullptr);
                 consumer->consume(result);
                 cleanup();
             }
@@ -64,6 +65,20 @@ namespace mondrian
             virtual void produce(output_tupletid_t *value) final
             {
                 produce(value, value + 1);
+            }
+
+            virtual void produce_tupletid_range(output_tupletid_t start, output_tupletid_t end) final
+            {
+                assert (start <= end);
+
+                output_tupletid_t offset = start;
+                while (offset < end) {
+                    size_t this_chunk_size = MIN(size, end - offset);
+                    result->iota(offset, this_chunk_size);
+                    send();
+                    reset();
+                    offset += this_chunk_size;
+                }
             }
 
         protected:

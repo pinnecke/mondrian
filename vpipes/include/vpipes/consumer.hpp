@@ -44,14 +44,24 @@ namespace mondrian
         protected:
             virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) { };
 
+            virtual void on_cleanup() { };
+
             virtual void lookup(input_t *out_values_begin, input_t *out_values_end,
                                 const input_tupletid_t *tid_begin, const input_tupletid_t *tid_end) final
             {
                 materialize_func(out_values_begin, out_values_end, tid_begin, tid_end);
             }
 
+            virtual void lookup_and_copy(input_t *out_values_begin, input_t *out_values_end,
+                                const input_tupletid_t *tid_begin, const input_tupletid_t *tid_end) final
+            {
+                materialize_func(out_values_begin, out_values_end, tid_begin, tid_end);
+            }
+
         public:
-            virtual void close() { }
+            virtual void close() {
+                on_cleanup();
+            }
 
             virtual void consume(input_chunk_t *data) final
             {
