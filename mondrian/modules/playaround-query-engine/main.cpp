@@ -55,7 +55,7 @@ std::vector<Type> read_from_file(std::string file_name)
         exit(EXIT_FAILURE);
     }
 
-    Type *content = (Type *) malloc(info.st_size);
+    Type *content = (Type *) calloc(info.st_size / sizeof(Type), sizeof(Type));
     assert (content != nullptr);
 
     FILE *fp = fopen(file_name.c_str(), "rb");
@@ -71,14 +71,15 @@ std::vector<Type> read_from_file(std::string file_name)
 
     fclose(fp);
     std::vector<Type> container (content, content  + info.st_size / sizeof(Type));
+    container.shrink_to_fit();
     free (content);
     return container;
 }
 
 int main()
 {
-    std::string path_partkey_data = "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data"; // "/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";
-    std::string path_orderkey_data = "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data"; // "/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data";
+    std::string path_partkey_data = "/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data"; // "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";
+    std::string path_orderkey_data = "/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data"; //"/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data";
 
     get_column_file_path(&path_partkey_data, "L_PARTKEY");
     get_column_file_path(&path_orderkey_data, "L_ORDERKEY");
@@ -122,7 +123,7 @@ int main()
     for (size_t vector_size = 100; vector_size < num_elements; vector_size += 50)
     {
         long current_duration = 0;
-        size_t num_samples = 10;
+        size_t num_samples = 100;
         size_t result_set_size = 0;
 
         for (size_t i = 0; i < num_samples; i++) {
@@ -135,6 +136,7 @@ int main()
                                                              predicates::less_than::straightforward_impl(2000000),
                                                              vector_size);
                         table_scan->start();
+                        free (table_scan);
                     });
 
            // for (size_t i = 0; i < result_set_size; i++)

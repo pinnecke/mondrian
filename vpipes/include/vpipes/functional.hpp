@@ -36,7 +36,7 @@ struct name                                                                     
 {                                                                                                               \
     value_t compare_value;                                                                                      \
                                                                                                                 \
-    name(value_t compare_value): compare_value(compare_value) { }                                               \
+    explicit name(value_t compare_value): compare_value(compare_value) { }                                      \
                                                                                                                 \
     void operator()(tupletid_t *result_buffer, size_t *result_size,                                             \
                     const tupletid_t *tupletids_begin, const tupletid_t *tupletids_end,                         \

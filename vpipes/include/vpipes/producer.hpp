@@ -36,7 +36,9 @@ namespace mondrian
             size_t size;
         protected:
 
-            void reset() { result = new output_chunk_t(size); }
+            void reset() {
+                result->reset();
+            }
 
             void cleanup()
             {
@@ -51,7 +53,7 @@ namespace mondrian
             {
                 assert (next_operator != nullptr);
                 next_operator->consume(result);
-                cleanup();
+                reset();
             }
 
         protected:
@@ -76,7 +78,6 @@ namespace mondrian
                     size_t this_chunk_size = MIN(size, end - offset);
                     result->iota(offset, this_chunk_size);
                     send();
-                    reset();
                     offset += this_chunk_size;
                 }
             }
@@ -90,7 +91,6 @@ namespace mondrian
                     begin = result->add(&chunk_state, begin, end);
                     if (chunk_state == output_chunk_t::state::full) {
                         send();
-                        reset();
                     }
                 } while (begin != end);
             }
@@ -100,7 +100,6 @@ namespace mondrian
                 if (next_operator != nullptr)
                 {
                     send();
-                    reset();
                     on_close();
                     send();
                     next_operator->close();
@@ -113,7 +112,7 @@ namespace mondrian
             producer(consumer_t *next_operator, unsigned chunk_size):
                     next_operator(next_operator), size(chunk_size)
             {
-                reset();
+                result = new output_chunk_t(chunk_size);
             }
 
 

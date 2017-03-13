@@ -47,6 +47,11 @@ namespace mondrian
                 data = (tupletid_t *) malloc(this->max_size * sizeof(tupletid_t));
             }
 
+            void reset()
+            {
+                cursor = 0;
+            }
+
             state add(tupletid_t value)
             {
                 assert(cursor < max_size);
