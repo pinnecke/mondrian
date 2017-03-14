@@ -37,13 +37,16 @@ namespace mondrian
         protected:
             virtual void on_start() = 0;
 
-            inline virtual const input_tupletid_t *get_begin() final
+            inline virtual const input_tupletid_t *get_begin() final __attribute__((always_inline))
             {
                 __builtin_prefetch(begin, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_KEEP_IN_CACHES_NORMAL);
                 return begin;
             }
 
-            inline virtual const input_tupletid_t *get_end() final { return end; }
+            inline virtual const input_tupletid_t *get_end() final __attribute__((always_inline))
+            {
+                return end;
+            }
 
         public:
             pipe_head(consumer_t *consumer, input_tupletid_t *begin, input_tupletid_t *end,

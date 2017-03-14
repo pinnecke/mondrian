@@ -49,7 +49,8 @@ namespace mondrian
             virtual void on_cleanup() { };
 
             inline virtual void lookup(input_t *out_values_begin, input_t *out_values_end,
-                                const input_tupletid_t *tid_begin, const input_tupletid_t *tid_end) final
+                                       const input_tupletid_t *tid_begin,
+                                       const input_tupletid_t *tid_end) final __attribute__((always_inline))
             {
                 __builtin_prefetch(out_values_begin, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
                 __builtin_prefetch(tid_begin, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);
@@ -61,7 +62,7 @@ namespace mondrian
                 on_cleanup();
             }
 
-            inline virtual void consume(input_chunk_t *data) final
+            inline virtual void consume(input_chunk_t *data) final __attribute__((always_inline))
             {
                 auto iterator = data->get_iterator();
                 if (__builtin_expect(!iterator.is_empty(), true)) {
@@ -69,7 +70,7 @@ namespace mondrian
                 }
             }
 
-            inline virtual void consume(input_tupletid_t *begin, input_tupletid_t *end) final
+            inline virtual void consume(input_tupletid_t *begin, input_tupletid_t *end) final __attribute__((always_inline))
             {
                 assert (begin != nullptr);
                 assert (end != nullptr);

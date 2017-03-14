@@ -69,7 +69,7 @@ namespace mondrian
                 return (cursor == max_size ? state::full : state::non_full);
             }
 
-            inline void iota(tupletid_t start, size_t num_of_values)
+            inline void iota(tupletid_t start, size_t num_of_values) __attribute__((always_inline))
             {
                 assert (num_of_values <= max_size);
                 num_of_values = MIN(max_size, num_of_values);
@@ -77,7 +77,7 @@ namespace mondrian
                 cursor += num_of_values;
             }
 
-            inline tupletid_t *add(state *out, tupletid_t *begin, tupletid_t *end)
+            inline tupletid_t *add(state *out, tupletid_t *begin, tupletid_t *end) __attribute__((always_inline))
             {
                 assert (cursor + 1 <= max_size);
                 auto append_max_len = std::min(max_size - cursor, size_t(end - begin));

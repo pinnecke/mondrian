@@ -40,7 +40,7 @@ struct name                                                                     
                                                                                                                 \
     inline void operator()(tupletid_t *result_buffer, size_t *result_size,                                      \
                     const tupletid_t *tupletids_begin, const tupletid_t *tupletids_end,                         \
-                    const value_t *values_begin, const value_t *values_end)                                     \
+                    const value_t *values_begin, const value_t *values_end) __attribute__((always_inline))      \
     {                                                                                                           \
         ASSERT_VALID_BATCHED_PREDICATE_ARGS();                                                                  \
         for (auto value_it = values_begin; value_it != values_end; ++value_it)                                  \
@@ -60,7 +60,7 @@ struct name                                                                     
                                                                                                                 \
     inline void operator()(tupletid_t *result_buffer, size_t *result_size,                                      \
                     const tupletid_t *tupletids_begin, const tupletid_t *tupletids_end,                         \
-                    const value_t *values_begin, const value_t *values_end)                                     \
+                    const value_t *values_begin, const value_t *values_end) __attribute__((always_inline))      \
     {                                                                                                           \
         ASSERT_VALID_BATCHED_PREDICATE_ARGS();                                                                  \
         for (auto value_it = values_begin; value_it != values_end; ++value_it)                                  \

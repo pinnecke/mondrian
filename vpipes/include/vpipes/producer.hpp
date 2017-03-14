@@ -49,7 +49,7 @@ namespace mondrian
                 }
             }
 
-            inline void send()
+            inline void send() __attribute__((always_inline))
             {
                 assert (next_operator != nullptr);
                 result->memory_prefetch_for_read();
@@ -65,12 +65,12 @@ namespace mondrian
 
             virtual void on_start() { };
 
-            inline virtual void produce(output_tupletid_t *value) final
+            inline virtual void produce(output_tupletid_t *value) final __attribute__((always_inline))
             {
                 produce(value, value + 1, false);
             }
 
-            inline virtual void produce_tupletid_range(output_tupletid_t start, output_tupletid_t end) final
+            inline virtual void produce_tupletid_range(output_tupletid_t start, output_tupletid_t end) final __attribute__((always_inline))
             {
                 assert (start <= end);
 
@@ -86,7 +86,7 @@ namespace mondrian
         protected:
 
             virtual inline void produce(output_tupletid_t *begin, output_tupletid_t *end,
-                                        bool expect_output_chunk_is_full_afterwards) final
+                                        bool expect_output_chunk_is_full_afterwards) final __attribute__((always_inline))
             {
                 result->memory_prefetch_for_write();
                 do {

@@ -59,7 +59,8 @@ namespace mondrian
                     assert (value_buffer != nullptr);
                 }
 
-                inline virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override final
+                inline virtual void on_consume(input_tupletid_t *begin,
+                                               input_tupletid_t *end) override final __attribute__((always_inline))
                 {
                     auto input_chunk_size = (end - begin);
 
