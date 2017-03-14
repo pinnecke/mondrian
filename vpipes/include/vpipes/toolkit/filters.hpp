@@ -63,7 +63,7 @@ namespace mondrian
                 {
                     auto input_chunk_size = (end - begin);
 
-                    if (input_chunk_size > buffer_size) {
+                    if (__builtin_expect(input_chunk_size > buffer_size, false)) {
                         buffer_size = input_chunk_size;
                         result_buffer = (input_tupletid_t *) realloc(result_buffer, input_chunk_size *
                                                                      sizeof(input_tupletid_t));
@@ -75,7 +75,7 @@ namespace mondrian
                     size_t result_size = 0;
                     super::lookup(value_buffer, value_buffer + input_chunk_size, begin, end);
                     predicate(result_buffer, &result_size, begin, end, value_buffer, value_buffer + input_chunk_size);
-                    super::produce(result_buffer, result_buffer + result_size);
+                    super::produce(result_buffer, result_buffer + result_size, false);
                 }
 
                 virtual void on_cleanup() override

@@ -66,7 +66,7 @@ namespace mondrian
 
             inline virtual void produce(output_tupletid_t *value) final
             {
-                produce(value, value + 1);
+                produce(value, value + 1, false);
             }
 
             inline virtual void produce_tupletid_range(output_tupletid_t start, output_tupletid_t end) final
@@ -84,12 +84,14 @@ namespace mondrian
 
         protected:
 
-            virtual inline void produce(output_tupletid_t *begin, output_tupletid_t *end) final
+            virtual inline void produce(output_tupletid_t *begin, output_tupletid_t *end,
+                                        bool expect_output_chunk_is_full_afterwards) final
             {
                 do {
                     typename output_chunk_t::state chunk_state;
                     begin = result->add(&chunk_state, begin, end);
-                    if (chunk_state == output_chunk_t::state::full) {
+                    if (__builtin_expect(chunk_state == output_chunk_t::state::full,
+                                         expect_output_chunk_is_full_afterwards)) {
                         send();
                     }
                 } while (begin != end);
@@ -97,7 +99,7 @@ namespace mondrian
 
             virtual void close()
             {
-                if (next_operator != nullptr)
+                if (__builtin_expect(next_operator != nullptr, true))
                 {
                     send();
                     on_close();

@@ -49,6 +49,26 @@ struct name                                                                     
     }                                                                                                           \
 };
 
+#define DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(name, opp)                                                       \
+struct name                                                                                                     \
+{                                                                                                               \
+    value_t compare_value;                                                                                      \
+    bool hint_expected_true;                                                                                    \
+                                                                                                                \
+    explicit name(value_t compare_value, bool hint_expected_true): compare_value(compare_value),                \
+                                                                    hint_expected_true(hint_expected_true) { }  \
+                                                                                                                \
+    inline void operator()(tupletid_t *result_buffer, size_t *result_size,                                      \
+                    const tupletid_t *tupletids_begin, const tupletid_t *tupletids_end,                         \
+                    const value_t *values_begin, const value_t *values_end)                                     \
+    {                                                                                                           \
+        ASSERT_VALID_BATCHED_PREDICATE_ARGS();                                                                  \
+        for (auto value_it = values_begin; value_it != values_end; ++value_it)                                  \
+            if (__builtin_expect((*value_it opp compare_value), hint_expected_true))                            \
+                result_buffer[(*result_size)++] = tupletids_begin[POINTER_DISTANCE(values_begin, value_it)];    \
+    }                                                                                                           \
+};
+
 namespace mondrian
 {
     namespace vpipes
@@ -76,31 +96,37 @@ namespace mondrian
                 struct less_than
                 {
                     DEFINE_STD_BINARY_PREDICATE(straightforward_impl, <);
+                    DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, <);
                 };
 
                 struct less_equal
                 {
                     DEFINE_STD_BINARY_PREDICATE(straightforward_impl, <=);
+                    DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, <=);
                 };
 
                 struct equal_to
                 {
                     DEFINE_STD_BINARY_PREDICATE(straightforward_impl, ==);
+                    DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, ==);
                 };
 
                 struct unequal_to
                 {
                     DEFINE_STD_BINARY_PREDICATE(straightforward_impl, !=);
+                    DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, !=);
                 };
 
                 struct greater_equal
                 {
                     DEFINE_STD_BINARY_PREDICATE(straightforward_impl, >=);
+                    DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, >=);
                 };
 
                 struct greater_than
                 {
                     DEFINE_STD_BINARY_PREDICATE(straightforward_impl, >);
+                    DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, >);
                 };
             };
 

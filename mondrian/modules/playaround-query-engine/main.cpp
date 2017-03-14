@@ -133,7 +133,7 @@ int main()
             current_duration += utils::profiling::measure<std::chrono::milliseconds>::execute(
                     [&PARTKEY, &materializer, &vector_size]() {
                         auto table_scan = PARTKEY.table_scan(&materializer,
-                                                             predicates::less_than::straightforward_impl(2000000),
+                                                             predicates::less_than::branch_hint_impl(2000000, false),
                                                              vector_size);
                         table_scan->start();
                         free (table_scan);

@@ -60,7 +60,7 @@ namespace mondrian
             inline virtual void consume(input_chunk_t *data) final
             {
                 auto iterator = data->get_iterator();
-                if (!iterator.is_empty()) {
+                if (__builtin_expect(!iterator.is_empty(), true)) {
                     on_consume(iterator.begin, iterator.end);
                 }
             }
