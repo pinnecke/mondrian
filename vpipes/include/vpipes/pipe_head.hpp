@@ -37,7 +37,11 @@ namespace mondrian
         protected:
             virtual void on_start() = 0;
 
-            inline virtual const input_tupletid_t *get_begin() final { return begin; }
+            inline virtual const input_tupletid_t *get_begin() final
+            {
+                __builtin_prefetch(begin, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_KEEP_IN_CACHES_NORMAL);
+                return begin;
+            }
 
             inline virtual const input_tupletid_t *get_end() final { return end; }
 

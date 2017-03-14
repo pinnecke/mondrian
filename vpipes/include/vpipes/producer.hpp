@@ -52,6 +52,7 @@ namespace mondrian
             inline void send()
             {
                 assert (next_operator != nullptr);
+                result->memory_prefetch_for_read();
                 next_operator->consume(result);
                 reset();
             }
@@ -87,6 +88,7 @@ namespace mondrian
             virtual inline void produce(output_tupletid_t *begin, output_tupletid_t *end,
                                         bool expect_output_chunk_is_full_afterwards) final
             {
+                result->memory_prefetch_for_write();
                 do {
                     typename output_chunk_t::state chunk_state;
                     begin = result->add(&chunk_state, begin, end);

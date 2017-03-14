@@ -52,6 +52,16 @@ namespace mondrian
                 cursor = 0;
             }
 
+            inline void memory_prefetch_for_read()
+            {
+                __builtin_prefetch(data, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
+            }
+
+            inline void memory_prefetch_for_write()
+            {
+                __builtin_prefetch(data + cursor, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
+            }
+
             inline state add(tupletid_t value)
             {
                 assert(cursor < max_size);

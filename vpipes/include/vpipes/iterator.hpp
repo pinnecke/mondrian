@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include "macros.hpp"
+
 namespace mondrian
 {
     namespace vpipes
@@ -28,7 +30,10 @@ namespace mondrian
             tupletid_t *begin;
             tupletid_t *end;
 
-            iterator(tupletid_t *begin, tupletid_t *end) : begin(begin), end(end) {}
+            iterator(tupletid_t *begin, tupletid_t *end) : begin(begin), end(end)
+            {
+                __builtin_prefetch(begin, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
+            }
 
             inline bool is_empty() { return begin == end; }
         };

@@ -17,7 +17,9 @@
 
 #include "chunk.hpp"
 #include "functional.hpp"
+#include "macros.hpp"
 #include <exception>
+
 
 namespace mondrian
 {
@@ -49,6 +51,8 @@ namespace mondrian
             inline virtual void lookup(input_t *out_values_begin, input_t *out_values_end,
                                 const input_tupletid_t *tid_begin, const input_tupletid_t *tid_end) final
             {
+                __builtin_prefetch(out_values_begin, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
+                __builtin_prefetch(tid_begin, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);
                 materialize_func(out_values_begin, out_values_end, tid_begin, tid_end);
             }
 
