@@ -85,32 +85,6 @@ namespace mondrian
                     free (value_buffer);
                 }
             };
-
-            template<class Type, class InputTupletIdType = size_t>
-            class simple_filter : public pipe<Type, Type, InputTupletIdType, InputTupletIdType>
-            {
-                using super = pipe<Type, Type, InputTupletIdType, InputTupletIdType>;
-            public:
-                using typename super::input_t;
-                using typename super::input_tupletid_t;
-                using typename super::consumer_t;
-                using predicate_t = std::function<bool(typename super::input_t *value)>;
-
-            private:
-                predicate_t predicate;
-            public:
-
-                simple_filter(consumer_t *consumer, unsigned chunk_size, predicate_t predicate) :
-                        super(consumer, chunk_size), predicate(predicate) { }
-
-                virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override
-                {
-                    for (auto it = begin; it != end; ++it) {
-                        if (predicate(&lookup(it)))
-                            super::produce(it);
-                    }
-                }
-            };
         }
     }
 }
