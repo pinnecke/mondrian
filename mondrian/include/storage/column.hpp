@@ -94,17 +94,17 @@ namespace mondrian
                                                   predicate_t predicate,
                                                   unsigned chunk_size)
             {
-                auto filter = new vpipes::toolkit::batched_pred_filter<value_t>(consumer,
-                                                                                [&] (value_t *out_begin, value_t *out_end,
-                                                                                         const size_t *begin, const size_t*end)
-                                                                                {
-                                                                                    assert (out_end - out_begin >= end - begin);
-                                                                                    size_t distance = (end - begin);
-                                                                                    for (size_t i = 0; i != distance; ++i) {
-                                                                                        out_begin[i] = data[begin[i]];
-                                                                                    }
-                                                                                },
-                                                                                predicate, chunk_size);
+                auto filter = new vpipes::toolkit::filter<value_t>(consumer,
+                                                                    [&] (value_t *out_begin, value_t *out_end,
+                                                                             const size_t *begin, const size_t*end)
+                                                                    {
+                                                                        assert (out_end - out_begin >= end - begin);
+                                                                        size_t distance = (end - begin);
+                                                                        for (size_t i = 0; i != distance; ++i) {
+                                                                            out_begin[i] = data[begin[i]];
+                                                                        }
+                                                                    },
+                                                                    predicate, chunk_size);
                 return new invoke_filter(filter, data, data + size, chunk_size);
             }
 

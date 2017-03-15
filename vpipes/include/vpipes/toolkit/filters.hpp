@@ -27,7 +27,7 @@ namespace mondrian
         namespace toolkit
         {
             template<class Input, class InputTupletIdType = size_t>
-            class batched_pred_filter : public pipe<Input, Input, InputTupletIdType, InputTupletIdType>
+            class filter : public pipe<Input, Input, InputTupletIdType, InputTupletIdType>
             {
                 using super = pipe<Input, Input, InputTupletIdType, InputTupletIdType>;
             public:
@@ -46,7 +46,7 @@ namespace mondrian
                 predicate_t predicate;
             public:
 
-                batched_pred_filter(consumer_t *consumer, materializer_t materializer, predicate_t predicate, unsigned chunk_size) :
+                filter(consumer_t *consumer, materializer_t materializer, predicate_t predicate, unsigned chunk_size) :
                         super(consumer, materializer, chunk_size), predicate(predicate)
                 {
                     // Note here: The operator is unaware of the vector size of the input. The assignment
