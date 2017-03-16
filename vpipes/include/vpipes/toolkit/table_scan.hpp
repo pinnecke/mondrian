@@ -43,7 +43,7 @@ namespace mondrian
 
             private:
                 const interval_t *tuplet_ids_interval_begin, *tuplet_ids_interval_end;
-                filter_t *filter;
+                filter_t *filter_operator;
                 materializer_t materialize_func;
 
             public:
@@ -55,13 +55,13 @@ namespace mondrian
                 {
                     assert (tuplet_ids_interval_begin != nullptr && tuplet_ids_interval_end != nullptr);
                     assert (tuplet_ids_interval_begin < tuplet_ids_interval_end);
-                    filter = new filter_t(consumer, materialize_func, predicate, chunk_size);
-                    super::set_consumer(filter);
+                    filter_operator = new filter_t(consumer, materialize_func, predicate, chunk_size);
+                    super::set_consumer(filter_operator);
                 }
 
                 virtual void on_start() override
                 {
-                    assert (filter != nullptr);
+                    assert (filter_operator != nullptr);
                     debug_create_variable(size_t, last_upperbound, 0);
 
                     for (auto interval = tuplet_ids_interval_begin; interval != tuplet_ids_interval_end; ++interval) {
@@ -77,9 +77,9 @@ namespace mondrian
 
                 virtual void on_cleanup() override
                 {
-                    assert (filter != nullptr);
-                    delete filter;
-                    filter = nullptr;
+                    assert (filter_operator != nullptr);
+                    delete filter_operator;
+                    filter_operator = nullptr;
                 }
             };
         }
