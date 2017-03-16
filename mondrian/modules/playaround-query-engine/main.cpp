@@ -78,8 +78,14 @@ std::vector<Type> read_from_file(std::string file_name)
 
 int main()
 {
-    std::string path_partkey_data =  "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";;//"/Users/marcus/temp/dbsf10/LINEITEM.L_PARTKEY.data"; //// // "/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";
-    std::string path_orderkey_data = "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data";//"/Users/marcus/temp/dbsf10/LINEITEM.L_ORDERKEY.data"; //  //  //"/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data";
+    std::string path_partkey_data, path_orderkey_data;
+    if (true) {
+        path_partkey_data =  "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";
+        path_orderkey_data = "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data";
+    } else {
+        path_partkey_data =  "/Users/marcus/temp/dbsf10/LINEITEM.L_PARTKEY.data"; // "/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";
+        path_orderkey_data =  "/Users/marcus/temp/dbsf10/LINEITEM.L_ORDERKEY.data"; //"/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data";
+    }
 
     get_column_file_path(&path_partkey_data, "L_PARTKEY");
     get_column_file_path(&path_orderkey_data, "L_ORDERKEY");
@@ -119,12 +125,13 @@ int main()
 
     double last_duration = 2e6;
     size_t last_chunk_size = 0;
+    size_t result_set_size = 0;
 
     for (size_t vector_size = 10; vector_size < num_elements; vector_size += 5)
     {
         long current_duration = 0;
         size_t num_samples = 10;
-        size_t result_set_size = 0;
+        result_set_size = 0;
 
         for (size_t i = 0; i < num_samples; i++) {
             vpipes::toolkit::materialize<uint32_t> materializer(result_buffer, &result_set_size,
@@ -143,9 +150,13 @@ int main()
            //     cout << "pos: " << i << ", value: " << result_buffer[i] << endl;
         }
 
-        double current_duration_d = current_duration/float(num_samples);
+        if (result_set_size != 59986043)
+            cerr << "WARNING: Result set size is unexcepted!" << endl;
+
+        double current_duration_d = current_duration/double(num_samples);
         cout << "avg duration: " << current_duration_d << "ms @ chunk size: " << vector_size
-             << ", best so far: " << last_duration << "ms @ chunk size: " << last_chunk_size << endl;
+             << ", best so far: " << last_duration << "ms @ chunk size: " << last_chunk_size << ";"
+             << result_set_size << endl;
 
 
         if (last_duration + 3 < current_duration_d) {

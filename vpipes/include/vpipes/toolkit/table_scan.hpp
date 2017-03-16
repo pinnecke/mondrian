@@ -64,14 +64,16 @@ namespace mondrian
                     assert (filter_operator != nullptr);
                     debug_create_variable(size_t, last_upperbound, 0);
 
-                    for (auto interval = tuplet_ids_interval_begin; interval != tuplet_ids_interval_end; ++interval) {
+                    auto interval = tuplet_ids_interval_begin;
+                    auto count = (tuplet_ids_interval_end - tuplet_ids_interval_begin);
+                    while (count--) {
                         debug_exec(
-                                assert (interval->get_type() == interval_t::bounds_policy::right_open);
-                                assert (interval->get_lower_bound() >= last_upperbound);
-                                last_upperbound = interval->get_upper_bound();
+                            assert (interval->get_type() == interval_t::bounds_policy::right_open);
+                            assert (interval->get_lower_bound() >= last_upperbound);
+                            last_upperbound = interval->get_upper_bound();
                         );
-
                         super::produce_tupletid_range(interval->get_lower_bound(), interval->get_upper_bound());
+                        ++interval;
                     }
                 }
 

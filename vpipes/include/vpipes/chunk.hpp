@@ -77,11 +77,11 @@ namespace mondrian
             {
                 assert (cursor + 1 <= max_size);
                 auto append_max_len = std::min(max_size - cursor, size_t(end - begin));
-                for (auto it = begin; it != begin + append_max_len; ++it) {
-                    data[cursor++] = *it;
-                }
-                *out = (cursor == max_size ? state::full : state::non_full);
-                return begin + append_max_len;
+                auto retval = begin + append_max_len;
+                while (append_max_len--)
+                    *(data + cursor++) = *begin++;
+                *out = (cursor >= max_size ? state::full : state::non_full);
+                return retval;
             }
 
             inline iterator <value_t> get_iterator()
