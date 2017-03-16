@@ -135,7 +135,7 @@ int main()
 
         for (size_t i = 0; i < num_samples; i++) {
             vpipes::toolkit::materialize<uint32_t> materializer(result_buffer, &result_set_size,
-                                                                std::move(materialize_from_orderkey), vector_size);
+                                                                materialize_from_orderkey, vector_size);
             using predicates = vpipes::functional::batched_predicates<uint32_t>;
             current_duration += utils::profiling::measure<std::chrono::nanoseconds>::execute(
                     [&PARTKEY, &materializer, &vector_size]() {
