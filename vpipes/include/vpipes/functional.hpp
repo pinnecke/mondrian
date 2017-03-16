@@ -15,8 +15,7 @@
 
 #pragma once
 
-#include <functional>
-#include <cassert>
+#include <vpipes.hpp>
 
 #define ASSERT_VALID_BATCHED_PREDICATE_ARGS()                           \
 {                                                                       \

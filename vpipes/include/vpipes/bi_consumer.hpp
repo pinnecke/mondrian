@@ -15,9 +15,7 @@
 
 #pragma once
 
-#include <functional>
-#include "consumer.hpp"
-#include "chunk.hpp"
+#include <vpipes.hpp>
 
 using namespace std;
 

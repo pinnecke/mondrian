@@ -15,8 +15,7 @@
 
 #pragma once
 
-#include <functional>
-#include "../pipe.hpp"
+#include <vpipes.hpp>
 
 using namespace std;
 

@@ -15,9 +15,7 @@
 
 #pragma once
 
-#include "producer.hpp"
-#include "bi_consumer.hpp"
-#include "consumer.hpp"
+#include <vpipes.hpp>
 
 namespace mondrian
 {

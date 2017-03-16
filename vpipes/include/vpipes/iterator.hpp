@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "macros.hpp"
+#include <vpipes.hpp>
 
 namespace mondrian
 {

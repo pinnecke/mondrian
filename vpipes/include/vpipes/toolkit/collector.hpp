@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "../batch_pipe.hpp"
+#include <vpipes.hpp>
 
 using namespace std;
 

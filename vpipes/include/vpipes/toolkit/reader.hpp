@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "../pipe_head.hpp"
+#include <vpipes.hpp>
 
 namespace mondrian
 {

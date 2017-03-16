@@ -15,11 +15,7 @@
 
 #pragma once
 
-#include <cassert>
-#include <algorithm>
-#include <numeric>
-#include "iterator.hpp"
-#include "macros.hpp"
+#include <vpipes.hpp>
 
 namespace mondrian
 {

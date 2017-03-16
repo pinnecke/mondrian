@@ -15,11 +15,7 @@
 
 #pragma once
 
-#include "chunk.hpp"
-#include "functional.hpp"
-#include "macros.hpp"
-#include <exception>
-
+#include <vpipes.hpp>
 
 namespace mondrian
 {

@@ -15,8 +15,7 @@
 
 #pragma once
 
-#include <functional>
-#include "../bi_pipe.hpp"
+#include <vpipes.hpp>
 
 using namespace std;
 
