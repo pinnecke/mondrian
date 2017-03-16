@@ -127,15 +127,15 @@ int main()
     size_t last_chunk_size = 0;
     size_t result_set_size = 0;
 
-    for (size_t vector_size = 10; vector_size < num_elements; vector_size += 5)
+    for (size_t vector_size = 50; vector_size < num_elements; vector_size += 50)
     {
         long current_duration = 0;
-        size_t num_samples = 10;
+        size_t num_samples = 25;
         result_set_size = 0;
 
         for (size_t i = 0; i < num_samples; i++) {
             vpipes::toolkit::materialize<uint32_t> materializer(result_buffer, &result_set_size,
-                                                                materialize_from_orderkey, vector_size);
+                                                                std::move(materialize_from_orderkey), vector_size);
             using predicates = vpipes::functional::batched_predicates<uint32_t>;
             current_duration += utils::profiling::measure<std::chrono::nanoseconds>::execute(
                     [&PARTKEY, &materializer, &vector_size]() {

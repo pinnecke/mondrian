@@ -37,7 +37,7 @@ namespace mondrian
             materializer_t materialize_func;
 
         public:
-            consumer(materializer_t materialize_func): materialize_func(materialize_func) { }
+            consumer(materializer_t&& materialize_func): materialize_func(materialize_func) { }
 
         protected:
             virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) { };

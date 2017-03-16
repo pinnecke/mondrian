@@ -40,8 +40,8 @@ namespace mondrian
                 unsigned expected_chunk_size;
 
             public:
-                materialize(Input *destination, size_t *result_set_size, materializer_t materialize_func, unsigned expected_chunk_size) :
-                        super(materialize_func), destination(destination), i(0), result_set_size(result_set_size),
+                materialize(Input *destination, size_t *result_set_size, materializer_t&& materialize_func, unsigned expected_chunk_size) :
+                        super(std::move(materialize_func)), destination(destination), i(0), result_set_size(result_set_size),
                         expected_chunk_size(expected_chunk_size)
                 {
                     assert (expected_chunk_size > 0);
