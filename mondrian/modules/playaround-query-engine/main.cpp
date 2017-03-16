@@ -123,7 +123,7 @@ int main()
     for (size_t vector_size = 100; vector_size < num_elements; vector_size += 50)
     {
         long current_duration = 0;
-        size_t num_samples = 3;
+        size_t num_samples = 10;
         size_t result_set_size = 0;
 
         for (size_t i = 0; i < num_samples; i++) {

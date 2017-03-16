@@ -68,7 +68,7 @@ namespace mondrian
                         debug_exec(
                                 assert (interval->get_type() == interval_t::bounds_policy::right_open);
                                 assert (interval->get_lower_bound() >= last_upperbound);
-                                last_upperbound = interval->get_upper_bound()
+                                last_upperbound = interval->get_upper_bound();
                         );
 
                         super::produce_tupletid_range(interval->get_lower_bound(), interval->get_upper_bound());

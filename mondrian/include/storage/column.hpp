@@ -7,6 +7,7 @@
 #include <cstring>
 #include <memory>
 #include <vpipes.hpp>
+#include "utils/gather.hpp"
 
 using namespace mondrian::vpipes;
 
@@ -82,10 +83,8 @@ namespace mondrian
                                                              const size_t *begin, const size_t*end)
                                                         {
                                                             assert (out_end - out_begin >= end - begin);
-                                                            size_t distance = (end - begin);
-                                                            for (size_t i = 0; i != distance; ++i) {
-                                                                out_begin[i] = data[begin[i]];
-                                                            }
+                                                            GATHER(out_begin, data, begin, (end - begin));
+
                                                         }, chunk_size);
             }
         };
