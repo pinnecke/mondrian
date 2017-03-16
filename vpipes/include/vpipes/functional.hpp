@@ -68,6 +68,32 @@ struct name                                                                     
     }                                                                                                           \
 };
 
+#define DEFINE_MICRO_OPTIMIZED_PREDICATE(name, opp)                                                             \
+struct name                                                                                                     \
+{                                                                                                               \
+    value_t compare_value;                                                                                      \
+    bool hint_expected_true;                                                                                    \
+                                                                                                                \
+    explicit name(value_t compare_value, bool hint_expected_true): compare_value(compare_value),                \
+                                                                    hint_expected_true(hint_expected_true) { }  \
+                                                                                                                \
+    inline void operator()(tupletid_t *result_buffer, size_t *result_size,                                      \
+                    const tupletid_t *tupletids_begin, const tupletid_t *tupletids_end,                         \
+                    const value_t *values_begin, const value_t *values_end) __attribute__((always_inline))      \
+    {                                                                                                           \
+        ASSERT_VALID_BATCHED_PREDICATE_ARGS();                                                                  \
+        size_t count =  (values_end - values_begin);                                                            \
+        tupletid_t *result_ptr = result_buffer;                                                                 \
+        const value_t *value_it = values_begin;                                                                 \
+        while (count--) {                                                                                       \
+           if (__builtin_expect((*(value_it++) opp compare_value), hint_expected_true)) {                       \
+               *(result_ptr++) = tupletids_begin[POINTER_DISTANCE(values_begin, (value_it - 1))];               \
+           }                                                                                                    \
+        }                                                                                                       \
+        *result_size = (result_ptr - result_buffer);                                                            \
+    }                                                                                                           \
+};
+
 namespace mondrian
 {
     namespace vpipes
@@ -96,36 +122,42 @@ namespace mondrian
                 {
                     DEFINE_STD_BINARY_PREDICATE(straightforward_impl, <);
                     DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, <);
+                    DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, <);
                 };
 
                 struct less_equal
                 {
                     DEFINE_STD_BINARY_PREDICATE(straightforward_impl, <=);
                     DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, <=);
+                    DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, <=);
                 };
 
                 struct equal_to
                 {
                     DEFINE_STD_BINARY_PREDICATE(straightforward_impl, ==);
                     DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, ==);
+                    DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, ==);
                 };
 
                 struct unequal_to
                 {
                     DEFINE_STD_BINARY_PREDICATE(straightforward_impl, !=);
                     DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, !=);
+                    DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, !=);
                 };
 
                 struct greater_equal
                 {
                     DEFINE_STD_BINARY_PREDICATE(straightforward_impl, >=);
                     DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, >=);
+                    DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, >=);
                 };
 
                 struct greater_than
                 {
                     DEFINE_STD_BINARY_PREDICATE(straightforward_impl, >);
                     DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, >);
+                    DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, >);
                 };
             };
 

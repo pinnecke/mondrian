@@ -78,8 +78,8 @@ std::vector<Type> read_from_file(std::string file_name)
 
 int main()
 {
-    std::string path_partkey_data = "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";// "/Users/marcus/temp/dbsf10/LINEITEM.L_PARTKEY.data"; // "/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";
-    std::string path_orderkey_data = "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data"; //"/Users/marcus/temp/dbsf10/LINEITEM.L_ORDERKEY.data";  //"/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data";
+    std::string path_partkey_data =  "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";;//"/Users/marcus/temp/dbsf10/LINEITEM.L_PARTKEY.data"; //// // "/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";
+    std::string path_orderkey_data = "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data";//"/Users/marcus/temp/dbsf10/LINEITEM.L_ORDERKEY.data"; //  //  //"/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data";
 
     get_column_file_path(&path_partkey_data, "L_PARTKEY");
     get_column_file_path(&path_orderkey_data, "L_ORDERKEY");
@@ -133,7 +133,7 @@ int main()
             current_duration += utils::profiling::measure<std::chrono::milliseconds>::execute(
                     [&PARTKEY, &materializer, &vector_size]() {
                         auto table_scan = PARTKEY.table_scan(&materializer,
-                                                             predicates::less_than::branch_hint_impl(2000000, false),
+                                                             predicates::less_than::micro_optimized_impl(2000000, true),
                                                              vector_size);
                         table_scan->start();
                         free (table_scan);
