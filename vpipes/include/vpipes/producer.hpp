@@ -34,7 +34,12 @@ namespace mondrian
             consumer_t *next_operator;
             output_chunk_t *result = nullptr;
             size_t size;
+
         protected:
+            void set_consumer(consumer_t *next_operator)
+            {
+                this->next_operator = next_operator;
+            }
 
             void reset() {
                 result->reset();

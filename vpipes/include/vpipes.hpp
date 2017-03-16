@@ -5,6 +5,7 @@
 #include "vpipes/toolkit/materialize.hpp"
 #include "vpipes/toolkit/printer.hpp"
 #include "vpipes/toolkit/reader.hpp"
+#include "vpipes/toolkit/table_scan.hpp"
 #include "vpipes/toolkit/test_bi_pipe.hpp"
 #include "vpipes/batch_pipe.hpp"
 #include "vpipes/bi_consumer.hpp"

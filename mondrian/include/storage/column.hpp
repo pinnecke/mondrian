@@ -8,6 +8,8 @@
 #include <memory>
 #include <vpipes.hpp>
 
+using namespace mondrian::vpipes;
+
 namespace mondrian
 {
     namespace storage
@@ -18,30 +20,12 @@ namespace mondrian
         public:
             using value_t = ValueType;
             using tupletid_t = size_t;
-            using predicate_t = typename vpipes::functional::batched_predicates<value_t>::func_t;
+            using table_scan_t = toolkit::table_scan<ValueType>;
+            using predicate_t = typename table_scan_t::predicate_t;
 
         private:
             value_t *data;
             size_t capacity, size;
-
-            class invoke_filter : public vpipes::producer<value_t>
-            {
-                using super = vpipes::producer<value_t>;
-                using typename super::consumer_t;
-
-                const value_t *begin, *end;
-            public:
-                invoke_filter(consumer_t *consumer, const value_t *begin, const value_t *end, unsigned int chunk_size) :
-                        super(consumer, chunk_size), begin(begin), end(end) {
-                    assert (begin != nullptr && end != nullptr);
-                    assert (begin <= end);
-                }
-
-                virtual void on_start() override
-                {
-                    super::produce_tupletid_range(0, (end - begin));
-                }
-            };
 
         public:
             column(const value_t *begin, const value_t *end): capacity(end - begin), size(0)
@@ -90,26 +74,19 @@ namespace mondrian
                 return false;
             }
 
-            vpipes::producer<value_t> *table_scan(vpipes::consumer<value_t> *consumer,
-                                                  predicate_t predicate,
-                                                  unsigned chunk_size)
+            producer<value_t> *table_scan(consumer<value_t> *consumer, predicate_t predicate, unsigned chunk_size)
             {
-                auto filter = new vpipes::toolkit::filter<value_t>(consumer,
-                                                                    [&] (value_t *out_begin, value_t *out_end,
-                                                                             const size_t *begin, const size_t*end)
-                                                                    {
-                                                                        assert (out_end - out_begin >= end - begin);
-                                                                        size_t distance = (end - begin);
-                                                                        for (size_t i = 0; i != distance; ++i) {
-                                                                            out_begin[i] = data[begin[i]];
-                                                                        }
-                                                                    },
-                                                                    predicate, chunk_size);
-                return new invoke_filter(filter, data, data + size, chunk_size);
+                return new toolkit::table_scan<value_t>(consumer, data, data + size, predicate,
+                                                        [&] (value_t *out_begin, value_t *out_end,
+                                                             const size_t *begin, const size_t*end)
+                                                        {
+                                                            assert (out_end - out_begin >= end - begin);
+                                                            size_t distance = (end - begin);
+                                                            for (size_t i = 0; i != distance; ++i) {
+                                                                out_begin[i] = data[begin[i]];
+                                                            }
+                                                        }, chunk_size);
             }
-
-        private:
-
         };
     }
 }

@@ -78,8 +78,8 @@ std::vector<Type> read_from_file(std::string file_name)
 
 int main()
 {
-    std::string path_partkey_data = "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data"; // "/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";
-    std::string path_orderkey_data = "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data"; //"/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data";
+    std::string path_partkey_data = "/Users/marcus/temp/dbsf10/LINEITEM.L_PARTKEY.data"; //"/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data"; // "/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";
+    std::string path_orderkey_data = "/Users/marcus/temp/dbsf10/LINEITEM.L_ORDERKEY.data"; //"/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data"; //"/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data";
 
     get_column_file_path(&path_partkey_data, "L_PARTKEY");
     get_column_file_path(&path_orderkey_data, "L_ORDERKEY");
@@ -123,7 +123,7 @@ int main()
     for (size_t vector_size = 100; vector_size < num_elements; vector_size += 50)
     {
         long current_duration = 0;
-        size_t num_samples = 100;
+        size_t num_samples = 3;
         size_t result_set_size = 0;
 
         for (size_t i = 0; i < num_samples; i++) {
