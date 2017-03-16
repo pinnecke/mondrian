@@ -76,7 +76,8 @@ namespace mondrian
 
             producer<value_t> *table_scan(consumer<value_t> *consumer, predicate_t predicate, unsigned chunk_size)
             {
-                return new toolkit::table_scan<value_t>(consumer, data, data + size, predicate,
+                interval<size_t> all_tuplet_ids(0, size);
+                return new toolkit::table_scan<value_t>(consumer, &all_tuplet_ids, &all_tuplet_ids + 1, predicate,
                                                         [&] (value_t *out_begin, value_t *out_end,
                                                              const size_t *begin, const size_t*end)
                                                         {

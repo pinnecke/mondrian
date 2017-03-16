@@ -17,8 +17,7 @@
 
 #pragma once
 
-#include <functional>
-#include "../pipe.hpp"
+#include <vpipes.hpp>
 
 using namespace std;
 
@@ -40,19 +39,22 @@ namespace mondrian
                 using filter_t = filter<input_t>;
                 using predicate_t = typename filter_t::predicate_t;
                 using materializer_t = typename functional::batched_materializes<input_t, input_tupletid_t>::func_t;
+                using interval_t = interval<InputTupletIdType>;
 
             private:
-                const input_t *begin, *end;
+                const interval_t *tuplet_ids_interval_begin, *tuplet_ids_interval_end;
                 filter_t *filter;
                 materializer_t materialize_func;
 
             public:
-                table_scan(consumer_t *consumer, const input_t *begin, const input_t *end,
-                           predicate_t predicate, materializer_t materializer, unsigned int chunk_size) :
-                        super(nullptr, chunk_size), begin(begin), end(end), materialize_func(materializer)
+                table_scan(consumer_t *consumer, const interval_t *tuplet_ids_interval_begin,
+                           const interval_t *tuplet_ids_interval_end, predicate_t predicate,
+                           materializer_t materializer, unsigned int chunk_size) :
+                        super(nullptr, chunk_size), tuplet_ids_interval_begin(tuplet_ids_interval_begin),
+                        tuplet_ids_interval_end(tuplet_ids_interval_end), materialize_func(materializer)
                 {
-                    assert (begin != nullptr && end != nullptr);
-                    assert (begin <= end);
+                    assert (tuplet_ids_interval_begin != nullptr && tuplet_ids_interval_end != nullptr);
+                    assert (tuplet_ids_interval_begin < tuplet_ids_interval_end);
                     filter = new filter_t(consumer, materialize_func, predicate, chunk_size);
                     super::set_consumer(filter);
                 }
@@ -60,13 +62,17 @@ namespace mondrian
                 virtual void on_start() override
                 {
                     assert (filter != nullptr);
-                    super::produce_tupletid_range(0, (end - begin));
-                }
+                    debug_create_variable(size_t, last_upperbound, 0);
 
-                vortial void on_close() override
-                {
-                    assert (filter != nullptr);
-                    filter->close();
+                    for (auto interval = tuplet_ids_interval_begin; interval != tuplet_ids_interval_end; ++interval) {
+                        debug_exec(
+                                assert (interval->get_type() == interval_t::bounds_policy::right_open);
+                                assert (interval->get_lower_bound() >= last_upperbound);
+                                last_upperbound = interval->get_upper_bound()
+                        );
+
+                        super::produce_tupletid_range(interval->get_lower_bound(), interval->get_upper_bound());
+                    }
                 }
 
                 virtual void on_cleanup() override

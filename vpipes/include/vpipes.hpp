@@ -1,4 +1,4 @@
-#pragma once
+#include <functional>
 
 #include "vpipes/toolkit/collector.hpp"
 #include "vpipes/toolkit/filters.hpp"
@@ -14,3 +14,5 @@
 #include "vpipes/consumer.hpp"
 #include "vpipes/producer.hpp"
 #include "vpipes/chunk.hpp"
+#include "vpipes/macros.hpp"
+#include "vpipes/interval.hpp"
