@@ -79,7 +79,7 @@ std::vector<Type> read_from_file(std::string file_name)
 int main()
 {
     std::string path_partkey_data, path_orderkey_data;
-    if (true) {
+    if (false) {
         path_partkey_data =  "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";
         path_orderkey_data = "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data";
     } else {
@@ -112,15 +112,15 @@ int main()
             (uint32_t *out_begin, uint32_t *out_end, const size_t *begin, const size_t*end)
     {
         assert (out_end - out_begin >= end - begin);
+        uint32_t *data = column_data_orderkey.data();
         size_t distance = (end - begin);
-        for (size_t i = 0; i != distance; ++i) {
-            uint32_t *data = column_data_orderkey.data();
-            out_begin[i] = data[begin[i]];  /* accessing the ORDERKEY column via raw data is a workaround since the
-                                                 * column data structure does not support this opperation currently.
-                                                 * Blame me for that, but it will be part of the vpipes query pipeline.
-                                                 * Therefore, materialization will come in the later stages of the
-                                                 * framework ;) */
-        }
+
+        /* accessing the ORDERKEY column via raw data is a workaround since the
+         * column data structure does not support this opperation currently.
+         * Blame me for that, but it will be part of the vpipes query pipeline.
+         * Therefore, materialization will come in the later stages of the
+         * framework ;) */
+        GATHER(out_begin, data, begin, (end - begin));
     };
 
     double last_duration = 2e6;
