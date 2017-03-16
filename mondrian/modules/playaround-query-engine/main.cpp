@@ -137,7 +137,7 @@ int main()
             vpipes::toolkit::materialize<uint32_t> materializer(result_buffer, &result_set_size,
                                                                 materialize_from_orderkey, vector_size);
             using predicates = vpipes::functional::batched_predicates<uint32_t>;
-            current_duration += utils::profiling::measure<std::chrono::milliseconds>::execute(
+            current_duration += utils::profiling::measure<std::chrono::nanoseconds>::execute(
                     [&PARTKEY, &materializer, &vector_size]() {
                         auto table_scan = PARTKEY.table_scan(&materializer,
                                                              predicates::less_than::micro_optimized_impl(2000000, true),
@@ -153,7 +153,7 @@ int main()
         if (result_set_size != 59986043)
             cerr << "WARNING: Result set size is unexcepted!" << endl;
 
-        double current_duration_d = current_duration/double(num_samples);
+        double current_duration_d = current_duration/double(num_samples)/1000000.0f;
         cout << "avg duration: " << current_duration_d << "ms @ chunk size: " << vector_size
              << ", best so far: " << last_duration << "ms @ chunk size: " << last_chunk_size << ";"
              << result_set_size << endl;
