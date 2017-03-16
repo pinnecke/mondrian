@@ -49,13 +49,13 @@ namespace mondrian
             public:
                 table_scan(consumer_t *consumer, const interval_t *tuplet_ids_interval_begin,
                            const interval_t *tuplet_ids_interval_end, predicate_t predicate,
-                           materializer_t&& materializer, unsigned int chunk_size) :
+                           materializer_t materializer, unsigned int chunk_size) :
                         super(nullptr, chunk_size), tuplet_ids_interval_begin(tuplet_ids_interval_begin),
                         tuplet_ids_interval_end(tuplet_ids_interval_end), materialize_func(materializer)
                 {
                     assert (tuplet_ids_interval_begin != nullptr && tuplet_ids_interval_end != nullptr);
                     assert (tuplet_ids_interval_begin < tuplet_ids_interval_end);
-                    filter_operator = new filter_t(consumer, std::move(materialize_func), std::move(predicate), chunk_size);
+                    filter_operator = new filter_t(consumer, materialize_func, predicate, chunk_size);
                     super::set_consumer(filter_operator);//TODO:XXX
                 }
 

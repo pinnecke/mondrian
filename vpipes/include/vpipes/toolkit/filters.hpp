@@ -45,8 +45,8 @@ namespace mondrian
                 predicate_t predicate;
             public:
 
-                filter(consumer_t *consumer, materializer_t&& materializer, predicate_t &&predicate, unsigned chunk_size) :
-                        super(consumer, std::move(materializer), chunk_size), predicate(predicate)
+                filter(consumer_t *consumer, materializer_t materializer, predicate_t predicate, unsigned chunk_size) :
+                        super(consumer, materializer, chunk_size), predicate(predicate)
                 {
                     // Note here: The operator is unaware of the vector size of the input. The assignment
                     // of the vector size of this operator as the vector size of the preceding operator

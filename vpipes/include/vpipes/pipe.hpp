@@ -43,8 +43,8 @@ namespace mondrian
             using input_super::lookup;
 
         public:
-            pipe(consumer_t *consumer, materializer_t&& materializer, unsigned chunk_size):
-                    input_super(std::move(materializer)), output_super(consumer, chunk_size) { }
+            pipe(consumer_t *consumer, materializer_t materializer, unsigned chunk_size):
+                    input_super(materializer), output_super(consumer, chunk_size) { }
 
             virtual void close() final
             {
