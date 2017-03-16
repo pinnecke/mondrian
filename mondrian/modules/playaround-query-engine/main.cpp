@@ -120,7 +120,7 @@ int main()
     double last_duration = 2e6;
     size_t last_chunk_size = 0;
 
-    for (size_t vector_size = 100; vector_size < num_elements; vector_size += 50)
+    for (size_t vector_size = 10; vector_size < num_elements; vector_size += 5)
     {
         long current_duration = 0;
         size_t num_samples = 10;
