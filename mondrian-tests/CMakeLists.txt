@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(
         "../pantheon/include"
 )
+include_directories("./vpipes_test")
 
 # Boost
 find_package(Boost 1.57.0 REQUIRED)
@@ -40,4 +41,8 @@ if(GTest_FOUND)
     add_executable(column_functions_dedup_nested_loop_test storage/column_functions_dedup_nested_loop_test.cpp)
     target_link_libraries(column_functions_dedup_nested_loop_test ${GTEST_BOTH_LIBRARIES})
     target_link_libraries(column_functions_dedup_nested_loop_test ${Boost_LIBRARIES})
+
+# uncomment those lines to enable tests for vpipe
+#  add_executable(VpipesTesting ./vpipes_test/tester_main.cpp )
+#  target_link_libraries(VpipesTesting ${GTEST_BOTH_LIBRARIES} pthread)
 endif()
