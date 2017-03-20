@@ -84,10 +84,28 @@ namespace mondrian
                 }
             }
 
+            bool has_index = false;
+
+            static int comp(const void *lhs, const void *rhs) {
+                return *(value_t *) lhs - *(value_t *) rhs;
+            }
+
+            void create_index() {
+                has_index = true;
+                std::qsort(data, size, sizeof(value_t), comp);
+            }
+
             inline virtual producer<value_t> *table_scan(consumer<value_t> *consumer, predicate_t predicate,
                                                          unsigned scan_chunk_size, unsigned filter_chunk_size) final __attribute__((always_inline))
             {
-                interval<size_t> all_tuplet_ids(0, size);
+                size_t start = 0, end = size;
+                if (has_index) {
+                    value_t key = 2000000;
+                    value_t *it = (value_t *) std::bsearch(&key, data, size, sizeof(value_t), comp);
+                    assert (it != nullptr && it < data);
+                    start = it - data;
+                }
+                interval<size_t> all_tuplet_ids(start, end);
                 return new toolkit::table_scan<value_t>(consumer, &all_tuplet_ids, &all_tuplet_ids + 1, predicate,
                                                         [&] (value_t *out, tupletid_t begin, tupletid_t end)
                                                         {
