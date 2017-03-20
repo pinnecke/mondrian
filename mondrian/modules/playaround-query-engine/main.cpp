@@ -128,10 +128,11 @@ int main()
     double last_duration = 2e6;
     size_t last_filter_chunk_size = 0, last_scan_chunk_size = 0;
     size_t result_set_size = 0;
-    const unsigned CHUNK_SIZE_UPPER_BOUND = 600 * 4;
+    const unsigned FILTER_CHUNK_SIZE_UPPER_BOUND = 600 * 4;
+    const unsigned SCAN_CHUNK_SIZE_UPPER_BOUND = 600 * 10;
 
-    for (unsigned filter_chunk_size = 10; filter_chunk_size < CHUNK_SIZE_UPPER_BOUND; filter_chunk_size += 90) {
-        for (unsigned scan_chunk_size = 10; scan_chunk_size < CHUNK_SIZE_UPPER_BOUND; scan_chunk_size += 90) {
+    for (unsigned filter_chunk_size = 10; filter_chunk_size < FILTER_CHUNK_SIZE_UPPER_BOUND; filter_chunk_size += 90) {
+        for (unsigned scan_chunk_size = 10; scan_chunk_size < SCAN_CHUNK_SIZE_UPPER_BOUND; scan_chunk_size += 90) {
             long current_duration = 0;
             size_t num_samples = 3;
             result_set_size = 0;
