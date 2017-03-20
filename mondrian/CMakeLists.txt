@@ -32,7 +32,7 @@ add_executable(
         mondrian ${SOURCE_FILES} main.cpp
 )
 
-#add_definitions( -DNDEBUG )
+add_definitions( -DNDEBUG )
 
 add_executable(
         play_vpipes ${SOURCE_FILES} modules/playaround-query-engine/main.cpp
