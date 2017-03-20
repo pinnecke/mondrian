@@ -31,30 +31,31 @@ namespace mondrian
             public:
                 using typename super::input_t;
                 using typename super::input_tupletid_t;
-                using typename super::materializer_t;
+                using typename super::input_chunk_t;
+                using materialize_t = typename functional::batched_materializes2<input_t, input_tupletid_t>::func_t;
 
             private:
-                size_t i;
+                size_t total_result_set_size;
                 input_t *destination;
                 size_t *result_set_size;
                 unsigned expected_chunk_size;
+                materialize_t materialize_func;
 
             public:
-                materialize(Input *destination, size_t *result_set_size, materializer_t materialize_func, unsigned expected_chunk_size) :
-                        super(materialize_func), destination(destination), i(0), result_set_size(result_set_size),
-                        expected_chunk_size(expected_chunk_size)
+                materialize(Input *destination, size_t *result_set_size, materialize_t materialize_func,
+                            unsigned expected_chunk_size) :
+                        destination(destination), total_result_set_size(0), result_set_size(result_set_size),
+                        materialize_func(materialize_func), expected_chunk_size(expected_chunk_size)
                 {
                     assert (expected_chunk_size > 0);
                 };
 
             protected:
-                inline virtual void on_consume(input_tupletid_t *begin,
-                                               input_tupletid_t *end) override final __attribute__((always_inline))
+                inline virtual void on_consume(const input_chunk_t *data) override final __attribute__((always_inline))
                 {
-                    size_t distance = (end - begin);
-                    super::lookup(destination + i, destination + i + distance, begin, end);
-                    i += distance;
-                    *result_set_size = i;
+                    materialize_func(destination, data->get_tupletids_begin(), data->get_size());
+                    total_result_set_size += data->get_size();
+                    *result_set_size = total_result_set_size;
                 }
             };
         }

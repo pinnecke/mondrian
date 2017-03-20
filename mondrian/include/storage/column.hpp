@@ -48,11 +48,11 @@ namespace mondrian
                 assert (data != nullptr);
             }
 
-            const value_t *materialize(tupletid_t tid)
+            /*const value_t *materialize(tupletid_t tid)
             {
                 assert(tid >= 0 && tid < size);
                 return data + tid;
-            }
+            }*/
 
             void append(const value_t *begin, const value_t *end)
             {
@@ -75,16 +75,23 @@ namespace mondrian
                 return false;
             }
 
+            void materialize(value_t *out, const tupletid_t *tupletids, size_t num_of_ids)
+            {
+                assert (out != nullptr && tupletids != nullptr);
+                while (num_of_ids--) {
+                    *out++ = data[*tupletids++];
+                }
+            }
+
             producer<value_t> *table_scan(consumer<value_t> *consumer, predicate_t predicate, unsigned chunk_size)
             {
                 interval<size_t> all_tuplet_ids(0, size);
                 return new toolkit::table_scan<value_t>(consumer, &all_tuplet_ids, &all_tuplet_ids + 1, predicate,
-                                                        [&] (value_t *out_begin, value_t *out_end,
-                                                             const size_t *begin, const size_t*end)
+                                                        [&] (value_t **out, const tupletid_t *tupletids, size_t num_elements)
                                                         {
-                                                            assert (out_end - out_begin >= end - begin);
-                                                            GATHER(out_begin, data, begin, (end - begin));
-
+                                                            assert (out != nullptr && tupletids != nullptr);
+                                                            //GATHER(out_begin, data, begin, (end - begin));
+                                                            POINTER_GATHER(out, data, tupletids, num_elements);
                                                         }, chunk_size);
             }
         };

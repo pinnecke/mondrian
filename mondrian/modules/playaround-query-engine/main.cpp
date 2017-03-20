@@ -79,12 +79,12 @@ std::vector<Type> read_from_file(std::string file_name)
 int main()
 {
     std::string path_partkey_data, path_orderkey_data;
-    if (true) {
+    if (false) {
         path_partkey_data =  "/home/sebastian/cogadb_databases/tpch_sf10_new/tables/LINEITEM/LINEITEM.L_PARTKEY.data"; //"/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";
         path_orderkey_data = "/home/sebastian/cogadb_databases/tpch_sf10_new/tables/LINEITEM/LINEITEM.L_ORDERKEY.data" ;//"/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data";
     } else {
         path_partkey_data =  "/Users/marcus/temp/dbsf10/LINEITEM.L_PARTKEY.data"; // "/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";
-        path_orderkey_data =  "/Users/marcus/temp/dbsf10/LINEITEM.L_ORDERKEY.data"; //"/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data";
+        path_orderkey_data = "/Users/marcus/temp/dbsf10/LINEITEM.L_ORDERKEY.data"; // "/Users/marcus/temp/databases/cogadb_reference_databases_v1/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data";
     }
 
     get_column_file_path(&path_partkey_data, "L_PARTKEY");
@@ -105,23 +105,25 @@ int main()
     assert (result_buffer != nullptr);
 
     column<uint32_t> PARTKEY(column_data_partkey.data(), column_data_partkey.data() + num_elements);
+    column<uint32_t> ORDERKEY(column_data_orderkey.data(), column_data_orderkey.data() + num_elements);
+
 
     column_data_partkey.clear();
 
-    vpipes::functional::batched_materializes<uint32_t>::func_t materialize_from_orderkey = [&column_data_orderkey]
-            (uint32_t *out_begin, uint32_t *out_end, const size_t *begin, const size_t*end)
-    {
-        assert (out_end - out_begin >= end - begin);
-        uint32_t *data = column_data_orderkey.data();
-        size_t distance = (end - begin);
-
-        /* accessing the ORDERKEY column via raw data is a workaround since the
-         * column data structure does not support this opperation currently.
-         * Blame me for that, but it will be part of the vpipes query pipeline.
-         * Therefore, materialization will come in the later stages of the
-         * framework ;) */
-        GATHER(out_begin, data, begin, (end - begin));
-    };
+//    vpipes::functional::batched_materializes<uint32_t>::func_t materialize_from_orderkey = [&column_data_orderkey]
+//            (uint32_t *out_begin, uint32_t *out_end, const size_t *begin, const size_t*end)
+//    {
+//        assert (out_end - out_begin >= end - begin);
+//        uint32_t *data = column_data_orderkey.data();
+//        size_t distance = (end - begin);
+//
+//        /* accessing the ORDERKEY column via raw data is a workaround since the
+//         * column data structure does not support this opperation currently.
+//         * Blame me for that, but it will be part of the vpipes query pipeline.
+//         * Therefore, materialization will come in the later stages of the
+//         * framework ;) */
+//        POINTER_GATHER(out_begin, data, begin, (end - begin));
+//    };
 
     double last_duration = 2e6;
     size_t last_chunk_size = 0;
@@ -130,17 +132,18 @@ int main()
     for (size_t vector_size = 10; vector_size < num_elements; vector_size += 10)
     {
         long current_duration = 0;
-        size_t num_samples = 25;
+        size_t num_samples = 3;
         result_set_size = 0;
 
         for (size_t i = 0; i < num_samples; i++) {
             vpipes::toolkit::materialize<uint32_t> materializer(result_buffer, &result_set_size,
-                                                                materialize_from_orderkey, vector_size);
+                                                                [&ORDERKEY] (auto out, auto tupletids, auto num_of_ids) {
+                                                                    return ORDERKEY.materialize(out, tupletids, num_of_ids);
+                                                                }, vector_size);
             using predicates = vpipes::functional::batched_predicates<uint32_t>;
             current_duration += utils::profiling::measure<std::chrono::nanoseconds>::execute(
                     [&PARTKEY, &materializer, &vector_size]() {
-                        auto table_scan = PARTKEY.table_scan(&materializer,
-                                                             predicates::less_than::micro_optimized_impl(2000000, true),
+                        auto table_scan = PARTKEY.table_scan(&materializer, predicates::less_than::micro_optimized_impl(2000000, true),
                                                              vector_size);
                         table_scan->start();
                         free (table_scan);

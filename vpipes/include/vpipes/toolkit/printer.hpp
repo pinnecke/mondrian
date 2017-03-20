@@ -31,9 +31,6 @@ namespace mondrian
             public:
                 using typename super::input_t;
                 using typename super::input_tupletid_t;
-                using typename super::materializer_t;
-
-                printer(materializer_t materialize_func) : super(materialize_func) {};
 
                 inline virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override final
                 {

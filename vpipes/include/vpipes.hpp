@@ -9,8 +9,8 @@
 
 #include "vpipes/macros.hpp"
 #include "vpipes/iterator.hpp"
-#include "vpipes/chunk.hpp"
 #include "vpipes/functional.hpp"
+#include "vpipes/chunk.hpp"
 #include "vpipes/consumer.hpp"
 #include "vpipes/batch_pipe.hpp"
 #include "vpipes/bi_consumer.hpp"

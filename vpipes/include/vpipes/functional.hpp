@@ -27,6 +27,14 @@
     assert (tupletids_begin <= tupletids_end);                          \
 }
 
+#define ASSERT_VALID_BATCHED_PREDICATE_ARGS2()                          \
+{                                                                       \
+    assert (out_matching_indices != nullptr);                           \
+    assert (out_num_matching_indices != nullptr);                       \
+    assert (tupletids != nullptr);                                      \
+    assert (values != nullptr);                                         \
+}
+
 #define POINTER_DISTANCE(begin, end)                                    \
     (end - begin)
 
@@ -39,11 +47,11 @@ struct name                                                                     
                                                                                                                 \
     inline void operator()(tupletid_t *result_buffer, size_t *result_size,                                      \
                     const tupletid_t *tupletids_begin, const tupletid_t *tupletids_end,                         \
-                    const value_t *values_begin, const value_t *values_end) __attribute__((always_inline))      \
+                    value_t **values_begin, value_t **values_end) __attribute__((always_inline))                \
     {                                                                                                           \
         ASSERT_VALID_BATCHED_PREDICATE_ARGS();                                                                  \
         for (auto value_it = values_begin; value_it != values_end; ++value_it)                                  \
-            if (*value_it opp compare_value)                                                                    \
+            if (**value_it opp compare_value)                                                                   \
                 result_buffer[(*result_size)++] = tupletids_begin[POINTER_DISTANCE(values_begin, value_it)];    \
     }                                                                                                           \
 };
@@ -59,11 +67,11 @@ struct name                                                                     
                                                                                                                 \
     inline void operator()(tupletid_t *result_buffer, size_t *result_size,                                      \
                     const tupletid_t *tupletids_begin, const tupletid_t *tupletids_end,                         \
-                    const value_t *values_begin, const value_t *values_end) __attribute__((always_inline))      \
+                    value_t **values_begin, value_t **values_end) __attribute__((always_inline))                \
     {                                                                                                           \
         ASSERT_VALID_BATCHED_PREDICATE_ARGS();                                                                  \
         for (auto value_it = values_begin; value_it != values_end; ++value_it)                                  \
-            if (__builtin_expect((*value_it opp compare_value), hint_expected_true))                            \
+            if (__builtin_expect((**value_it opp compare_value), hint_expected_true))                           \
                 result_buffer[(*result_size)++] = tupletids_begin[POINTER_DISTANCE(values_begin, value_it)];    \
     }                                                                                                           \
 };
@@ -77,20 +85,22 @@ struct name                                                                     
     explicit name(value_t compare_value, bool hint_expected_true): compare_value(compare_value),                \
                                                                     hint_expected_true(hint_expected_true) { }  \
                                                                                                                 \
-    inline void operator()(tupletid_t *result_buffer, size_t *result_size,                                      \
-                    const tupletid_t *tupletids_begin, const tupletid_t *tupletids_end,                         \
-                    const value_t *values_begin, const value_t *values_end) __attribute__((always_inline))      \
+    inline void operator()(size_t *out_matching_indices, size_t *out_num_matching_indices,                      \
+                           const tupletid_t *tupletids, value_t *const *values,                                 \
+                           size_t num_elements) __attribute__((always_inline))                                  \
     {                                                                                                           \
-        ASSERT_VALID_BATCHED_PREDICATE_ARGS();                                                                  \
-        size_t count =  (values_end - values_begin);                                                            \
-        tupletid_t *result_ptr = result_buffer;                                                                 \
-        const value_t *value_it = values_begin;                                                                 \
-        while (count--) {                                                                                       \
-           if (__builtin_expect((*(value_it++) opp compare_value), hint_expected_true)) {                       \
-               *(result_ptr++) = tupletids_begin[POINTER_DISTANCE(values_begin, (value_it - 1))];               \
-           }                                                                                                    \
+        ASSERT_VALID_BATCHED_PREDICATE_ARGS2();                                                                 \
+        const size_t *out_matching_indices_start = out_matching_indices;                                        \
+        __builtin_prefetch(out_matching_indices, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);   \
+        __builtin_prefetch(out_num_matching_indices, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);   \
+        __builtin_prefetch(tupletids, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);               \
+        __builtin_prefetch(values, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);                  \
+        for (size_t idx = 0; idx != num_elements; ++idx) {                                                      \
+            if (__builtin_expect((*values[idx] opp compare_value), hint_expected_true)) {                       \
+                  *out_matching_indices++ = idx;                                                                \
+            }                                                                                                   \
         }                                                                                                       \
-        *result_size = (result_ptr - result_buffer);                                                            \
+        *out_num_matching_indices = (out_matching_indices - out_matching_indices_start);                        \
     }                                                                                                           \
 };
 
@@ -98,8 +108,8 @@ namespace mondrian
 {
     namespace vpipes
     {
-        namespace functional {
-
+        namespace functional
+        {
             template <class ValueType, class TupletIdType = size_t>
             struct batched_materializes
             {
@@ -109,14 +119,32 @@ namespace mondrian
                                                   const tupletid_t *begin, const tupletid_t *end)>;
             };
 
+            template <class ValueType, class TupletIdType = size_t>
+            struct batched_materializes2
+            {
+                using value_t = ValueType;
+                using tupletid_t = TupletIdType;
+                using func_t = std::function<void(value_t *out, const tupletid_t *tupletids, size_t num_of_ids)>;
+            };
+
+            template <class ValueType, class TupletIdType = size_t>
+            struct linker
+            {
+                using value_t = ValueType;
+                using tupletid_t = TupletIdType;
+                using func_t = std::function<void(value_t **out, const tupletid_t *tupletids, size_t num_elements)>;
+            };
+
             template<class ValueType, class TupletIdType = size_t>
             struct batched_predicates
             {
                 using value_t = ValueType;
                 using tupletid_t = TupletIdType;
-                using func_t = std::function<void(tupletid_t *result_buffer, size_t *result_size,
-                                                  const tupletid_t *tupletids_begin, const tupletid_t *tupletids_end,
-                                                  const value_t *values_begin, const value_t *values_end)>;
+                using func_t = std::function<void(size_t *out_matching_indices, size_t *out_num_matching_indices,
+                                                  const tupletid_t *tupletids, value_t * const *values, size_t num_elements)>;
+                                                  //tupletid_t *result_buffer, size_t *result_size,
+                                                  //const tupletid_t *tupletids_begin, const tupletid_t *tupletids_end,
+                                                  //value_t **values_begin, value_t **values_end)>;
 
                 struct less_than
                 {

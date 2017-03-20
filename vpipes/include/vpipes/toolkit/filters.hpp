@@ -32,56 +32,53 @@ namespace mondrian
             public:
                 using typename super::input_t;
                 using typename super::input_tupletid_t;
+                using typename super::output_t;
+                using typename super::output_tupletid_t;
                 using typename super::consumer_t;
-                using typename super::materializer_t;
+                using typename super::input_chunk_t;
                 using iterator_t = vpipes::iterator<input_tupletid_t *>;
                 using predicate_t = typename vpipes::functional::batched_predicates<input_t>::func_t;
 
             private:
-                input_tupletid_t *result_buffer;
-                input_t *value_buffer;
+                size_t *matching_indices_buffer;
                 size_t buffer_size;
 
                 predicate_t predicate;
             public:
 
-                filter(consumer_t *consumer, materializer_t materializer, predicate_t predicate, unsigned chunk_size) :
-                        super(consumer, materializer, chunk_size), predicate(predicate)
+                filter(consumer_t *consumer, predicate_t predicate, unsigned chunk_size) :
+                        super(consumer, chunk_size), predicate(predicate)
                 {
                     // Note here: The operator is unaware of the vector size of the input. The assignment
                     // of the vector size of this operator as the vector size of the preceding operator
                     // just a best guess and must be corrected afterwards if it was wrong
                     buffer_size = chunk_size;
-                    result_buffer = (input_tupletid_t *) malloc(buffer_size * sizeof(input_tupletid_t));
-                    value_buffer = (input_t *) malloc(buffer_size * sizeof(input_t));
-                    assert (result_buffer != nullptr);
-                    assert (value_buffer != nullptr);
+                    matching_indices_buffer = (size_t *) malloc(buffer_size * sizeof(size_t));
+                    assert (matching_indices_buffer != nullptr);
                 }
 
-                inline virtual void on_consume(input_tupletid_t *begin,
-                                               input_tupletid_t *end) override final __attribute__((always_inline))
+                inline virtual void on_consume(const input_chunk_t *data) override final __attribute__((always_inline))
                 {
-                    auto input_chunk_size = (end - begin);
+                    auto input_chunk_size = data->get_size();
 
                     if (__builtin_expect(input_chunk_size > buffer_size, false)) {
                         buffer_size = input_chunk_size;
-                        result_buffer = (input_tupletid_t *) realloc(result_buffer, input_chunk_size *
+                        matching_indices_buffer = (size_t *) realloc(matching_indices_buffer, input_chunk_size *
                                                                      sizeof(input_tupletid_t));
-                        value_buffer = (input_t *) realloc(value_buffer, input_chunk_size *
-                                                                     sizeof(input_t));
-                        assert (result_buffer != nullptr);
-                        assert (value_buffer != nullptr);
+                        assert (matching_indices_buffer != nullptr);
                     }
+
                     size_t result_size = 0;
-                    super::lookup(value_buffer, value_buffer + input_chunk_size, begin, end);
-                    predicate(result_buffer, &result_size, begin, end, value_buffer, value_buffer + input_chunk_size);
-                    super::produce(result_buffer, result_buffer + result_size, false);
+                    predicate(matching_indices_buffer, &result_size,
+                              data->get_tupletids_begin(), data->get_values_begin(), data->get_size());
+                    assert (result_size <= buffer_size);
+                    super::produce(data->get_tupletids_begin(), data->get_values_begin(), matching_indices_buffer,
+                                   result_size, false);
                 }
 
                 virtual void on_cleanup() override
                 {
-                    free (result_buffer);
-                    free (value_buffer);
+                    free (matching_indices_buffer);
                 }
             };
         }
