@@ -23,6 +23,7 @@
 #include "vpipes/toolkit/collector.hpp"
 #include "vpipes/toolkit/filters.hpp"
 #include "vpipes/toolkit/materialize.hpp"
+#include "vpipes/toolkit/no_operation.hpp"
 #include "vpipes/toolkit/printer.hpp"
 #include "vpipes/toolkit/reader.hpp"
 #include "vpipes/toolkit/table_scan.hpp"
