@@ -103,7 +103,11 @@ namespace mondrian
                     value_t key = 2000000;
                     value_t *it = (value_t *) std::bsearch(&key, data, size, sizeof(value_t), comp);
                     assert (it != nullptr && it < data);
-                    start = it - data;
+                    bool greater_than = false;
+                    if (greater_than)
+                        start = it - data;
+                    else
+                        end = it - data;
                 }
                 interval<size_t> all_tuplet_ids(start, end);
                 return new toolkit::table_scan<value_t>(consumer, &all_tuplet_ids, &all_tuplet_ids + 1, predicate,
