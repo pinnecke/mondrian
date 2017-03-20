@@ -108,8 +108,10 @@ int main()
     column<uint32_t> ORDERKEY(column_data_orderkey.data(), column_data_orderkey.data() + num_elements);
 
     cout << "Generate index on PARTKEY..." << std::flush;
-    PARTKEY.create_index();
-    cout << "DONE" << endl;
+    auto d = utils::profiling::measure<std::chrono::nanoseconds>::execute([&PARTKEY] () {
+        PARTKEY.create_index();
+    });
+    cout << "DONE (" << d / 1000000.0f << " ms)" << endl;
 
 
     column_data_partkey.clear();
