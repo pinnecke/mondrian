@@ -75,7 +75,8 @@ namespace mondrian
                 return false;
             }
 
-            void materialize(value_t *out, const tupletid_t *tupletids, size_t num_of_ids)
+            inline virtual void materialize(value_t *out, const tupletid_t *tupletids,
+                                            size_t num_of_ids) final __attribute__((always_inline))
             {
                 assert (out != nullptr && tupletids != nullptr);
                 while (num_of_ids--) {
@@ -83,15 +84,18 @@ namespace mondrian
                 }
             }
 
-            producer<value_t> *table_scan(consumer<value_t> *consumer, predicate_t predicate, unsigned chunk_size)
+            inline virtual producer<value_t> *table_scan(consumer<value_t> *consumer, predicate_t predicate,
+                                                         unsigned chunk_size) final __attribute__((always_inline))
             {
                 interval<size_t> all_tuplet_ids(0, size);
                 return new toolkit::table_scan<value_t>(consumer, &all_tuplet_ids, &all_tuplet_ids + 1, predicate,
-                                                        [&] (value_t **out, const tupletid_t *tupletids, size_t num_elements)
+                                                        [&] (value_t *out, tupletid_t begin, tupletid_t end)
                                                         {
-                                                            assert (out != nullptr && tupletids != nullptr);
+                                                            assert (out != nullptr);
+                                                            assert (begin < end);
                                                             //GATHER(out_begin, data, begin, (end - begin));
-                                                            POINTER_GATHER(out, data, tupletids, num_elements);
+                                                            //POINTER_GATHER(out, data, tupletids, num_elements);
+                                                            memcpy(out, data + begin, (end - begin) * sizeof(value_t));
                                                         }, chunk_size);
             }
         };

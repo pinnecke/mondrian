@@ -13,7 +13,7 @@ namespace mondrian
             __builtin_prefetch(idx, PREFETCH_RW_FOR_READ, 0);       \
             size_t count = num;                                     \
             while (count--) {                                       \
-                *(dest++) = (src + *(idx++));                       \
+                *(dest++) = *(src + *(idx++));                      \
             }                                                       \
         }
     }

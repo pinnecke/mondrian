@@ -38,20 +38,20 @@ namespace mondrian
                 using typename super::consumer_t;
                 using filter_t = filter<input_t>;
                 using predicate_t = typename filter_t::predicate_t;
-                using linker_t = typename functional::linker<input_t, input_tupletid_t>::func_t;
+                using block_copy_t = typename functional::block_copy<input_t, input_tupletid_t>::func_t;
                 using interval_t = interval<InputTupletIdType>;
 
             private:
                 const interval_t *tuplet_ids_interval_begin, *tuplet_ids_interval_end;
                 filter_t *filter_operator;
-                linker_t linker_func;
+                block_copy_t block_copy_func;
 
             public:
                 table_scan(consumer_t *consumer, const interval_t *tuplet_ids_interval_begin,
                            const interval_t *tuplet_ids_interval_end, predicate_t predicate,
-                           linker_t linker_func, unsigned int chunk_size) :
+                           block_copy_t block_copy_func, unsigned int chunk_size) :
                         super(nullptr, chunk_size), tuplet_ids_interval_begin(tuplet_ids_interval_begin),
-                        tuplet_ids_interval_end(tuplet_ids_interval_end), linker_func(linker_func)
+                        tuplet_ids_interval_end(tuplet_ids_interval_end), block_copy_func(block_copy_func)
                 {
                     assert (tuplet_ids_interval_begin != nullptr && tuplet_ids_interval_end != nullptr);
                     assert (tuplet_ids_interval_begin < tuplet_ids_interval_end);
@@ -72,7 +72,8 @@ namespace mondrian
                             assert (interval->get_lower_bound() >= last_upperbound);
                             last_upperbound = interval->get_upper_bound();
                         );
-                        super::produce_tupletid_range(interval->get_lower_bound(), interval->get_upper_bound(), linker_func);
+                        super::produce_tupletid_range(interval->get_lower_bound(), interval->get_upper_bound(),
+                                                      block_copy_func);
                         ++interval;
                     }
                 }

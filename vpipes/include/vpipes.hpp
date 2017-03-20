@@ -9,6 +9,7 @@
 
 #include "vpipes/macros.hpp"
 #include "vpipes/iterator.hpp"
+#include "vpipes/interval.hpp"
 #include "vpipes/functional.hpp"
 #include "vpipes/chunk.hpp"
 #include "vpipes/consumer.hpp"
@@ -19,7 +20,6 @@
 #include "vpipes/bi_pipe.hpp"
 #include "vpipes/pipe_head.hpp"
 
-#include "vpipes/interval.hpp"
 #include "vpipes/toolkit/collector.hpp"
 #include "vpipes/toolkit/filters.hpp"
 #include "vpipes/toolkit/materialize.hpp"

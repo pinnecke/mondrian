@@ -29,7 +29,7 @@ namespace mondrian
             using output_tupletid_t = OutputTupletIdType;
             using consumer_t = consumer<output_t, output_tupletid_t>;
             using output_chunk_t = chunk<output_t, output_tupletid_t>;
-            using linker_t = typename functional::linker<output_t, output_tupletid_t>::func_t;
+            using block_copy_t = typename functional::block_copy<output_t, output_tupletid_t>::func_t;
 
         private:
             consumer_t *next_operator;
@@ -77,14 +77,14 @@ namespace mondrian
             }*/
 
             inline virtual void produce_tupletid_range(output_tupletid_t start, output_tupletid_t end,
-                                                       linker_t linker_func) final __attribute__((always_inline))
+                                                       block_copy_t block_copy_func) final __attribute__((always_inline))
             {
                 assert (start <= end);
 
                 output_tupletid_t offset = start;
                 while (offset < end) {
                     size_t this_chunk_size = MIN(size, end - offset);
-                    result->iota(offset, this_chunk_size, linker_func);
+                    result->iota(offset, this_chunk_size, block_copy_func);
                     send();
                     offset += this_chunk_size;
                 }
@@ -92,7 +92,7 @@ namespace mondrian
 
         protected:
 
-            virtual inline void produce(const output_tupletid_t *tupletids, output_t * const *values,
+            virtual inline void produce(const output_tupletid_t *tupletids, const output_t * values,
                                         const size_t *indices, size_t num_indices,
                                         bool expect_output_chunk_is_full_afterwards) final __attribute__((always_inline))
             {

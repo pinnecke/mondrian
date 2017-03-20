@@ -27,11 +27,11 @@ namespace mondrian
         public:
             using value_t = ValueType;
             using tupletid_t = TupletIdType;
-            using linker_t = typename functional::linker<value_t, tupletid_t>::func_t;
+            using block_copy_t = typename functional::block_copy<value_t, tupletid_t>::func_t;
 
         private:
             tupletid_t * tupletids;
-            value_t **values;
+            value_t *values;
             size_t max_size, cursor;
 
         public:
@@ -43,7 +43,7 @@ namespace mondrian
             chunk(size_t num_of_elements) : max_size(num_of_elements), cursor(0)
             {
                 tupletids = (tupletid_t *) malloc(this->max_size * sizeof(tupletid_t));
-                values = (value_t **) malloc(this->max_size * sizeof(value_t*));
+                values = (value_t *) malloc(this->max_size * sizeof(value_t));
             }
 
             inline void reset()
@@ -71,17 +71,18 @@ namespace mondrian
                 return (cursor == max_size ? state::full : state::non_full);
             }*/
 
-            inline void iota(tupletid_t start, size_t num_of_values, linker_t linker_func) __attribute__((always_inline))
+            inline void iota(tupletid_t start, size_t num_of_values, block_copy_t block_copy_func) __attribute__((always_inline))
             {
                 assert (num_of_values <= max_size);
                 num_of_values = MIN(max_size, num_of_values);
                 auto offset = tupletids + cursor;
                 std::iota(offset, offset + num_of_values, start);
-                linker_func(values, offset, num_of_values);
+
+                block_copy_func(values, start, start + num_of_values);
                 cursor += num_of_values;
             }
 
-            inline size_t add(state *out, const tupletid_t *in_tuplet_ids, value_t *const *in_values,
+            inline size_t add(state *out, const tupletid_t *in_tuplet_ids, const value_t *in_values,
                                    const size_t *indices, size_t num_indices) __attribute__((always_inline))
             {
                 assert (cursor + 1 <= max_size);
@@ -131,12 +132,12 @@ namespace mondrian
                 free(values);
             }
 
-            value_t **get_values_begin() const
+            value_t *get_values_begin() const
             {
                 return values;
             }
 
-            value_t **get_values_end() const
+            value_t *get_values_end() const
             {
                 return values + cursor;
             }
