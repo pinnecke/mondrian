@@ -143,7 +143,7 @@ int main()
                 current_duration += utils::profiling::measure<std::chrono::nanoseconds>::execute(
                         [&PARTKEY, &nop, &scan_chunk_size, &filter_chunk_size]() {
                             auto table_scan = PARTKEY.table_scan(&nop,
-                                                                 predicates::less_than::micro_optimized_impl(
+                                                                 predicates::greater_than::micro_optimized_impl(
                                                                          2000000,
                                                                          true),
                                                                  scan_chunk_size, filter_chunk_size);
