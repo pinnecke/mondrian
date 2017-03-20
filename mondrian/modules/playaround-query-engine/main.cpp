@@ -79,7 +79,7 @@ std::vector<Type> read_from_file(std::string file_name)
 int main()
 {
     std::string path_partkey_data, path_orderkey_data;
-    if (false) {
+    if (true) {
         path_partkey_data =  "/home/sebastian/cogadb_databases/tpch_sf10_new/tables/LINEITEM/LINEITEM.L_PARTKEY.data"; //"/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";
         path_orderkey_data = "/home/sebastian/cogadb_databases/tpch_sf10_new/tables/LINEITEM/LINEITEM.L_ORDERKEY.data" ;//"/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data";
     } else {
