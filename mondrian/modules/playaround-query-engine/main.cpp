@@ -126,50 +126,67 @@ int main()
 //    };
 
     double last_duration = 2e6;
-    size_t last_chunk_size = 0;
+    size_t last_materialize_chunk_size = 0, last_filter_chunk_size = 0, last_scan_chunk_size = 0;
     size_t result_set_size = 0;
+    const unsigned CHUNK_SIZE_UPPER_BOUND = 600;
 
-    for (size_t vector_size = 10; vector_size < num_elements; vector_size += 10)
-    {
-        long current_duration = 0;
-        size_t num_samples = 3;
-        result_set_size = 0;
+    for (unsigned materialize_chunk_size = 10; materialize_chunk_size < CHUNK_SIZE_UPPER_BOUND; materialize_chunk_size += 90) {
+        for (unsigned filter_chunk_size = 10; filter_chunk_size < CHUNK_SIZE_UPPER_BOUND; filter_chunk_size += 90) {
+            for (unsigned scan_chunk_size = 10; scan_chunk_size < CHUNK_SIZE_UPPER_BOUND; scan_chunk_size += 90) {
+                long current_duration = 0;
+                size_t num_samples = 3;
+                result_set_size = 0;
 
-        for (size_t i = 0; i < num_samples; i++) {
-            vpipes::toolkit::materialize<uint32_t> materializer(result_buffer, &result_set_size,
-                                                                [&ORDERKEY] (auto out, auto tupletids, auto num_of_ids) {
-                                                                    return ORDERKEY.materialize(out, tupletids, num_of_ids);
-                                                                }, vector_size);
-            using predicates = vpipes::functional::batched_predicates<uint32_t>;
-            current_duration += utils::profiling::measure<std::chrono::nanoseconds>::execute(
-                    [&PARTKEY, &materializer, &vector_size]() {
-                        auto table_scan = PARTKEY.table_scan(&materializer, predicates::less_than::micro_optimized_impl(2000000, true),
-                                                             vector_size);
-                        table_scan->start();
-                        free (table_scan);
-                    });
+                for (size_t i = 0; i < num_samples; i++) {
+                    vpipes::toolkit::materialize<uint32_t> materializer(result_buffer, &result_set_size,
+                                                                        [&ORDERKEY](auto out, auto tupletids,
+                                                                                    auto num_of_ids) {
+                                                                            return ORDERKEY.materialize(out, tupletids,
+                                                                                                        num_of_ids);
+                                                                        }, materialize_chunk_size);
+                    using predicates = vpipes::functional::batched_predicates<uint32_t>;
+                    current_duration += utils::profiling::measure<std::chrono::nanoseconds>::execute(
+                            [&PARTKEY, &materializer, &scan_chunk_size, &filter_chunk_size]() {
+                                auto table_scan = PARTKEY.table_scan(&materializer,
+                                                                     predicates::less_than::micro_optimized_impl(
+                                                                             2000000,
+                                                                             true),
+                                                                     scan_chunk_size, filter_chunk_size);
+                                table_scan->start();
+                                free(table_scan);
+                            });
 
-           // for (size_t i = 0; i < result_set_size; i++)
-           //     cout << "pos: " << i << ", value: " << result_buffer[i] << endl;
+                }
+
+                if (result_set_size != 59986043)
+                    cerr << "WARNING: Result set size is unexcepted!" << endl;
+
+                double current_duration_d = current_duration/double(num_samples)/1000000.0f;
+                cout << "avg duration: " << current_duration_d
+                     << "ms @ m-chunk size: " << materialize_chunk_size
+                     << "/ f-chunk size: " << filter_chunk_size
+                     << "/ s-chunk size: " << scan_chunk_size
+                     << ", best so far: " << last_duration
+                     << "ms @ m-chunk size: " << last_materialize_chunk_size
+                     << "/ f-chunk size: " << last_filter_chunk_size
+                     << "/ s-chunk size: " << last_scan_chunk_size
+                     << " w/ result set size: " << result_set_size << endl;
+
+
+           //     if (last_duration + 3 < current_duration_d) {
+           //         cout << "best performance: " << last_duration << "ms @ chunk size: " << last_chunk_size << endl;
+           //     }
+
+                if (last_duration > current_duration_d) {
+                    last_duration = current_duration_d;
+                    last_materialize_chunk_size = materialize_chunk_size;
+                    last_filter_chunk_size = filter_chunk_size;
+                    last_scan_chunk_size = scan_chunk_size;
+                }
+            }
         }
 
-        if (result_set_size != 59986043)
-            cerr << "WARNING: Result set size is unexcepted!" << endl;
 
-        double current_duration_d = current_duration/double(num_samples)/1000000.0f;
-        cout << "avg duration: " << current_duration_d << "ms @ chunk size: " << vector_size
-             << ", best so far: " << last_duration << "ms @ chunk size: " << last_chunk_size << ";"
-             << result_set_size << endl;
-
-
-        if (last_duration + 3 < current_duration_d) {
-            cout << "best performance: " << last_duration << "ms @ chunk size: " << last_chunk_size << endl;
-        }
-
-        if (last_duration > current_duration_d) {
-            last_duration = current_duration_d;
-            last_chunk_size = vector_size;
-        }
 
     }
 

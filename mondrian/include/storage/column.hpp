@@ -85,7 +85,7 @@ namespace mondrian
             }
 
             inline virtual producer<value_t> *table_scan(consumer<value_t> *consumer, predicate_t predicate,
-                                                         unsigned chunk_size) final __attribute__((always_inline))
+                                                         unsigned scan_chunk_size, unsigned filter_chunk_size) final __attribute__((always_inline))
             {
                 interval<size_t> all_tuplet_ids(0, size);
                 return new toolkit::table_scan<value_t>(consumer, &all_tuplet_ids, &all_tuplet_ids + 1, predicate,
@@ -96,7 +96,7 @@ namespace mondrian
                                                             //GATHER(out_begin, data, begin, (end - begin));
                                                             //POINTER_GATHER(out, data, tupletids, num_elements);
                                                             memcpy(out, data + begin, (end - begin) * sizeof(value_t));
-                                                        }, chunk_size);
+                                                        }, scan_chunk_size, filter_chunk_size);
             }
         };
     }
