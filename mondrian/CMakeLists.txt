@@ -38,6 +38,10 @@ add_executable(
         play_vpipes ${SOURCE_FILES} modules/playaround-query-engine/main.cpp
 )
 
+add_executable(
+        play_vpipes-index ${SOURCE_FILES} modules/playaround-query-engine/main-index.cpp
+)
+
 
 
 if(Boost_FOUND)

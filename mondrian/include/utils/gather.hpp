@@ -4,7 +4,7 @@ namespace mondrian
 {
     namespace utils
     {
-#define GATHER(dest, src, idx, num)                                 \
+#define POINTER_GATHER(dest, src, idx, num)                         \
         {                                                           \
             assert (dest != nullptr);                               \
             assert (src != nullptr);                                \

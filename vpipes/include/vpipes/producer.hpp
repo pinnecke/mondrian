@@ -29,6 +29,7 @@ namespace mondrian
             using output_tupletid_t = OutputTupletIdType;
             using consumer_t = consumer<output_t, output_tupletid_t>;
             using output_chunk_t = chunk<output_t, output_tupletid_t>;
+            using block_copy_t = typename functional::block_copy<output_t, output_tupletid_t>::func_t;
 
         private:
             consumer_t *next_operator;
@@ -70,19 +71,20 @@ namespace mondrian
 
             virtual void on_start() { };
 
-            inline virtual void produce(output_tupletid_t *value) final __attribute__((always_inline))
+            /*inline virtual void produce(output_tupletid_t *value) final __attribute__((always_inline))
             {
                 produce(value, value + 1, false);
-            }
+            }*/
 
-            inline virtual void produce_tupletid_range(output_tupletid_t start, output_tupletid_t end) final __attribute__((always_inline))
+            inline virtual void produce_tupletid_range(output_tupletid_t start, output_tupletid_t end,
+                                                       block_copy_t block_copy_func) final __attribute__((always_inline))
             {
                 assert (start <= end);
 
                 output_tupletid_t offset = start;
                 while (offset < end) {
                     size_t this_chunk_size = MIN(size, end - offset);
-                    result->iota(offset, this_chunk_size);
+                    result->iota(offset, this_chunk_size, block_copy_func);
                     send();
                     offset += this_chunk_size;
                 }
@@ -90,19 +92,34 @@ namespace mondrian
 
         protected:
 
-            virtual inline void produce(output_tupletid_t *begin, output_tupletid_t *end,
+            virtual inline void produce(const output_tupletid_t *tupletids, const output_t * values,
+                                        const size_t *indices, size_t num_indices,
                                         bool expect_output_chunk_is_full_afterwards) final __attribute__((always_inline))
             {
                 result->memory_prefetch_for_write();
                 do {
                     typename output_chunk_t::state chunk_state;
-                    begin = result->add(&chunk_state, begin, end);
+                    num_indices = result->add(&chunk_state, tupletids, values, indices, num_indices);
                     if (__builtin_expect(chunk_state == output_chunk_t::state::full,
                                          expect_output_chunk_is_full_afterwards)) {
                         send();
                     }
-                } while (begin != end);
+                } while (num_indices);
             }
+
+//            virtual inline void produce(output_tupletid_t *begin, output_tupletid_t *end,
+//                                        bool expect_output_chunk_is_full_afterwards) final __attribute__((always_inline))
+//            {
+//                result->memory_prefetch_for_write();
+//                do {
+//                    typename output_chunk_t::state chunk_state;
+//                    begin = result->add(&chunk_state, begin, end, );
+//                    if (__builtin_expect(chunk_state == output_chunk_t::state::full,
+//                                         expect_output_chunk_is_full_afterwards)) {
+//                        send();
+//                    }
+//                } while (begin != end);
+//            }
 
             virtual void close()
             {

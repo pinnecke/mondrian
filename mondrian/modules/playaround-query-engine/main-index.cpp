@@ -107,6 +107,12 @@ int main()
     column<uint32_t> PARTKEY(column_data_partkey.data(), column_data_partkey.data() + num_elements);
     column<uint32_t> ORDERKEY(column_data_orderkey.data(), column_data_orderkey.data() + num_elements);
 
+    cout << "Generate index on PARTKEY..." << std::flush;
+    auto d = utils::profiling::measure<std::chrono::nanoseconds>::execute([&PARTKEY] () {
+        PARTKEY.create_index();
+    });
+    cout << "DONE (" << d / 1000000.0f << " ms)" << endl;
+
 
     column_data_partkey.clear();
 
@@ -143,7 +149,7 @@ int main()
                 current_duration += utils::profiling::measure<std::chrono::nanoseconds>::execute(
                         [&PARTKEY, &nop, &scan_chunk_size, &filter_chunk_size]() {
                             auto table_scan = PARTKEY.table_scan(&nop,
-                                                                 predicates::greater_than::micro_optimized_impl(
+                                                                 predicates::less_than::micro_optimized_impl(
                                                                          2000000,
                                                                          true),
                                                                  scan_chunk_size, filter_chunk_size);

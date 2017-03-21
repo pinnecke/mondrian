@@ -31,7 +31,6 @@ namespace mondrian
             using typename input_super::input_t;
             using typename input_super::input_tupletid_t;
             using typename input_super::input_chunk_t;
-            using typename input_super::materializer_t;
 
             using typename output_super::output_t;
             using typename output_super::output_tupletid_t;
@@ -40,11 +39,10 @@ namespace mondrian
 
         protected:
             using output_super::produce;
-            using input_super::lookup;
 
         public:
-            pipe(consumer_t *consumer, materializer_t materializer, unsigned chunk_size):
-                    input_super(materializer), output_super(consumer, chunk_size) { }
+            pipe(consumer_t *consumer, unsigned chunk_size):
+                    output_super(consumer, chunk_size) { }
 
             virtual void close() final
             {

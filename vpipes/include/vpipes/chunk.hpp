@@ -27,9 +27,11 @@ namespace mondrian
         public:
             using value_t = ValueType;
             using tupletid_t = TupletIdType;
+            using block_copy_t = typename functional::block_copy<value_t, tupletid_t>::func_t;
 
         private:
-            tupletid_t *data;
+            tupletid_t * tupletids;
+            value_t *values;
             size_t max_size, cursor;
 
         public:
@@ -40,7 +42,8 @@ namespace mondrian
 
             chunk(size_t num_of_elements) : max_size(num_of_elements), cursor(0)
             {
-                data = (tupletid_t *) malloc(this->max_size * sizeof(tupletid_t));
+                tupletids = (tupletid_t *) malloc(this->max_size * sizeof(tupletid_t));
+                values = (value_t *) malloc(this->max_size * sizeof(value_t));
             }
 
             inline void reset()
@@ -50,46 +53,104 @@ namespace mondrian
 
             inline void memory_prefetch_for_read()
             {
-                __builtin_prefetch(data, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
+                __builtin_prefetch(tupletids, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
+                __builtin_prefetch(values, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
             }
 
             inline void memory_prefetch_for_write()
             {
-                __builtin_prefetch(data + cursor, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
+                __builtin_prefetch(tupletids + cursor, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
+                __builtin_prefetch(values + cursor, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
             }
 
-            inline state add(tupletid_t value)
+            /*inline state add(tupletid_t tupletid, value_t *value)
             {
                 assert(cursor < max_size);
-                data[cursor++] = value;
+                values[cursor] = value;
+                tupletids[cursor++] = tupletid;
                 return (cursor == max_size ? state::full : state::non_full);
-            }
+            }*/
 
-            inline void iota(tupletid_t start, size_t num_of_values) __attribute__((always_inline))
+            inline void iota(tupletid_t start, size_t num_of_values, block_copy_t block_copy_func) __attribute__((always_inline))
             {
                 assert (num_of_values <= max_size);
                 num_of_values = MIN(max_size, num_of_values);
-                std::iota(data, data + num_of_values, start);
+                auto offset = tupletids + cursor;
+                std::iota(offset, offset + num_of_values, start);
+
+                block_copy_func(values, start, start + num_of_values);
                 cursor += num_of_values;
             }
 
-            inline tupletid_t *add(state *out, tupletid_t *begin, tupletid_t *end) __attribute__((always_inline))
+            inline size_t add(state *out, const tupletid_t *in_tuplet_ids, const value_t *in_values,
+                                   const size_t *indices, size_t num_indices) __attribute__((always_inline))
             {
                 assert (cursor + 1 <= max_size);
-                auto append_max_len = std::min(max_size - cursor, size_t(end - begin));
-                auto retval = begin + append_max_len;
-                while (append_max_len--)
-                    *(data + cursor++) = *begin++;
+                auto append_max_len = std::min(max_size - cursor, num_indices);
+                auto retval = num_indices - append_max_len;
+                while (append_max_len--) {
+                    auto idx = *indices++;
+                    *(values + cursor) = in_values[idx];
+                    *(tupletids + cursor++) = in_tuplet_ids[idx];
+                }
                 *out = (cursor >= max_size ? state::full : state::non_full);
                 return retval;
             }
 
+//            inline tupletid_t *add(state *out, tupletid_t *begin, tupletid_t *end,
+//                                   const value_t *values_begin, const value_t *values_end) __attribute__((always_inline))
+//            {
+//                assert (cursor + 1 <= max_size);
+//                auto append_max_len = std::min(max_size - cursor, size_t(end - begin));
+//                auto retval = begin + append_max_len;
+//                while (append_max_len--) {
+//                    *(values + cursor) = *values_begin++;
+//                    *(tupletids + cursor++) = *begin++;
+//                }
+//                *out = (cursor >= max_size ? state::full : state::non_full);
+//                return retval;
+//            }
+
             inline iterator <value_t> get_iterator()
             {
-                return iterator<value_t>(data, data + cursor);
+                return iterator<value_t>(tupletids, tupletids + cursor);
             }
 
-            void release() { free(data); }
+            bool is_empty() const
+            {
+                return cursor == 0;
+            }
+
+            size_t get_size() const
+            {
+                assert (cursor <= max_size);
+                return cursor;
+            }
+
+            void release() {
+                free(tupletids);
+                free(values);
+            }
+
+            value_t *get_values_begin() const
+            {
+                return values;
+            }
+
+            value_t *get_values_end() const
+            {
+                return values + cursor;
+            }
+
+            tupletid_t *get_tupletids_begin() const
+            {
+                return tupletids;
+            }
+
+            tupletid_t *get_tupletids_end() const
+            {
+                return tupletids + cursor;
+            }
         };
     }
 }

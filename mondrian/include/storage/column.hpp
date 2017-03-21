@@ -48,11 +48,11 @@ namespace mondrian
                 assert (data != nullptr);
             }
 
-            const value_t *materialize(tupletid_t tid)
+            /*const value_t *materialize(tupletid_t tid)
             {
                 assert(tid >= 0 && tid < size);
                 return data + tid;
-            }
+            }*/
 
             void append(const value_t *begin, const value_t *end)
             {
@@ -75,17 +75,50 @@ namespace mondrian
                 return false;
             }
 
-            producer<value_t> *table_scan(consumer<value_t> *consumer, predicate_t predicate, unsigned chunk_size)
+            inline virtual void materialize(value_t *out, const tupletid_t *tupletids,
+                                            size_t num_of_ids) final __attribute__((always_inline))
             {
-                interval<size_t> all_tuplet_ids(0, size);
-                return new toolkit::table_scan<value_t>(consumer, &all_tuplet_ids, &all_tuplet_ids + 1, predicate,
-                                                        [&] (value_t *out_begin, value_t *out_end,
-                                                             const size_t *begin, const size_t*end)
-                                                        {
-                                                            assert (out_end - out_begin >= end - begin);
-                                                            GATHER(out_begin, data, begin, (end - begin));
+                assert (out != nullptr && tupletids != nullptr);
+                while (num_of_ids--) {
+                    *out++ = data[*tupletids++];
+                }
+            }
 
-                                                        }, chunk_size);
+            bool has_index = false;
+
+            static int comp(const void *lhs, const void *rhs) {
+                return *(value_t *) lhs - *(value_t *) rhs;
+            }
+
+            void create_index() {
+                has_index = true;
+                std::qsort(data, size, sizeof(value_t), comp);
+            }
+
+            inline virtual producer<value_t> *table_scan(consumer<value_t> *consumer, predicate_t predicate,
+                                                         unsigned scan_chunk_size, unsigned filter_chunk_size) final __attribute__((always_inline))
+            {
+                size_t start = 0, end = size;
+                if (has_index) {
+                    value_t key = 2000000;
+                    value_t *it = (value_t *) std::bsearch(&key, data, size, sizeof(value_t), comp);
+                    assert (it != nullptr && it < data);
+                    bool greater_than = false;
+                    if (greater_than)
+                        start = it - data;
+                    else
+                        end = it - data;
+                }
+                interval<size_t> all_tuplet_ids(start, end);
+                return new toolkit::table_scan<value_t>(consumer, &all_tuplet_ids, &all_tuplet_ids + 1, predicate,
+                                                        [&] (value_t *out, tupletid_t begin, tupletid_t end)
+                                                        {
+                                                            assert (out != nullptr);
+                                                            assert (begin < end);
+                                                            //GATHER(out_begin, data, begin, (end - begin));
+                                                            //POINTER_GATHER(out, data, tupletids, num_elements);
+                                                            memcpy(out, data + begin, (end - begin) * sizeof(value_t));
+                                                        }, scan_chunk_size, filter_chunk_size);
             }
         };
     }
