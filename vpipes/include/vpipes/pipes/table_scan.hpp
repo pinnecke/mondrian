@@ -1,5 +1,3 @@
-#pragma once
-
 // Vector-Pipes - a framework for the push-based iterator model with support of vectorized execution
 // Copyright (C) 2017  Marcus Pinnecke (marcus.pinnecke@ovgu.de)
 //
@@ -25,7 +23,7 @@ namespace mondrian
 {
     namespace vpipes
     {
-        namespace toolkit
+        namespace pipes
         {
             template <class InputType, class InputTupletIdType = size_t>
             class table_scan : public producer<InputType, InputTupletIdType>
@@ -38,7 +36,7 @@ namespace mondrian
                 using typename super::consumer_t;
                 using filter_t = filter<input_t>;
                 using predicate_t = typename filter_t::predicate_t;
-                using block_copy_t = typename functional::block_copy<input_t, input_tupletid_t>::func_t;
+                using block_copy_t = typename block_copy<input_t, input_tupletid_t>::func_t;
                 using interval_t = interval<InputTupletIdType>;
 
             private:

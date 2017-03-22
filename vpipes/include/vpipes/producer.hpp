@@ -29,7 +29,7 @@ namespace mondrian
             using output_tupletid_t = OutputTupletIdType;
             using consumer_t = consumer<output_t, output_tupletid_t>;
             using output_chunk_t = chunk<output_t, output_tupletid_t>;
-            using block_copy_t = typename functional::block_copy<output_t, output_tupletid_t>::func_t;
+            using block_copy_t = typename block_copy<output_t, output_tupletid_t>::func_t;
 
         private:
             consumer_t *next_operator;
@@ -71,11 +71,6 @@ namespace mondrian
 
             virtual void on_start() { };
 
-            /*inline virtual void produce(output_tupletid_t *value) final __attribute__((always_inline))
-            {
-                produce(value, value + 1, false);
-            }*/
-
             inline virtual void produce_tupletid_range(output_tupletid_t start, output_tupletid_t end,
                                                        block_copy_t block_copy_func) final __attribute__((always_inline))
             {
@@ -107,20 +102,6 @@ namespace mondrian
                 } while (num_indices);
             }
 
-//            virtual inline void produce(output_tupletid_t *begin, output_tupletid_t *end,
-//                                        bool expect_output_chunk_is_full_afterwards) final __attribute__((always_inline))
-//            {
-//                result->memory_prefetch_for_write();
-//                do {
-//                    typename output_chunk_t::state chunk_state;
-//                    begin = result->add(&chunk_state, begin, end, );
-//                    if (__builtin_expect(chunk_state == output_chunk_t::state::full,
-//                                         expect_output_chunk_is_full_afterwards)) {
-//                        send();
-//                    }
-//                } while (begin != end);
-//            }
-
             virtual void close()
             {
                 if (__builtin_expect(next_operator != nullptr, true))
@@ -141,9 +122,8 @@ namespace mondrian
                 result = new output_chunk_t(chunk_size);
             }
 
-
-
-            inline virtual void start() final {
+            inline virtual void start() final
+            {
                 on_start();
                 close();
             }
