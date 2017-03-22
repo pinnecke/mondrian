@@ -38,41 +38,25 @@
 #define POINTER_DISTANCE(begin, end)                                    \
     (end - begin)
 
-#define DEFINE_STD_BINARY_PREDICATE(name, opp)                                                                  \
+#define DEFINE_STRAIGHT_FORWARD(name, opp)                                                                      \
 struct name                                                                                                     \
 {                                                                                                               \
     value_t compare_value;                                                                                      \
                                                                                                                 \
-    explicit name(value_t compare_value): compare_value(compare_value) { }                                      \
+    explicit name(value_t compare_value): compare_value(compare_value)  { }                                     \
                                                                                                                 \
-    inline void operator()(tupletid_t *result_buffer, size_t *result_size,                                      \
-                    const tupletid_t *tupletids_begin, const tupletid_t *tupletids_end,                         \
-                    value_t *values_begin, value_t *values_end) __attribute__((always_inline))                \
+    virtual inline void operator()(size_t *out_matching_indices, size_t *out_num_matching_indices,              \
+                           const tupletid_t *tupletids, const value_t *values,                                  \
+                           size_t num_elements) final __attribute__((always_inline))                            \
     {                                                                                                           \
-        ASSERT_VALID_BATCHED_PREDICATE_ARGS();                                                                  \
-        for (auto value_it = values_begin; value_it != values_end; ++value_it)                                  \
-            if (*value_it opp compare_value)                                                                   \
-                result_buffer[(*result_size)++] = tupletids_begin[POINTER_DISTANCE(values_begin, value_it)];    \
-    }                                                                                                           \
-};
-
-#define DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(name, opp)                                                       \
-struct name                                                                                                     \
-{                                                                                                               \
-    value_t compare_value;                                                                                      \
-    bool hint_expected_true;                                                                                    \
-                                                                                                                \
-    explicit name(value_t compare_value, bool hint_expected_true): compare_value(compare_value),                \
-                                                                    hint_expected_true(hint_expected_true) { }  \
-                                                                                                                \
-    inline void operator()(tupletid_t *result_buffer, size_t *result_size,                                      \
-                    const tupletid_t *tupletids_begin, const tupletid_t *tupletids_end,                         \
-                    value_t *values_begin, value_t *values_end) __attribute__((always_inline))                \
-    {                                                                                                           \
-        ASSERT_VALID_BATCHED_PREDICATE_ARGS();                                                                  \
-        for (auto value_it = values_begin; value_it != values_end; ++value_it)                                  \
-            if (__builtin_expect((*value_it opp compare_value), hint_expected_true))                           \
-                result_buffer[(*result_size)++] = tupletids_begin[POINTER_DISTANCE(values_begin, value_it)];    \
+        ASSERT_VALID_BATCHED_PREDICATE_ARGS2();                                                                 \
+        const size_t *out_matching_indices_start = out_matching_indices;                                        \
+        for (size_t idx = 0; idx != num_elements; ++idx) {                                                      \
+            if (values[idx] opp compare_value) {                                                                \
+                  *out_matching_indices++ = idx;                                                                \
+            }                                                                                                   \
+        }                                                                                                       \
+        *out_num_matching_indices = (out_matching_indices - out_matching_indices_start);                        \
     }                                                                                                           \
 };
 
@@ -108,90 +92,54 @@ namespace mondrian
 {
     namespace vpipes
     {
-        namespace functional
+        namespace predicates
         {
-            template <class ValueType, class TupletIdType = size_t>
-            struct batched_materializes
-            {
-                using value_t = ValueType;
-                using tupletid_t = TupletIdType;
-                using func_t = std::function<void(value_t *out_begin, value_t *out_end,
-                                                  const tupletid_t *begin, const tupletid_t *end)>;
-            };
-
-            template <class ValueType, class TupletIdType = size_t>
-            struct batched_materializes2
-            {
-                using value_t = ValueType;
-                using tupletid_t = TupletIdType;
-                using func_t = std::function<void(value_t *out, const tupletid_t *tupletids, size_t num_of_ids)>;
-            };
-
-            template <class ValueType, class TupletIdType = size_t>
-            struct block_copy
-            {
-                using value_t = ValueType;
-                using tupletid_t = TupletIdType;
-                using func_t = std::function<void(value_t *out, tupletid_t begin, tupletid_t end)>;
-            };
-
             template<class ValueType, class TupletIdType = size_t>
             struct batched_predicates
             {
                 using value_t = ValueType;
                 using tupletid_t = TupletIdType;
                 using func_t = std::function<void(size_t *out_matching_indices, size_t *out_num_matching_indices,
-                                                  const tupletid_t *tupletids, const value_t *values, size_t num_elements)>;
-                                                  //tupletid_t *result_buffer, size_t *result_size,
-                                                  //const tupletid_t *tupletids_begin, const tupletid_t *tupletids_end,
-                                                  //value_t **values_begin, value_t **values_end)>;
+                                                  const tupletid_t *tupletids, const value_t *values,
+                                                  size_t num_elements)>;
 
                 struct less_than
                 {
-                    DEFINE_STD_BINARY_PREDICATE(straightforward_impl, <);
-                    DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, <);
+                    DEFINE_STRAIGHT_FORWARD(straightforward_impl, <);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, <);
                 };
 
                 struct less_equal
                 {
-                    DEFINE_STD_BINARY_PREDICATE(straightforward_impl, <=);
-                    DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, <=);
+                    DEFINE_STRAIGHT_FORWARD(straightforward_impl, <=);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, <=);
                 };
 
                 struct equal_to
                 {
-                    DEFINE_STD_BINARY_PREDICATE(straightforward_impl, ==);
-                    DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, ==);
+                    DEFINE_STRAIGHT_FORWARD(straightforward_impl, ==);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, ==);
                 };
 
                 struct unequal_to
                 {
-                    DEFINE_STD_BINARY_PREDICATE(straightforward_impl, !=);
-                    DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, !=);
+                    DEFINE_STRAIGHT_FORWARD(straightforward_impl, !=);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, !=);
                 };
 
                 struct greater_equal
                 {
-                    DEFINE_STD_BINARY_PREDICATE(straightforward_impl, >=);
-                    DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, >=);
+                    DEFINE_STRAIGHT_FORWARD(straightforward_impl, >=);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, >=);
                 };
 
                 struct greater_than
                 {
-                    DEFINE_STD_BINARY_PREDICATE(straightforward_impl, >);
-                    DEFINE_BUILTIN_EXPECT_BINARY_PREDICATE(branch_hint_impl, >);
+                    DEFINE_STRAIGHT_FORWARD(straightforward_impl, >);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, >);
                 };
             };
-
         }
-
-
     }
 }
 

@@ -23,7 +23,7 @@ namespace mondrian
 {
     namespace vpipes
     {
-        namespace toolkit
+        namespace pipes
         {
             template<class Input, class InputTupletIdType = size_t>
             class filter : public pipe<Input, Input, InputTupletIdType, InputTupletIdType>
@@ -37,7 +37,7 @@ namespace mondrian
                 using typename super::consumer_t;
                 using typename super::input_chunk_t;
                 using iterator_t = vpipes::iterator<input_tupletid_t *>;
-                using predicate_t = typename vpipes::functional::batched_predicates<input_t>::func_t;
+                using predicate_t = typename vpipes::predicates::batched_predicates<input_t>::func_t;
 
             private:
                 size_t *matching_indices_buffer;

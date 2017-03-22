@@ -21,25 +21,21 @@ namespace mondrian
 {
     namespace vpipes
     {
-        namespace toolkit
+        namespace pipes
         {
             template<class Input, class InputTupletIdType = size_t>
-            class printer : public consumer<Input, InputTupletIdType>
+            class no_operation : public consumer<Input, InputTupletIdType>
             {
                 using super = consumer<Input, InputTupletIdType>;
 
             public:
                 using typename super::input_t;
                 using typename super::input_tupletid_t;
+                using typename super::input_chunk_t;
 
-                inline virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override final
+            protected:
+                inline virtual void on_consume(const input_chunk_t *data) override final __attribute__((always_inline))
                 {
-                    size_t distance = (end - begin);
-                    input_t *values = (input_t *) malloc (distance * sizeof(input_t));
-                    super::lookup(values, values + distance, begin, end);
-                    for (size_t i = 0; i < distance; ++i)
-                        std::cout << ">> TID=" << begin[i] << ", value=" << values[i] << std::endl;
-                    free (values);
                 }
             };
         }

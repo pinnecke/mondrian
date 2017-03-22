@@ -27,7 +27,7 @@ namespace mondrian
         public:
             using value_t = ValueType;
             using tupletid_t = TupletIdType;
-            using block_copy_t = typename functional::block_copy<value_t, tupletid_t>::func_t;
+            using block_copy_t = typename block_copy<value_t, tupletid_t>::func_t;
 
         private:
             tupletid_t * tupletids;
@@ -63,14 +63,6 @@ namespace mondrian
                 __builtin_prefetch(values + cursor, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
             }
 
-            /*inline state add(tupletid_t tupletid, value_t *value)
-            {
-                assert(cursor < max_size);
-                values[cursor] = value;
-                tupletids[cursor++] = tupletid;
-                return (cursor == max_size ? state::full : state::non_full);
-            }*/
-
             inline void iota(tupletid_t start, size_t num_of_values, block_copy_t block_copy_func) __attribute__((always_inline))
             {
                 assert (num_of_values <= max_size);
@@ -96,20 +88,6 @@ namespace mondrian
                 *out = (cursor >= max_size ? state::full : state::non_full);
                 return retval;
             }
-
-//            inline tupletid_t *add(state *out, tupletid_t *begin, tupletid_t *end,
-//                                   const value_t *values_begin, const value_t *values_end) __attribute__((always_inline))
-//            {
-//                assert (cursor + 1 <= max_size);
-//                auto append_max_len = std::min(max_size - cursor, size_t(end - begin));
-//                auto retval = begin + append_max_len;
-//                while (append_max_len--) {
-//                    *(values + cursor) = *values_begin++;
-//                    *(tupletids + cursor++) = *begin++;
-//                }
-//                *out = (cursor >= max_size ? state::full : state::non_full);
-//                return retval;
-//            }
 
             inline iterator <value_t> get_iterator()
             {

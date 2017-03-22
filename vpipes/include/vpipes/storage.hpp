@@ -21,31 +21,21 @@ namespace mondrian
 {
     namespace vpipes
     {
-        namespace toolkit
+        template <class ValueType, class TupletIdType = size_t>
+        struct point_copy
         {
-            template<class Output, class OutputTupletIdType = size_t>
-            class reader : public pipe_head<Output, OutputTupletIdType>
-            {
-                using super = pipe_head<Output, OutputTupletIdType>;
+            using value_t = ValueType;
+            using tupletid_t = TupletIdType;
+            using func_t = std::function<void(value_t *out, const tupletid_t *tupletids, size_t num_of_ids)>;
+        };
 
-            public:
-                using typename super::input_t;
-                using typename super::input_tupletid_t;
-                using typename super::consumer_t;
-
-                reader(consumer_t *consumer, input_tupletid_t *begin, input_tupletid_t *end,
-                       unsigned chunk_size): super(consumer, begin, end, chunk_size) {}
-
-                inline virtual void on_start() override final
-                {
-                    auto begin = super::get_begin();
-                    auto end = super::get_end();
-                    for (auto it = begin; it != end; ++it)
-                        super::produce(&it);
-                    super::close();
-                };
-            };
-        }
+        template <class ValueType, class TupletIdType = size_t>
+        struct block_copy
+        {
+            using value_t = ValueType;
+            using tupletid_t = TupletIdType;
+            using func_t = std::function<void(value_t *out, tupletid_t begin, tupletid_t end)>;
+        };
     }
 }
 

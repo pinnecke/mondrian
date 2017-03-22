@@ -1,6 +1,6 @@
 
 #include <vpipes.hpp>
-#include <vpipes/functional.hpp>
+#include <vpipes/storage.hpp>
 #include <storage/column.hpp>
 #include <utils/profiling.hpp>
 #include <fstream>
@@ -79,7 +79,7 @@ std::vector<Type> read_from_file(std::string file_name)
 int main()
 {
     std::string path_partkey_data, path_orderkey_data;
-    if (true) {
+    if (false) {
         path_partkey_data = "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";  // "/home/sebastian/cogadb_databases/tpch_sf10_new/tables/LINEITEM/LINEITEM.L_PARTKEY.data";
         path_orderkey_data = "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_ORDERKEY.data"; // "/home/sebastian/cogadb_databases/tpch_sf10_new/tables/LINEITEM/LINEITEM.L_ORDERKEY.data" ;
     } else {
@@ -130,6 +130,7 @@ int main()
     size_t result_set_size = 0;
     const unsigned FILTER_CHUNK_SIZE_UPPER_BOUND = 600 * 4;
     const unsigned SCAN_CHUNK_SIZE_UPPER_BOUND = 600 * 10;
+    unsigned mat_chunk_size = 420;
 
     for (unsigned filter_chunk_size = 10; filter_chunk_size < FILTER_CHUNK_SIZE_UPPER_BOUND; filter_chunk_size += 90) {
         for (unsigned scan_chunk_size = 10; scan_chunk_size < SCAN_CHUNK_SIZE_UPPER_BOUND; scan_chunk_size += 90) {
@@ -138,14 +139,13 @@ int main()
             result_set_size = 0;
 
             for (size_t i = 0; i < num_samples; i++) {
-                vpipes::toolkit::no_operation<uint32_t> nop;
-                using predicates = vpipes::functional::batched_predicates<uint32_t>;
+                vpipes::pipes::materialize<uint32_t> materialize(result_buffer, &result_set_size, ORDERKEY.f, mat_chunk_size);
+                using predicates = vpipes::predicates::batched_predicates<uint32_t>;
                 current_duration += utils::profiling::measure<std::chrono::nanoseconds>::execute(
-                        [&PARTKEY, &nop, &scan_chunk_size, &filter_chunk_size]() {
-                            auto table_scan = PARTKEY.table_scan(&nop,
-                                                                 predicates::greater_than::micro_optimized_impl(
-                                                                         2000000,
-                                                                         true),
+                        [&PARTKEY, &materialize, &scan_chunk_size, &filter_chunk_size]() {
+                            auto table_scan = PARTKEY.table_scan(&materialize,
+                                                                 predicates::greater_equal::micro_optimized_impl(
+                                                                         2000000, false),
                                                                  scan_chunk_size, filter_chunk_size);
                             table_scan->start();
                             free(table_scan);
