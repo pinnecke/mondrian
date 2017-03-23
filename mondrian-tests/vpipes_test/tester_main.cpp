@@ -5,10 +5,13 @@
 #include "gtest/gtest.h"
 #include <vpipes.hpp>
 #include <testing_chunks.hpp>
+
 #include <testing_reader_materlizer.hpp>
+
 #include <testing_filters.hpp>
 #include <testing_table_scan.hpp>
-using namespace std;
+
+ using namespace std;
 using namespace mondrian::vpipes;
 
 

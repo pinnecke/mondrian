@@ -12,111 +12,105 @@ using namespace mondrian::vpipes;
 
 
 TEST(TESTfilters, BasicFiltersTest) {
-    size_t num_elements = 100;
-    auto input = create_column<size_t>(num_elements, false, true);
-    size_t chunk_size = 20;
-    auto result_size = 100;
-    auto result = create_column<size_t>(num_elements);
-    auto input_filtered = create_column<size_t>(result_size, false, true);
-    auto index = 0;
-    for (auto i = input; i != (input + num_elements); ++i) {
-        if (((*i) % 2 == 0))
-            input_filtered[index++] = *i;
+    size_t res_length = 500;
+    auto chunk_size =20;
+    auto  input_length= 50;
+    auto  result = create_column(res_length, true);
+    auto predicate_value = 5 ;
 
-    }
-    mondrian::vpipes::functional::batched_materializes<size_t>::func_t materialize1 = [](size_t *out_begin,
-                                                                                         size_t *out_end,
-                                                                                         const size_t *begin,
-                                                                                         const size_t *end) {
-        assert (out_end - out_begin >= end - begin);
-        size_t distance = (end - begin);
-        for (size_t i = 0; i != distance; ++i) {
-            *(out_begin + i) = *(begin + i);
+    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *out, const size_t *tupletids, size_t num_of_ids)
+    {
+        for (auto i = 0; i< num_of_ids; ++i) {
+            *(out+i) = *(tupletids+i);
+
         }
     };
+    mondrian::vpipes::pipes::materialize<size_t> mat(result,&res_length,ids_copier,chunk_size);
 
-    toolkit::materialize<size_t> mat(result, &num_elements, materialize1, chunk_size);
-    toolkit::filter<size_t> even_num_filter(&mat, materialize1, PREDICATE(2), chunk_size);
-    auto read = toolkit::reader<std::size_t>(&even_num_filter, input, input + num_elements, chunk_size);
-    read.start();
-    EXPECT_EQ(has_same_vals(input_filtered, result, num_elements), true);
-    delete_column<size_t>(input_filtered);
-    delete_column<size_t>(result);
-    delete_column<size_t>(input);
+    mondrian::vpipes::pipes::filter<size_t> filter_nums_more_5(&mat , mondrian::vpipes::predicates::batched_predicates<size_t >
+    ::greater_equal::micro_optimized_impl(predicate_value,true),chunk_size);
+
+    testing_vpipes_classes::minimal_reader<size_t > reader(&filter_nums_more_5,mondrian::vpipes::predicates::batched_predicates<size_t >
+    ::greater_equal::micro_optimized_impl(0,true),input_length,chunk_size,chunk_size);
+
+    reader.read();
+
+    auto expected_result = generate_expected_result(input_length,[predicate_value] (size_t val) -> size_t {
+        return ! (val >=predicate_value);
+    });
+
+    EXPECT_EQ( has_same_vals(expected_result,result,res_length) , true  );
+    delete_column(result);
+    delete_column(expected_result);
 
 }
 
 
 TEST(TESTfilters, CascadingFilters) {
-    size_t num_elements = 100;
-    auto input = create_column<size_t>(num_elements, false, true);
-    size_t chunk_size = 20;
-    auto result_size = 100;
-    auto result = create_column<size_t>(num_elements);
-    auto input_filtered = create_column<size_t>(result_size, false, true);
-    auto index = 0;
-    for (auto i = input; i != (input + num_elements); ++i) {
-        if (((*i) % 2 == 0) && ((*i) % 5 == 0) && ((*i) % 12 == 0))
-            input_filtered[index++] = *i;
+    size_t res_length = 500;
+    auto chunk_size =20;
+    auto  input_length= 50;
+    auto  result = create_column(res_length, true);
+    auto lower_bound = 5 ;
+    auto upper_bound = 30 ;
+    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *out, const size_t *tupletids, size_t num_of_ids)
+    {
+        for (auto i = 0; i< num_of_ids; ++i) {
+            *(out+i) = *(tupletids+i);
 
-    }
-
-    mondrian::vpipes::functional::batched_materializes<size_t>::func_t materialize1 = [](size_t *out_begin,
-                                                                                         size_t *out_end,
-                                                                                         const size_t *begin,
-                                                                                         const size_t *end) {
-        assert (out_end - out_begin >= end - begin);
-        size_t distance = (end - begin);
-        for (size_t i = 0; i != distance; ++i) {
-            *(out_begin + i) = *(begin + i);
         }
     };
+    mondrian::vpipes::pipes::materialize<size_t> mat(result,&res_length,ids_copier,chunk_size);
 
-    toolkit::materialize<size_t> mat(result, &num_elements, materialize1, chunk_size);
-    toolkit::filter<size_t> fives_filter(&mat, materialize1, PREDICATE(5), chunk_size);
-    toolkit::filter<size_t> even_num_filter(&fives_filter, materialize1, PREDICATE(2), chunk_size);
-    toolkit::filter<size_t> twelve_filter(&even_num_filter, materialize1, PREDICATE(12), chunk_size);
-    auto read = toolkit::reader<std::size_t>(&twelve_filter, input, input + num_elements, chunk_size);
-    read.start();
-    EXPECT_EQ(has_same_vals(input_filtered, result, num_elements), true);
-    delete_column<size_t>(input_filtered);
-    delete_column<size_t>(result);
-    delete_column<size_t>(input);
+    mondrian::vpipes::pipes::filter<size_t> filter_nums_more_5(&mat , mondrian::vpipes::predicates::batched_predicates<size_t >
+    ::greater_equal::micro_optimized_impl(5,true),chunk_size);
+
+    mondrian::vpipes::pipes::filter<size_t> filter_nums_less_20(&filter_nums_more_5 , mondrian::vpipes::predicates::batched_predicates<size_t >
+    ::less_equal::micro_optimized_impl(30,true),chunk_size);
+
+
+    testing_vpipes_classes::minimal_reader<size_t > reader(&filter_nums_less_20,mondrian::vpipes::predicates::batched_predicates<size_t >
+    ::greater_equal::micro_optimized_impl(0,true),input_length,chunk_size,chunk_size);
+
+    reader.read();
+
+    auto expected_result = generate_expected_result(input_length,[lower_bound,upper_bound] (size_t val) -> size_t {
+        return ! (val >=lower_bound && val<=upper_bound  );
+    });
+
+    EXPECT_EQ( has_same_vals(expected_result,result,res_length) , true  );
+    delete_column(result);
+    delete_column(expected_result);
 
 }
 
 
 TEST(TESTfilters, NoConditionSatisfied) {
-    size_t num_elements = 100;
-    auto input = create_column<size_t>(num_elements, false, true);
-    size_t chunk_size = 20;
-    auto result_size = 100;
-    auto result = create_column<size_t>(num_elements);
-    auto input_filtered = create_column<size_t>(result_size, false, true);
-    auto index = 0;
-    for (auto i = input; i != (input + num_elements); ++i) {
-        if (((*i) % 1000000 == 0))
-            input_filtered[index++] = *i;
+    size_t res_length = 50;
+    auto chunk_size =20;
+    auto  input_length= 50;
+    auto  result = create_column(res_length, true);
+    auto expected_result =create_column(res_length, true);
+    auto predicate_value = 100 ;
+    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *out, const size_t *tupletids, size_t num_of_ids)
+    {
+        for (auto i = 0; i< num_of_ids; ++i) {
+            *(out+i) = *(tupletids+i);
 
-    }
-    mondrian::vpipes::functional::batched_materializes<size_t>::func_t materialize1 = [](size_t *out_begin,
-                                                                                         size_t *out_end,
-                                                                                         const size_t *begin,
-                                                                                         const size_t *end) {
-        assert (out_end - out_begin >= end - begin);
-        size_t distance = (end - begin);
-        for (size_t i = 0; i != distance; ++i) {
-            *(out_begin + i) = *(begin + i);
         }
     };
+    mondrian::vpipes::pipes::materialize<size_t> mat(result,&res_length,ids_copier,chunk_size);
 
-    toolkit::materialize<size_t> mat(result, &num_elements, materialize1, chunk_size);
-    toolkit::filter<size_t> dummy_filter(&mat, materialize1, PREDICATE(1000000), chunk_size);
-    auto read = toolkit::reader<std::size_t>(&dummy_filter, input, input + num_elements, chunk_size);
-    read.start();
-    EXPECT_EQ(has_same_vals(input_filtered, result, num_elements), true);
-    delete_column<size_t>(input_filtered);
-    delete_column<size_t>(result);
-    delete_column<size_t>(input);
+    mondrian::vpipes::pipes::filter<size_t> filter_nums_more_100(&mat , mondrian::vpipes::predicates::batched_predicates<size_t >
+    ::greater_equal::micro_optimized_impl(predicate_value,true),chunk_size);
+
+    testing_vpipes_classes::minimal_reader<size_t > reader(&filter_nums_more_100,mondrian::vpipes::predicates::batched_predicates<size_t >
+    ::greater_equal::micro_optimized_impl(0,true),input_length,chunk_size,chunk_size);
+
+    reader.read();
+
+    EXPECT_EQ( has_same_vals(expected_result,result,res_length) , true  );
+    delete_column(result);
+    delete_column(expected_result);
 
 }

@@ -5,37 +5,10 @@
 
 
 
-#define PREDICATE(x)                                                                    \
-[] (size_t *result, size_t *result_size, size_t const *begin, size_t const *end,size_t const *values_begin, size_t const *values_end) {                       \
-    size_t i = 0;                                                                       \
-        \
-    for (auto it = values_begin; it != values_end; ++it) {                                            \
-        if (*it % x == 0)                                                              \
-            (result)[i++] = *it;                                                       \
-    }                                                                                   \
-    *result_size = i;                                                                   \
-}
 
-#define PREDICATE2(x)                                                                    \
-[] (size_t *result, size_t *result_size, size_t const *begin, size_t const *end,size_t const *values_begin, size_t const *values_end) {                       \
-    size_t i = 0;                                                                       \
-        \
-    for (auto it = values_begin; it != values_end; ++it) {                                            \
-        if (*it > x)                                                              \
-            (result)[i++] = *it;                                                       \
-    }                                                                                   \
-    *result_size = i;                                                                   \
-}
-
-
-
-
-
-template <class InputType>
-
-std::size_t *create_column(unsigned long num_of_elements, bool fill_with_fives = true, bool fill = true)
+std::size_t *create_column(std::size_t num_of_elements, bool fill_with_fives = true, bool fill = true)
 {
-    auto result = (std::size_t *) malloc (num_of_elements * sizeof(InputType));
+    auto result = (std::size_t *) malloc (num_of_elements * sizeof(size_t));
     if (fill) {
         for (auto i = 0; i < num_of_elements; ++i)
             result[i] = fill_with_fives ?5 :i;
@@ -43,33 +16,26 @@ std::size_t *create_column(unsigned long num_of_elements, bool fill_with_fives =
     return result;
 }
 
-template <class InputType>
-void delete_column(InputType *column)
+void delete_column(size_t *column)
 {
     free (column);
 }
 
 
 
-template <class dtype>
-    bool has_same_vals(dtype input, dtype output, size_t num_elements){
-    for (auto i = 0 ; i<num_elements ;i++  ){
-        if (input[i]!=output[i]) return false;
-    }
-    return true;
-}
-
-
-vector <size_t> generate_vector_from_intervals( size_t *begins , size_t *ends, size_t num_intervals, int predicate   ){
-    vector <size_t> generated_vec ;
-    for (auto i =0 ; i <num_intervals ;i++){
-        for (auto j = begins[i]; j<ends[i]; j++  ){
-            if (j%predicate ==0){
-                generated_vec.push_back(j);
-            }
+    bool has_same_vals(std::size_t *input , std::size_t  *output, size_t num_elements){
+        for (auto i = 0 ; i<num_elements ;i++  ){
+            if (input[i]!=output[i]) return false;
         }
+        return true;
     }
 
-    return generated_vec;
-}
 
+size_t* generate_expected_result (size_t input_length ,  std::function< bool(int) > pred_logic  ){
+    auto expected_result = create_column(input_length, false);
+    auto expected_result_start = expected_result;
+    auto expected_result_end = expected_result+input_length;
+    std::remove_if(expected_result_start,expected_result_end,pred_logic);
+
+    return expected_result;
+}
