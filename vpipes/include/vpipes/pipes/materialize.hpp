@@ -54,6 +54,7 @@ namespace mondrian
                 inline virtual void on_consume(const input_chunk_t *data) override final __attribute__((always_inline))
                 {
                     point_copy_func(destination, data->get_tupletids_begin(), data->get_size());
+//                    destination = destination +data->get_size();
                     total_result_set_size += data->get_size();
                     *result_set_size = total_result_set_size;
                 }
