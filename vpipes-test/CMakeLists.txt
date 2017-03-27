@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(
         "../vpipes/include"
 )
-include_directories("./vpipes_test")
+include_directories(".")
 
 # Boost
 find_package(Boost 1.57.0 REQUIRED)
@@ -34,6 +34,6 @@ if(GTest_FOUND)
 endif()
 
 if(GTest_FOUND)
-    add_executable(VpipesTesting ./vpipes_test/tester_main.cpp )
+    add_executable(VpipesTesting ./tester_main.cpp )
     target_link_libraries(VpipesTesting ${GTEST_BOTH_LIBRARIES} pthread)
 endif()
