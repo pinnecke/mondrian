@@ -91,6 +91,7 @@ namespace mondrian
                                         const size_t *indices, size_t num_indices,
                                         bool expect_output_chunk_is_full_afterwards) final __attribute__((always_inline))
             {
+                auto original_num_indices =num_indices;
                 result->memory_prefetch_for_write();
                 do {
                     typename output_chunk_t::state chunk_state;
@@ -99,6 +100,7 @@ namespace mondrian
                                          expect_output_chunk_is_full_afterwards)) {
                         send();
                     }
+                    indices = indices + (original_num_indices  - num_indices);
                 } while (num_indices);
             }
 
