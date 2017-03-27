@@ -14,17 +14,17 @@ using namespace mondrian::vpipes;
 TEST(Testchunks, TestAddStateAfterFilling) {
     auto chunk_size = 15 ;
     mondrian::vpipes::chunk<size_t > rat_chunk (chunk_size);
-    auto ids =create_column(chunk_size+20,false);
-    auto values =create_column(chunk_size,false);
-    auto indeces_num = 20 ;
-    auto indeces = new size_t [indeces_num];
-    for (auto i =0 ; i <indeces_num ;++i){
-        indeces [i] = i;
+    auto ids = create_column(chunk_size+20,false);
+    auto values = create_column(chunk_size,false);
+    auto indices_num = 20 ;
+    auto indices = new size_t [indices_num];
+    for (auto i =0 ; i < indices_num; ++i) {
+        indices [i] = i;
     }
-    mondrian::vpipes::chunk<size_t >::state  rat_chunk_state =  mondrian::vpipes::chunk<size_t >::state::non_full;
-    rat_chunk.add(&rat_chunk_state,ids,values,indeces,indeces_num);
+    mondrian::vpipes::chunk<size_t >::state rat_chunk_state = mondrian::vpipes::chunk<size_t >::state::non_full;
+    rat_chunk.add(&rat_chunk_state,ids,values,indices,indices_num);
     EXPECT_NE(rat_chunk_state,mondrian::vpipes::chunk<size_t >::state::non_full )<<"after filling the chunk the state will change";
-    delete [] indeces;
+    delete [] indices;
     delete_column(ids);
     delete_column(values);
     rat_chunk.release();
@@ -37,15 +37,15 @@ TEST(Testchunks, TestAddStateAfterNotFilling) {
     mondrian::vpipes::chunk<size_t > rat_chunk (chunk_size);
     auto ids =create_column(chunk_size+20,false);
     auto values =create_column(chunk_size,false);
-    auto indeces_num = 5 ;
-    auto indeces = new size_t [indeces_num];
-    for (auto i =0 ; i <indeces_num ;++i){
-        indeces [i] = i;
+    auto indices_num = 5 ;
+    auto indices = new size_t [indices_num];
+    for (auto i =0 ; i <indices_num ;++i){
+        indices [i] = i;
     }
     mondrian::vpipes::chunk<size_t >::state  rat_chunk_state =  mondrian::vpipes::chunk<size_t >::state::non_full;
-    rat_chunk.add(&rat_chunk_state,ids,values,indeces,indeces_num);
+    rat_chunk.add(&rat_chunk_state,ids,values,indices,indices_num);
     EXPECT_EQ(rat_chunk_state,mondrian::vpipes::chunk<size_t >::state::non_full )<<"if the chunk is not filled the state won't change";
-    delete [] indeces;
+    delete [] indices;
     delete_column(ids);
     delete_column(values);
     rat_chunk.release();
@@ -58,15 +58,15 @@ TEST(Testchunks, TestAddReturnValue) {
     mondrian::vpipes::chunk<size_t > rat_chunk (chunk_size);
     auto ids =create_column(chunk_size+20,false);
     auto values =create_column(chunk_size,false);
-    auto indeces_num = 20 ;
-    auto indeces = new size_t [indeces_num];
-    for (auto i =0 ; i <indeces_num ;++i){
-        indeces [i] = i;
+    auto indices_num = 20 ;
+    auto indices = new size_t [indices_num];
+    for (auto i =0 ; i <indices_num ;++i){
+        indices [i] = i;
     }
     mondrian::vpipes::chunk<size_t >::state  rat_chunk_state =  mondrian::vpipes::chunk<size_t >::state::non_full;
-    auto add_res = rat_chunk.add(&rat_chunk_state,ids,values,indeces,indeces_num);
-    EXPECT_EQ(add_res, indeces_num - chunk_size )<<"add will return, how many elements it couldn't add because it is fulled";
-    delete [] indeces;
+    auto add_res = rat_chunk.add(&rat_chunk_state,ids,values,indices,indices_num);
+    EXPECT_EQ(add_res, indices_num - chunk_size )<<"add will return, how many elements it couldn't add because it is fulled";
+    delete [] indices;
     delete_column(ids);
     delete_column(values);
     rat_chunk.release();
@@ -78,19 +78,19 @@ TEST(TestChunks, TestReset) {
     mondrian::vpipes::chunk<size_t > rat_chunk (chunk_size);
     auto ids =create_column(chunk_size+10,false);
     auto values =create_column(chunk_size,false);
-    auto indeces_num = 20 ;
-    auto indeces = new size_t [indeces_num];
-    for (auto i =0 ; i <indeces_num ;++i){
-        indeces [i] = i;
+    auto indices_num = 20 ;
+    auto indices = new size_t [indices_num];
+    for (auto i =0 ; i <indices_num ;++i){
+        indices [i] = i;
     }
     mondrian::vpipes::chunk<size_t >::state  rat_chunk_state =  mondrian::vpipes::chunk<size_t >::state::non_full;
-    auto indeces_left  = rat_chunk.add(&rat_chunk_state,ids,values,indeces,indeces_num);
-    EXPECT_EQ(indeces_left,indeces_num-chunk_size )<<"this number denotes the left to be added";
+    auto indices_left  = rat_chunk.add(&rat_chunk_state,ids,values,indices,indices_num);
+    EXPECT_EQ(indices_left,indices_num-chunk_size )<<"this number denotes the left to be added";
     rat_chunk.reset();
-    indeces_left = rat_chunk.add(&rat_chunk_state,ids,values,indeces,indeces_left);
-    EXPECT_EQ(indeces_left,0 )<<"now all indeces are added nothing left to be added";
+    indices_left = rat_chunk.add(&rat_chunk_state,ids,values,indices,indices_left);
+    EXPECT_EQ(indices_left,0 )<<"now all indices are added nothing left to be added";
 
-    delete [] indeces;
+    delete [] indices;
     delete_column(ids);
     delete_column(values);
     rat_chunk.release();
