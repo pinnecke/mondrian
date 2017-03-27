@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 14)
 #add_definitions(-DNINFO)
 
 include_directories(
-        "../pantheon/include"
+        "../vpipes/include"
 )
 include_directories("./vpipes_test")
 
@@ -34,15 +34,6 @@ if(GTest_FOUND)
 endif()
 
 if(GTest_FOUND)
-    add_executable(host_vector_column_test storage/host_vector_column_test.cpp)
-    target_link_libraries(host_vector_column_test ${GTEST_BOTH_LIBRARIES})
-    target_link_libraries(host_vector_column_test ${Boost_LIBRARIES})
-
-    add_executable(column_functions_dedup_nested_loop_test storage/column_functions_dedup_nested_loop_test.cpp)
-    target_link_libraries(column_functions_dedup_nested_loop_test ${GTEST_BOTH_LIBRARIES})
-    target_link_libraries(column_functions_dedup_nested_loop_test ${Boost_LIBRARIES})
-
-# uncomment those lines to enable tests for vpipe
-#  add_executable(VpipesTesting ./vpipes_test/tester_main.cpp )
-#  target_link_libraries(VpipesTesting ${GTEST_BOTH_LIBRARIES} pthread)
+    add_executable(VpipesTesting ./vpipes_test/tester_main.cpp )
+    target_link_libraries(VpipesTesting ${GTEST_BOTH_LIBRARIES} pthread)
 endif()
