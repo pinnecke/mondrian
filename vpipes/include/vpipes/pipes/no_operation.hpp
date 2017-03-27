@@ -31,10 +31,10 @@ namespace mondrian
             public:
                 using typename super::input_t;
                 using typename super::input_tupletid_t;
-                using typename super::input_chunk_t;
+                using typename super::input_batch_t;
 
             protected:
-                inline virtual void on_consume(const input_chunk_t *data) override final __attribute__((always_inline))
+                inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
                 {
                 }
             };

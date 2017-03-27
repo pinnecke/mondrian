@@ -50,8 +50,8 @@ namespace mondrian
 
         public:
             pipe_head(consumer_t *consumer, input_tupletid_t *begin, input_tupletid_t *end,
-                            unsigned chunk_size) :
-                            super(consumer, chunk_size), begin(begin), end(end) {};
+                            unsigned batch_size) :
+                            super(consumer, batch_size), begin(begin), end(end) {};
 
             inline virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override final {};
 

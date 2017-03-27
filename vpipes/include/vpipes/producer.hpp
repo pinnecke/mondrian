@@ -28,12 +28,12 @@ namespace mondrian
             using output_t = Output;
             using output_tupletid_t = OutputTupletIdType;
             using consumer_t = consumer<output_t, output_tupletid_t>;
-            using output_chunk_t = chunk<output_t, output_tupletid_t>;
+            using output_batch_t = batch<output_t, output_tupletid_t>;
             using block_copy_t = typename block_copy<output_t, output_tupletid_t>::func_t;
 
         private:
             consumer_t *next_operator;
-            output_chunk_t *result = nullptr;
+            output_batch_t *result = nullptr;
             size_t size;
 
         protected:
@@ -78,10 +78,10 @@ namespace mondrian
 
                 output_tupletid_t offset = start;
                 while (offset < end) {
-                    size_t this_chunk_size = MIN(size, end - offset);
-                    result->iota(offset, this_chunk_size, block_copy_func);
+                    size_t this_batch_size = MIN(size, end - offset);
+                    result->iota(offset, this_batch_size, block_copy_func);
                     send();
-                    offset += this_chunk_size;
+                    offset += this_batch_size;
                 }
             }
 
@@ -89,15 +89,15 @@ namespace mondrian
 
             virtual inline void produce(const output_tupletid_t *tupletids, const output_t * values,
                                         const size_t *indices, size_t num_indices,
-                                        bool expect_output_chunk_is_full_afterwards) final __attribute__((always_inline))
+                                        bool expect_output_batch_is_full_afterwards) final __attribute__((always_inline))
             {
                 auto original_num_indices =num_indices;
                 result->memory_prefetch_for_write();
                 do {
-                    typename output_chunk_t::state chunk_state;
-                    num_indices = result->add(&chunk_state, tupletids, values, indices, num_indices);
-                    if (__builtin_expect(chunk_state == output_chunk_t::state::full,
-                                         expect_output_chunk_is_full_afterwards)) {
+                    typename output_batch_t::state batch_state;
+                    num_indices = result->add(&batch_state, tupletids, values, indices, num_indices);
+                    if (__builtin_expect(batch_state == output_batch_t::state::full,
+                                         expect_output_batch_is_full_afterwards)) {
                         send();
                     }
                     indices = indices + (original_num_indices  - num_indices);
@@ -118,10 +118,10 @@ namespace mondrian
             }
 
         public:
-            producer(consumer_t *next_operator, unsigned chunk_size):
-                    next_operator(next_operator), size(chunk_size)
+            producer(consumer_t *next_operator, unsigned batch_size):
+                    next_operator(next_operator), size(batch_size)
             {
-                result = new output_chunk_t(chunk_size);
+                result = new output_batch_t(batch_size);
             }
 
             inline virtual void start() final

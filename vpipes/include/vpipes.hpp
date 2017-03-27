@@ -12,7 +12,7 @@
 #include "vpipes/interval.hpp"
 #include "vpipes/storage.hpp"
 #include "vpipes/predicates.hpp"
-#include "vpipes/chunk.hpp"
+#include "vpipes/batch.hpp"
 #include "vpipes/consumer.hpp"
 #include "vpipes/producer.hpp"
 #include "vpipes/pipe.hpp"

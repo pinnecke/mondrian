@@ -27,13 +27,13 @@ namespace mondrian
         public:
             using input_t = Input;
             using input_tupletid_t = InputTupletIdType;
-            using input_chunk_t = chunk<input_t, input_tupletid_t>;
+            using input_batch_t = batch<input_t, input_tupletid_t>;
 
             template<class IL, class IR, class ILTID, class IRTID>
             friend class bi_pipe_tail;
 
         protected:
-            virtual void on_consume(const input_chunk_t *data) { };
+            virtual void on_consume(const input_batch_t *data) { };
 
             virtual void on_cleanup() { };
 
@@ -42,7 +42,7 @@ namespace mondrian
                 on_cleanup();
             }
 
-            inline virtual void consume(const input_chunk_t *data) final __attribute__((always_inline))
+            inline virtual void consume(const input_batch_t *data) final __attribute__((always_inline))
             {
                 if (__builtin_expect(!data->is_empty(), true)) {
                     on_consume(data);

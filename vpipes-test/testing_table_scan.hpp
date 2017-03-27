@@ -9,7 +9,7 @@
 
 TEST(TestTableScan,TestBasicFunctionality){
     size_t res_length = 50;
-    auto chunk_size =20;
+    auto batch_size =20;
     auto  input_length= 50;
     auto  result = create_column(res_length, true);
     auto predicate_value = 5 ;
@@ -21,7 +21,7 @@ TEST(TestTableScan,TestBasicFunctionality){
 
         }
     };
-    mondrian::vpipes::pipes::materialize<size_t> mat(result,&res_length,ids_copier,chunk_size);
+    mondrian::vpipes::pipes::materialize<size_t> mat(result,&res_length,ids_copier,batch_size);
 
 
     interval<size_t> all_tuplet_ids(0, input_length);
@@ -37,7 +37,7 @@ TEST(TestTableScan,TestBasicFunctionality){
 
     auto loc_table = pipes::table_scan<size_t >(&mat, &all_tuplet_ids, &all_tuplet_ids + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
                                                 ::greater_equal::micro_optimized_impl(predicate_value,true),
-                                                loc_block_copy   , chunk_size, chunk_size);
+                                                loc_block_copy   , batch_size, batch_size);
 
     loc_table.start();
 

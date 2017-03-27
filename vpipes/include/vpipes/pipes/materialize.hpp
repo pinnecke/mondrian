@@ -31,27 +31,27 @@ namespace mondrian
             public:
                 using typename super::input_t;
                 using typename super::input_tupletid_t;
-                using typename super::input_chunk_t;
+                using typename super::input_batch_t;
                 using point_copy_func_t = typename point_copy<input_t, input_tupletid_t>::func_t;
 
             private:
                 size_t total_result_set_size;
                 input_t *destination;
                 size_t *result_set_size;
-                unsigned expected_chunk_size;
+                unsigned expected_batch_size;
                 point_copy_func_t point_copy_func;
 
             public:
                 materialize(Input *destination, size_t *result_set_size, point_copy_func_t point_copy_func,
-                            unsigned expected_chunk_size) :
+                            unsigned expected_batch_size) :
                         destination(destination), total_result_set_size(0), result_set_size(result_set_size),
-                        point_copy_func(point_copy_func), expected_chunk_size(expected_chunk_size)
+                        point_copy_func(point_copy_func), expected_batch_size(expected_batch_size)
                 {
-                    assert (expected_chunk_size > 0);
+                    assert (expected_batch_size > 0);
                 };
 
             protected:
-                inline virtual void on_consume(const input_chunk_t *data) override final __attribute__((always_inline))
+                inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
                 {
                     point_copy_func(destination, data->get_tupletids_begin(), data->get_size());
                     destination += data->get_size();

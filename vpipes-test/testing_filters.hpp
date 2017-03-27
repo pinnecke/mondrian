@@ -13,7 +13,7 @@ using namespace mondrian::vpipes;
 
 TEST(TESTfilters, BasicFiltersTest) {
     size_t res_length = 500;
-    auto chunk_size =20;
+    auto batch_size =20;
     auto  input_length= 50;
     auto  result = create_column(res_length, true);
     auto predicate_value = 5 ;
@@ -25,13 +25,13 @@ TEST(TESTfilters, BasicFiltersTest) {
 
         }
     };
-    mondrian::vpipes::pipes::materialize<size_t> mat(result,&res_length,ids_copier,chunk_size);
+    mondrian::vpipes::pipes::materialize<size_t> mat(result,&res_length,ids_copier,batch_size);
 
     mondrian::vpipes::pipes::filter<size_t> filter_nums_more_5(&mat , mondrian::vpipes::predicates::batched_predicates<size_t >
-    ::greater_equal::micro_optimized_impl(predicate_value,true),chunk_size);
+    ::greater_equal::micro_optimized_impl(predicate_value,true),batch_size);
 
     testing_vpipes_classes::minimal_reader<size_t > reader(&filter_nums_more_5,mondrian::vpipes::predicates::batched_predicates<size_t >
-    ::greater_equal::micro_optimized_impl(0,true),input_length,chunk_size,chunk_size);
+    ::greater_equal::micro_optimized_impl(0,true),input_length,batch_size,batch_size);
 
     reader.read();
 
@@ -48,7 +48,7 @@ TEST(TESTfilters, BasicFiltersTest) {
 
 TEST(TESTfilters, CascadingFilters) {
     size_t res_length = 500;
-    auto chunk_size =20;
+    auto batch_size =20;
     auto  input_length= 50;
     auto  result = create_column(res_length, true);
     auto lower_bound = 5 ;
@@ -60,17 +60,17 @@ TEST(TESTfilters, CascadingFilters) {
 
         }
     };
-    mondrian::vpipes::pipes::materialize<size_t> mat(result,&res_length,ids_copier,chunk_size);
+    mondrian::vpipes::pipes::materialize<size_t> mat(result,&res_length,ids_copier,batch_size);
 
     mondrian::vpipes::pipes::filter<size_t> filter_nums_more_5(&mat , mondrian::vpipes::predicates::batched_predicates<size_t >
-    ::greater_equal::micro_optimized_impl(5,true),chunk_size);
+    ::greater_equal::micro_optimized_impl(5,true),batch_size);
 
     mondrian::vpipes::pipes::filter<size_t> filter_nums_less_20(&filter_nums_more_5 , mondrian::vpipes::predicates::batched_predicates<size_t >
-    ::less_equal::micro_optimized_impl(30,true),chunk_size);
+    ::less_equal::micro_optimized_impl(30,true),batch_size);
 
 
     testing_vpipes_classes::minimal_reader<size_t > reader(&filter_nums_less_20,mondrian::vpipes::predicates::batched_predicates<size_t >
-    ::greater_equal::micro_optimized_impl(0,true),input_length,chunk_size,chunk_size);
+    ::greater_equal::micro_optimized_impl(0,true),input_length,batch_size,batch_size);
 
     reader.read();
 
@@ -87,7 +87,7 @@ TEST(TESTfilters, CascadingFilters) {
 
 TEST(TESTfilters, NoConditionSatisfied) {
     size_t res_length = 50;
-    auto chunk_size =20;
+    auto batch_size =20;
     auto  input_length= 50;
     auto  result = create_column(res_length, true);
     auto expected_result =create_column(res_length, true);
@@ -99,13 +99,13 @@ TEST(TESTfilters, NoConditionSatisfied) {
 
         }
     };
-    mondrian::vpipes::pipes::materialize<size_t> mat(result,&res_length,ids_copier,chunk_size);
+    mondrian::vpipes::pipes::materialize<size_t> mat(result,&res_length,ids_copier,batch_size);
 
     mondrian::vpipes::pipes::filter<size_t> filter_nums_more_100(&mat , mondrian::vpipes::predicates::batched_predicates<size_t >
-    ::greater_equal::micro_optimized_impl(predicate_value,true),chunk_size);
+    ::greater_equal::micro_optimized_impl(predicate_value,true),batch_size);
 
     testing_vpipes_classes::minimal_reader<size_t > reader(&filter_nums_more_100,mondrian::vpipes::predicates::batched_predicates<size_t >
-    ::greater_equal::micro_optimized_impl(0,true),input_length,chunk_size,chunk_size);
+    ::greater_equal::micro_optimized_impl(0,true),input_length,batch_size,batch_size);
 
     reader.read();
 

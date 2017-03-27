@@ -30,19 +30,19 @@ namespace mondrian
         public:
             using typename input_super::input_t;
             using typename input_super::input_tupletid_t;
-            using typename input_super::input_chunk_t;
+            using typename input_super::input_batch_t;
 
             using typename output_super::output_t;
             using typename output_super::output_tupletid_t;
-            using typename output_super::output_chunk_t;
+            using typename output_super::output_batch_t;
             using typename output_super::consumer_t;
 
         protected:
             using output_super::produce;
 
         public:
-            pipe(consumer_t *consumer, unsigned chunk_size):
-                    output_super(consumer, chunk_size) { }
+            pipe(consumer_t *consumer, unsigned batch_size):
+                    output_super(consumer, batch_size) { }
 
             virtual void close() final
             {

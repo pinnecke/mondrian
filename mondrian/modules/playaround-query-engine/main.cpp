@@ -126,27 +126,27 @@ int main()
 //    };
 
     double last_duration = 2e6;
-    size_t last_filter_chunk_size = 0, last_scan_chunk_size = 0;
+    size_t last_filter_batch_size = 0, last_scan_batch_size = 0;
     size_t result_set_size = 0;
-    const unsigned FILTER_CHUNK_SIZE_UPPER_BOUND = 600 * 4;
-    const unsigned SCAN_CHUNK_SIZE_UPPER_BOUND = 600 * 10;
-    unsigned mat_chunk_size = 420;
+    const unsigned FILTER_BATCH_SIZE_UPPER_BOUND = 600 * 4;
+    const unsigned SCAN_BATCH_SIZE_UPPER_BOUND = 600 * 10;
+    unsigned mat_batch_size = 420;
 
-    for (unsigned filter_chunk_size = 10; filter_chunk_size < FILTER_CHUNK_SIZE_UPPER_BOUND; filter_chunk_size += 90) {
-        for (unsigned scan_chunk_size = 10; scan_chunk_size < SCAN_CHUNK_SIZE_UPPER_BOUND; scan_chunk_size += 90) {
+    for (unsigned filter_batch_size = 10; filter_batch_size < FILTER_BATCH_SIZE_UPPER_BOUND; filter_batch_size += 90) {
+        for (unsigned scan_batch_size = 10; scan_batch_size < SCAN_BATCH_SIZE_UPPER_BOUND; scan_batch_size += 90) {
             long current_duration = 0;
             size_t num_samples = 3;
             result_set_size = 0;
 
             for (size_t i = 0; i < num_samples; i++) {
-                vpipes::pipes::materialize<uint32_t> materialize(result_buffer, &result_set_size, ORDERKEY.f, mat_chunk_size);
+                vpipes::pipes::materialize<uint32_t> materialize(result_buffer, &result_set_size, ORDERKEY.f, mat_batch_size);
                 using predicates = vpipes::predicates::batched_predicates<uint32_t>;
                 current_duration += utils::profiling::measure<std::chrono::nanoseconds>::execute(
-                        [&PARTKEY, &materialize, &scan_chunk_size, &filter_chunk_size]() {
+                        [&PARTKEY, &materialize, &scan_batch_size, &filter_batch_size]() {
                             auto table_scan = PARTKEY.table_scan(&materialize,
                                                                  predicates::greater_equal::micro_optimized_impl(
                                                                          2000000, false),
-                                                                 scan_chunk_size, filter_chunk_size);
+                                                                 scan_batch_size, filter_batch_size);
                             table_scan->start();
                             free(table_scan);
                         });
@@ -158,22 +158,22 @@ int main()
 
             double current_duration_d = current_duration / double(num_samples) / 1000000.0f;
             cout << "avg duration: " << current_duration_d
-                 << "ms @ / f-chunk size: " << filter_chunk_size
-                 << "/ s-chunk size: " << scan_chunk_size
+                 << "ms @ / f-batch size: " << filter_batch_size
+                 << "/ s-batch size: " << scan_batch_size
                  << ", best so far: " << last_duration
-                 << "/ f-chunk size: " << last_filter_chunk_size
-                 << "/ s-chunk size: " << last_scan_chunk_size
+                 << "/ f-batch size: " << last_filter_batch_size
+                 << "/ s-batch size: " << last_scan_batch_size
                  << " w/ result set size: " << result_set_size << endl;
 
 
             //     if (last_duration + 3 < current_duration_d) {
-            //         cout << "best performance: " << last_duration << "ms @ chunk size: " << last_chunk_size << endl;
+            //         cout << "best performance: " << last_duration << "ms @ batch size: " << last_batch_size << endl;
             //     }
 
             if (last_duration > current_duration_d) {
                 last_duration = current_duration_d;
-                last_filter_chunk_size = filter_chunk_size;
-                last_scan_chunk_size = scan_chunk_size;
+                last_filter_batch_size = filter_batch_size;
+                last_scan_batch_size = scan_batch_size;
             }
         }
 

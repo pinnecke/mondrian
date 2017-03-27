@@ -4,7 +4,7 @@
 
 #include "gtest/gtest.h"
 #include <vpipes.hpp>
-#include <testing_chunks.hpp>
+#include <testing_batches.hpp>
 
 #include <testing_reader_materlizer.hpp>
 

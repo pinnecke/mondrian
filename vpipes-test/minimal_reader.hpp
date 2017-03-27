@@ -24,16 +24,16 @@ namespace testing_vpipes_classes{
     private:
         consumer<value_t> *m_consumer;
         predicate_t m_predicate;
-        unsigned m_scan_chunk_size;
-        unsigned m_filter_chunk_size;
+        unsigned m_scan_batch_size;
+        unsigned m_filter_batch_size;
         size_t   m_total_elements;
     public:
         minimal_reader(consumer<value_t> *consumer_p, predicate_t predicate,
-                       size_t total_elements,unsigned scan_chunk_size ,unsigned filter_chunk_size):m_consumer(consumer_p),
+                       size_t total_elements,unsigned scan_batch_size ,unsigned filter_batch_size):m_consumer(consumer_p),
                                                                                                    m_predicate(predicate),
                                                                                                    m_total_elements(total_elements),
-                                                                                                   m_scan_chunk_size(scan_chunk_size),
-                                                                                                   m_filter_chunk_size(filter_chunk_size)
+                                                                                                   m_scan_batch_size(scan_batch_size),
+                                                                                                   m_filter_batch_size(filter_batch_size)
         {
 
         }
@@ -55,7 +55,7 @@ namespace testing_vpipes_classes{
             };
 
             auto loc_table = pipes::table_scan<value_t>(m_consumer, &all_tuplet_ids, &all_tuplet_ids + 1, m_predicate,
-                                                        loc_block_copy   , m_scan_chunk_size, m_filter_chunk_size);
+                                                        loc_block_copy   , m_scan_batch_size, m_filter_batch_size);
 
             loc_table.start();
         }

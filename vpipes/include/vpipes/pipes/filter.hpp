@@ -35,7 +35,7 @@ namespace mondrian
                 using typename super::output_t;
                 using typename super::output_tupletid_t;
                 using typename super::consumer_t;
-                using typename super::input_chunk_t;
+                using typename super::input_batch_t;
                 using iterator_t = vpipes::iterator<input_tupletid_t *>;
                 using predicate_t = typename vpipes::predicates::batched_predicates<input_t>::func_t;
 
@@ -46,24 +46,24 @@ namespace mondrian
                 predicate_t predicate;
             public:
 
-                filter(consumer_t *consumer, predicate_t predicate, unsigned chunk_size) :
-                        super(consumer, chunk_size), predicate(predicate)
+                filter(consumer_t *consumer, predicate_t predicate, unsigned batch_size) :
+                        super(consumer, batch_size), predicate(predicate)
                 {
                     // Note here: The operator is unaware of the vector size of the input. The assignment
                     // of the vector size of this operator as the vector size of the preceding operator
                     // just a best guess and must be corrected afterwards if it was wrong
-                    buffer_size = chunk_size;
+                    buffer_size = batch_size;
                     matching_indices_buffer = (size_t *) malloc(buffer_size * sizeof(size_t));
                     assert (matching_indices_buffer != nullptr);
                 }
 
-                inline virtual void on_consume(const input_chunk_t *data) override final __attribute__((always_inline))
+                inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
                 {
-                    auto input_chunk_size = data->get_size();
+                    auto input_batch_size = data->get_size();
 
-                    if (__builtin_expect(input_chunk_size > buffer_size, false)) {
-                        buffer_size = input_chunk_size;
-                        matching_indices_buffer = (size_t *) realloc(matching_indices_buffer, input_chunk_size *
+                    if (__builtin_expect(input_batch_size > buffer_size, false)) {
+                        buffer_size = input_batch_size;
+                        matching_indices_buffer = (size_t *) realloc(matching_indices_buffer, input_batch_size *
                                                                      sizeof(input_tupletid_t));
                         assert (matching_indices_buffer != nullptr);
                     }

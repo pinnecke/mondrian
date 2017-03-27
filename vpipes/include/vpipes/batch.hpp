@@ -22,7 +22,7 @@ namespace mondrian
     namespace vpipes
     {
         template<class ValueType, class TupletIdType = size_t>
-        class chunk
+        class batch
         {
         public:
             using value_t = ValueType;
@@ -40,7 +40,7 @@ namespace mondrian
                 full, non_full
             };
 
-            chunk(size_t num_of_elements) : max_size(num_of_elements), cursor(0)
+            batch(size_t num_of_elements) : max_size(num_of_elements), cursor(0)
             {
                 tupletids = (tupletid_t *) malloc(this->max_size * sizeof(tupletid_t));
                 values = (value_t *) malloc(this->max_size * sizeof(value_t));
