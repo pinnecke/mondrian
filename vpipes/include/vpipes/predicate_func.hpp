@@ -88,6 +88,37 @@ struct name                                                                     
     }                                                                                                           \
 };
 
+#define DEFINE_branch_free_impl(name, opp)                                                 \
+struct name                                                                                                     \
+{                                                                                                               \
+    value_t compare_value;                                                                                      \
+    bool hint_expected_true;                                                                                    \
+                                                                                                                \
+    explicit name(value_t compare_value, bool hint_expected_true): compare_value(compare_value),                \
+                                                                    hint_expected_true(hint_expected_true) { }  \
+                                                                                                                \
+    virtual inline void operator()(size_t *out_matching_indices, size_t *out_num_matching_indices,              \
+                           const tupletid_t *tupletids, const value_t *values,                                  \
+                           size_t num_elements) final __attribute__((always_inline))                            \
+    {                                                                                                           \
+        ASSERT_VALID_BATCHED_PREDICATE_ARGS2();                                                                 \
+        const size_t *out_matching_indices_start = out_matching_indices;                                        \
+        __builtin_prefetch(out_matching_indices, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);   \
+        __builtin_prefetch(out_num_matching_indices, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);   \
+        __builtin_prefetch(tupletids, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);               \
+        __builtin_prefetch(values, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);                  \
+        *out_num_matching_indices = 0 ;                                                                         \
+        size_t idx = 0;                                                                                         \
+        while ( num_elements- idx  ) {                                                                          \
+             *(out_matching_indices+ *out_num_matching_indices)=idx;                                            \
+             *out_num_matching_indices = *out_num_matching_indices+(  __builtin_expect((values[idx] opp compare_value), hint_expected_true)  );            \
+             ++idx;                                                                                             \
+        }                                                                                                       \
+    }                                                                                                           \
+};
+
+
+
 namespace mondrian
 {
     namespace vpipes
@@ -107,36 +138,43 @@ namespace mondrian
                 {
                     DEFINE_STRAIGHT_FORWARD(straightforward_impl, <);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, <);
+                    DEFINE_branch_free_impl(branch_free_impl, <);
+
                 };
 
                 struct less_equal
                 {
                     DEFINE_STRAIGHT_FORWARD(straightforward_impl, <=);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, <=);
+                    DEFINE_branch_free_impl(branch_free_impl, <=);
                 };
 
                 struct equal_to
                 {
                     DEFINE_STRAIGHT_FORWARD(straightforward_impl, ==);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, ==);
+                    DEFINE_branch_free_impl(branch_free_impl, ==);
                 };
 
                 struct unequal_to
                 {
                     DEFINE_STRAIGHT_FORWARD(straightforward_impl, !=);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, !=);
+                    DEFINE_branch_free_impl(branch_free_impl, !=);
                 };
 
                 struct greater_equal
                 {
                     DEFINE_STRAIGHT_FORWARD(straightforward_impl, >=);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, >=);
+                    DEFINE_branch_free_impl(branch_free_impl, >=);
                 };
 
                 struct greater_than
                 {
                     DEFINE_STRAIGHT_FORWARD(straightforward_impl, >);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, >);
+                    DEFINE_branch_free_impl(branch_free_impl, >);
                 };
             };
         }

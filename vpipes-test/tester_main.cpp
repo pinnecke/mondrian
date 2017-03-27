@@ -5,15 +5,10 @@
 #include "gtest/gtest.h"
 #include <vpipes.hpp>
 #include <testing_batches.hpp>
-
 #include <testing_reader_materlizer.hpp>
-
 #include <testing_filters.hpp>
 #include <testing_table_scan.hpp>
-
- using namespace std;
-using namespace mondrian::vpipes;
-
+#include <testing_predicates.hpp>
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
