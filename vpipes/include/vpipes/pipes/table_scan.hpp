@@ -35,7 +35,7 @@ namespace mondrian
                 using input_tupletid_t = InputTupletIdType;
                 using typename super::consumer_t;
                 using filter_t = filter<input_t>;
-                using predicate_t = typename filter_t::predicate_t;
+                using predicate_func_t = typename filter_t::predicate_func_t;
                 using block_copy_t = typename block_copy<input_t, input_tupletid_t>::func_t;
                 using interval_t = interval<InputTupletIdType>;
 
@@ -46,7 +46,7 @@ namespace mondrian
 
             public:
                 table_scan(consumer_t *consumer, const interval_t *tuplet_ids_interval_begin,
-                           const interval_t *tuplet_ids_interval_end, predicate_t predicate,
+                           const interval_t *tuplet_ids_interval_end, predicate_func_t predicate,
                            block_copy_t block_copy_func, unsigned scan_batch_size, unsigned filter_batch_size) :
                         super(nullptr, scan_batch_size), tuplet_ids_interval_begin(tuplet_ids_interval_begin),
                         tuplet_ids_interval_end(tuplet_ids_interval_end), block_copy_func(block_copy_func)

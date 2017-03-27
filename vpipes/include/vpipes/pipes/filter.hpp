@@ -32,21 +32,23 @@ namespace mondrian
             public:
                 using typename super::input_t;
                 using typename super::input_tupletid_t;
+                using typename super::input_batch_t;
                 using typename super::output_t;
                 using typename super::output_tupletid_t;
+                using typename super::output_batch_t;
                 using typename super::consumer_t;
-                using typename super::input_batch_t;
+
                 using iterator_t = vpipes::iterator<input_tupletid_t *>;
-                using predicate_t = typename vpipes::predicates::batched_predicates<input_t>::func_t;
+                using predicate_func_t = typename vpipes::predicates::batched_predicates<input_t>::func_t;
 
             private:
                 size_t *matching_indices_buffer;
                 size_t buffer_size;
 
-                predicate_t predicate;
+                predicate_func_t predicate;
             public:
 
-                filter(consumer_t *consumer, predicate_t predicate, unsigned batch_size) :
+                filter(consumer_t *consumer, predicate_func_t predicate, unsigned batch_size) :
                         super(consumer, batch_size), predicate(predicate)
                 {
                     // Note here: The operator is unaware of the vector size of the input. The assignment

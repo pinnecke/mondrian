@@ -19,16 +19,16 @@ namespace testing_vpipes_classes{
         using value_t = ValueType;
         using tupletid_t = size_t;
         using table_scan_t = pipes::table_scan<ValueType>;
-        using predicate_t = typename table_scan_t::predicate_t;
+        using predicate_func_t = typename table_scan_t::predicate_func_t;
         using point_copy_t = typename point_copy<value_t, size_t>::func_t;
     private:
         consumer<value_t> *m_consumer;
-        predicate_t m_predicate;
+        predicate_func_t m_predicate;
         unsigned m_scan_batch_size;
         unsigned m_filter_batch_size;
         size_t   m_total_elements;
     public:
-        minimal_reader(consumer<value_t> *consumer_p, predicate_t predicate,
+        minimal_reader(consumer<value_t> *consumer_p, predicate_func_t predicate,
                        size_t total_elements,unsigned scan_batch_size ,unsigned filter_batch_size):m_consumer(consumer_p),
                                                                                                    m_predicate(predicate),
                                                                                                    m_total_elements(total_elements),

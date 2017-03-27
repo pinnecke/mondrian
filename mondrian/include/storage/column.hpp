@@ -22,7 +22,7 @@ namespace mondrian
             using value_t = ValueType;
             using tupletid_t = size_t;
             using table_scan_t = pipes::table_scan<ValueType>;
-            using predicate_t = typename table_scan_t::predicate_t;
+            using predicate_func_t = typename table_scan_t::predicate_func_t;
             using point_copy_t = typename point_copy<value_t, size_t>::func_t;
 
         private:
@@ -89,7 +89,7 @@ namespace mondrian
                 this->materialize(out, tupletids, num_of_ids);
             };
 
-            inline virtual producer<value_t> *table_scan(consumer<value_t> *consumer, predicate_t predicate,
+            inline virtual producer<value_t> *table_scan(consumer<value_t> *consumer, predicate_func_t predicate,
                                                          unsigned scan_batch_size, unsigned filter_batch_size) final __attribute__((always_inline))
             {
                 size_t start = 0, end = size;
