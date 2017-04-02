@@ -434,3 +434,154 @@ TEST(TestBranchFreeImp,TestNotEqaul ){
     delete_column(ids);
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TEST(TestOPTIMIZEDBranchFreeImp,TestGreaterEqual ){
+    size_t res_size =150 ;
+    size_t input_size =150 ;
+    auto ids = create_column(input_size,false);
+    auto vals = create_column(input_size,false);
+    auto result = create_column(res_size,true);
+    size_t pred_val = 5 ;
+    auto expected_result = generate_expected_result(input_size, [pred_val] (size_t val) -> size_t {
+        return ! (val >=pred_val);
+    });
+    auto predicate=   mondrian::vpipes::predicates::batched_predicates<size_t>::greater_equal::optimized_branch_free_impl(pred_val,true);
+
+    predicate(result, &res_size,
+              ids, vals, input_size);
+
+    EXPECT_EQ(has_same_vals(result,expected_result,res_size),true );
+    delete_column(expected_result);
+    delete_column(vals);
+    delete_column(result);
+    delete_column(ids);
+
+}
+
+TEST(TestOPTIMIZEDBranchFreeImp,TestGreater ){
+    size_t res_size =150 ;
+    size_t input_size =150 ;
+    auto ids = create_column(input_size,false);
+    auto vals = create_column(input_size,false);
+    auto result = create_column(res_size,true);
+    size_t pred_val = 5 ;
+    auto expected_result = generate_expected_result(input_size, [pred_val] (size_t val) -> size_t {
+        return ! (val >pred_val);
+    });
+    auto predicate=   mondrian::vpipes::predicates::batched_predicates<size_t>::greater_than::optimized_branch_free_impl(pred_val,true);
+
+    predicate(result, &res_size,
+              ids, vals, input_size);
+
+    EXPECT_EQ(has_same_vals(result,expected_result,res_size),true );
+    delete_column(expected_result);
+    delete_column(vals);
+    delete_column(result);
+    delete_column(ids);
+
+}
+
+TEST(TestOPTIMIZEDBranchFreeImp,TestLessEqaul ){
+    size_t res_size =150 ;
+    size_t input_size =150 ;
+    auto ids = create_column(input_size,false);
+    auto vals = create_column(input_size,false);
+    auto result = create_column(res_size,true);
+    size_t pred_val = 5 ;
+    auto expected_result = generate_expected_result(input_size, [pred_val] (size_t val) -> size_t {
+        return ! (val <=pred_val);
+    });
+    auto predicate=   mondrian::vpipes::predicates::batched_predicates<size_t>::less_equal::optimized_branch_free_impl(pred_val,true);
+
+    predicate(result, &res_size,
+              ids, vals, input_size);
+    EXPECT_EQ(has_same_vals(result,expected_result,res_size),true );
+    delete_column(expected_result);
+    delete_column(vals);
+    delete_column(result);
+    delete_column(ids);
+
+}
+
+TEST(TestOPTIMIZEDBranchFreeImp,TestLess ){
+    size_t res_size =150 ;
+    size_t input_size =150 ;
+    auto vals = create_column(input_size,false);
+    auto ids = create_column(input_size,false);
+    auto result = create_column(res_size,true);
+    size_t pred_val = 5 ;
+    auto expected_result = generate_expected_result(input_size, [pred_val] (size_t val) -> size_t {
+        return ! (val <pred_val);
+    });
+    auto predicate=   mondrian::vpipes::predicates::batched_predicates<size_t>::less_than::optimized_branch_free_impl(pred_val,true);
+
+    predicate(result, &res_size,
+              ids, vals, input_size);
+
+    EXPECT_EQ(has_same_vals(result,expected_result,res_size),true );
+    delete_column(expected_result);
+    delete_column(vals);
+    delete_column(result);
+    delete_column(ids);
+
+}
+
+TEST(TestOPTIMIZEDBranchFreeImp,TestEqaul ){
+    size_t res_size =150 ;
+    size_t input_size =150 ;
+    auto ids = create_column(input_size,false);
+    auto vals = create_column(input_size,false);
+    auto result = create_column(res_size,true);
+    size_t pred_val = 5 ;
+    auto expected_result = generate_expected_result(input_size, [pred_val] (size_t val) -> size_t {
+        return ! (val ==pred_val);
+    });
+    auto predicate=   mondrian::vpipes::predicates::batched_predicates<size_t>::equal_to::optimized_branch_free_impl(pred_val,true);
+
+    predicate(result, &res_size,
+              ids, vals, input_size);
+
+    EXPECT_EQ(has_same_vals(result,expected_result,res_size),true );
+    delete_column(expected_result);
+    delete_column(vals);
+    delete_column(result);
+    delete_column(ids);
+
+}
+
+TEST(TestOPTIMIZEDBranchFreeImp,TestNotEqaul ){
+    size_t res_size =150 ;
+    size_t input_size =150 ;
+    auto ids = create_column(input_size,false);
+    auto vals = create_column(input_size,false);
+    auto result = create_column(res_size,true);
+    size_t pred_val = 5 ;
+    auto expected_result = generate_expected_result(input_size, [pred_val] (size_t val) -> size_t {
+        return ! (val !=pred_val);
+    });
+    auto predicate=   mondrian::vpipes::predicates::batched_predicates<size_t>::unequal_to::optimized_branch_free_impl(pred_val,true);
+
+    predicate(result, &res_size,
+              ids, vals, input_size);
+
+    EXPECT_EQ(has_same_vals(result,expected_result,res_size),true );
+    delete_column(expected_result);
+    delete_column(vals);
+    delete_column(result);
+    delete_column(ids);
+
+}
