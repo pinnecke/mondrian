@@ -42,32 +42,40 @@ namespace mondrian
                 using map_func_t = typename vpipes::maps::batched_map<input_t, output_t>::func_t;
 
             private:
+                output_t *value_buffer;
+                size_t buffer_size;
                 map_func_t map_func;
 
             public:
 
                 map(consumer_t *consumer, map_func_t map_func, unsigned batch_size) :
-                        super(consumer, batch_size), map_func(map_func) { }
+                        super(consumer, batch_size), map_func(map_func)
+                {
+                    // Note here: The operator is unaware of the batch size of the input. The assignment
+                    // of the batch size of this operator as the batch size of the preceding operator
+                    // just a best guess and must be corrected afterwards if it was wrong
+                    buffer_size = batch_size;
+                    value_buffer = (output_t *) malloc(buffer_size * sizeof(output_t));
+                    assert (value_buffer != nullptr);
+                }
 
                 inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
                 {
-
-
-                    /*auto input_batch_size = data->get_size();
+                    auto input_batch_size = data->get_size();
 
                     if (__builtin_expect(input_batch_size > buffer_size, false)) {
                         buffer_size = input_batch_size;
-                        matching_indices_buffer = (size_t *) realloc(matching_indices_buffer, input_batch_size *
-                                                                                              sizeof(input_tupletid_t));
-                        assert (matching_indices_buffer != nullptr);
+                        value_buffer = (output_t *) realloc(value_buffer, input_batch_size * sizeof(output_t));
+                        assert (value_buffer != nullptr);
                     }
 
-                    size_t result_size = 0;
-                    predicate(matching_indices_buffer, &result_size,
-                              data->get_tupletids_begin(), data->get_values_begin(), data->get_size());
-                    assert (result_size <= buffer_size);
-                    super::produce(data->get_tupletids_begin(), data->get_values_begin(), matching_indices_buffer,
-                                   result_size, false);*/
+                    map_func(value_buffer, data->get_values_begin(), input_batch_size);
+                    super::produce(data->get_tupletids_begin(), value_buffer, input_batch_size, true);
+                }
+
+                virtual void on_cleanup() override
+                {
+                    free (value_buffer);
                 }
             };
         }

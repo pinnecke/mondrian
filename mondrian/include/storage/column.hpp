@@ -49,12 +49,6 @@ namespace mondrian
                 assert (data != nullptr);
             }
 
-            /*const value_t *materialize(tupletid_t tid)
-            {
-                assert(tid >= 0 && tid < size);
-                return data + tid;
-            }*/
-
             void append(const value_t *begin, const value_t *end)
             {
                 assert (begin != nullptr && end != nullptr);
@@ -90,7 +84,8 @@ namespace mondrian
             };
 
             inline virtual producer<value_t> *table_scan(consumer<value_t> *consumer, predicate_func_t predicate,
-                                                         unsigned scan_batch_size, unsigned filter_batch_size) final __attribute__((always_inline))
+                                                         unsigned scan_batch_size, unsigned filter_batch_size,
+                                                         bool filter_hint_expected_avg_batch_eval_is_non_empty) final __attribute__((always_inline))
             {
                 size_t start = 0, end = size;
                 interval<size_t> all_tuplet_ids(start, end);
@@ -99,10 +94,9 @@ namespace mondrian
                                                         {
                                                             assert (out != nullptr);
                                                             assert (begin < end);
-                                                            //GATHER(out_begin, data, begin, (end - begin));
-                                                            //POINTER_GATHER(out, data, tupletids, num_elements);
                                                             memcpy(out, data + begin, (end - begin) * sizeof(value_t));
-                                                        }, scan_batch_size, filter_batch_size);
+                                                        }, scan_batch_size, filter_batch_size,
+                                                      filter_hint_expected_avg_batch_eval_is_non_empty);
             }
         };
     }

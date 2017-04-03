@@ -89,6 +89,19 @@ namespace mondrian
                 return retval;
             }
 
+            inline size_t add(state *out, const tupletid_t *in_tuplet_ids, const value_t *in_values,
+                              size_t num_elements) __attribute__((always_inline))
+            {
+                assert (cursor + 1 <= max_size);
+                auto append_max_len = std::min(max_size - cursor, num_elements);
+                auto retval = num_elements - append_max_len;
+                memcpy(tupletids + cursor, in_tuplet_ids, append_max_len);
+                memcpy(values + cursor, in_values, append_max_len);
+                cursor += append_max_len;
+                *out = (cursor >= max_size ? state::full : state::non_full);
+                return retval;
+            }
+
             inline iterator <value_t> get_iterator()
             {
                 return iterator<value_t>(tupletids, tupletids + cursor);

@@ -17,18 +17,16 @@
 
 #include <vpipes.hpp>
 
-using namespace std;
-
 namespace mondrian
 {
     namespace vpipes
     {
         namespace pipes
         {
-            template<class Input, class InputTupletIdType = size_t>
-            class filter : public pipe<Input, Input, InputTupletIdType, InputTupletIdType>
+            template<class Input, class Output, class InputTupletIdType = size_t>
+            class project : public pipe<Input, Output, InputTupletIdType, InputTupletIdType>
             {
-                using super = pipe<Input, Input, InputTupletIdType, InputTupletIdType>;
+                using super = pipe<Input, Output, InputTupletIdType, InputTupletIdType>;
             public:
                 using typename super::input_t;
                 using typename super::input_tupletid_t;
@@ -38,55 +36,46 @@ namespace mondrian
                 using typename super::output_batch_t;
                 using typename super::consumer_t;
 
-                using iterator_t = vpipes::iterator<input_tupletid_t *>;
-                using predicate_func_t = typename vpipes::predicates::batched_predicates<input_t>::func_t;
+                using point_copy_func_t = typename point_copy<output_t, output_tupletid_t>::func_t;
 
             private:
-                size_t *matching_indices_buffer;
-                size_t buffer_size;
-                bool hint_avg_batch_eval_result_is_non_empty;
+                point_copy_func_t point_copy;
 
-                predicate_func_t predicate;
+                output_t *out_projected_values;
+                size_t buffer_size;
             public:
 
-                filter(consumer_t *consumer, predicate_func_t predicate, unsigned batch_size,
-                       bool hint_avg_batch_eval_result_is_non_empty) :
-                        super(consumer, batch_size), predicate(predicate),
-                        hint_avg_batch_eval_result_is_non_empty(hint_avg_batch_eval_result_is_non_empty)
+                project(consumer_t *consumer, point_copy_func_t point_copy, unsigned batch_size) :
+                        super(consumer, batch_size), point_copy(point_copy)
                 {
                     // Note here: The operator is unaware of the batch size of the input. The assignment
                     // of the batch size of this operator as the batch size of the preceding operator
                     // just a best guess and must be corrected afterwards if it was wrong
                     buffer_size = batch_size;
-                    matching_indices_buffer = (size_t *) malloc(buffer_size * sizeof(size_t));
-                    assert (matching_indices_buffer != nullptr);
+                    out_projected_values = (output_t *) malloc(buffer_size * sizeof(output_t));
+                    assert (out_projected_values != nullptr);
                 }
 
                 inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
                 {
                     auto input_batch_size = data->get_size();
+                    auto in_tupletids = data->get_tupletids_begin();
+                    auto in_values = data->get_values_begin();
 
                     if (__builtin_expect(input_batch_size > buffer_size, false)) {
                         buffer_size = input_batch_size;
-                        matching_indices_buffer = (size_t *) realloc(matching_indices_buffer, input_batch_size *
-                                                                     sizeof(input_tupletid_t));
-                        assert (matching_indices_buffer != nullptr);
+                        out_projected_values = (output_t *) realloc(out_projected_values, input_batch_size *
+                                                                                              sizeof(output_t));
+                        assert (out_projected_values != nullptr);
                     }
 
-                    size_t result_size = 0;
-                    predicate(matching_indices_buffer, &result_size,
-                              data->get_tupletids_begin(), data->get_values_begin(), input_batch_size);
-                    assert (result_size <= buffer_size);
-
-                    if (__builtin_expect(result_size != 0, hint_avg_batch_eval_result_is_non_empty)) {
-                        super::produce(data->get_tupletids_begin(), data->get_values_begin(), matching_indices_buffer,
-                                       result_size, false);
-                    }
+                    point_copy(out_projected_values, in_tupletids, input_batch_size);
+                    super::produce(in_tupletids, out_projected_values, input_batch_size, false);
                 }
 
                 virtual void on_cleanup() override
                 {
-                    free (matching_indices_buffer);
+                    free (out_projected_values);
                 }
             };
         }

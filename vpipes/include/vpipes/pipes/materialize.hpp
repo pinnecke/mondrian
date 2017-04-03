@@ -32,28 +32,23 @@ namespace mondrian
                 using typename super::input_t;
                 using typename super::input_tupletid_t;
                 using typename super::input_batch_t;
-                using point_copy_func_t = typename point_copy<input_t, input_tupletid_t>::func_t;
-
             private:
                 size_t total_result_set_size;
                 input_t *destination;
                 size_t *result_set_size;
-                unsigned expected_batch_size;
-                point_copy_func_t point_copy_func;
 
             public:
-                materialize(Input *destination, size_t *result_set_size, point_copy_func_t point_copy_func,
-                            unsigned expected_batch_size) :
-                        destination(destination), total_result_set_size(0), result_set_size(result_set_size),
-                        point_copy_func(point_copy_func), expected_batch_size(expected_batch_size)
+                materialize(Input *destination, size_t *result_set_size) :
+                        destination(destination), total_result_set_size(0), result_set_size(result_set_size)
                 {
-                    assert (expected_batch_size > 0);
+                    assert (destination != nullptr);
+                    assert (result_set_size != nullptr);
                 };
 
             protected:
                 inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
                 {
-                    point_copy_func(destination, data->get_tupletids_begin(), data->get_size());
+                    memcpy(destination, data->get_values_begin(), data->get_size());
                     destination += data->get_size();
                     total_result_set_size += data->get_size();
                     *result_set_size = total_result_set_size;

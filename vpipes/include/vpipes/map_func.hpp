@@ -33,7 +33,7 @@ namespace mondrian
             };
 
             template<class Input>
-            struct mark_map : public batched_map<Input, bool>
+            struct indicators : public batched_map<Input, bool>
             {
             private:
                 using super = batched_map<Input, bool>;
@@ -43,7 +43,7 @@ namespace mondrian
                 using typename super::output_t;
                 using typename super::func_t;
 
-                struct mark_less_than
+                struct less_than
                 {
                     struct straightforward_impl
                     {
@@ -62,27 +62,27 @@ namespace mondrian
                     };
                 };
 
-                struct mark_less_equal
+                struct less_equal
                 {
                     // TODO ...
                 };
 
-                struct mark_equal_to
+                struct equal_to
                 {
                     // TODO ...
                 };
 
-                struct mark_unequal_to
+                struct unequal_to
                 {
                     // TODO ...
                 };
 
-                struct mark_greater_equal
+                struct greater_equal
                 {
                     // TODO ...
                 };
 
-                struct mark_greater_than
+                struct greater_than
                 {
                     // TODO ...
                 };

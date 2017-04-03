@@ -23,3 +23,5 @@
 #include "vpipes/pipes/materialize.hpp"
 #include "vpipes/pipes/no_operation.hpp"
 #include "vpipes/pipes/table_scan.hpp"
+#include "vpipes/pipes/map.hpp"
+#include "vpipes/pipes/project.hpp"

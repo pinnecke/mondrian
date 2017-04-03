@@ -104,6 +104,25 @@ namespace mondrian
                 } while (num_indices);
             }
 
+            virtual inline void produce(const output_tupletid_t *tupletids, const output_t * values,
+                                        size_t num_elements, bool expect_output_batch_is_full_afterwards)
+                                        final __attribute__((always_inline))
+            {
+                auto original_num_elements = num_elements;
+                result->memory_prefetch_for_write();
+                do {
+                    typename output_batch_t::state batch_state;
+                    num_elements = result->add(&batch_state, tupletids, values, num_elements);
+                    if (__builtin_expect(batch_state == output_batch_t::state::full,
+                                         expect_output_batch_is_full_afterwards)) {
+                        send();
+                    }
+                    auto step = (original_num_elements - num_elements);
+                    tupletids += step;
+                    tupletids += step;
+                } while (num_elements);
+            }
+
             virtual void close()
             {
                 if (__builtin_expect(next_operator != nullptr, true))

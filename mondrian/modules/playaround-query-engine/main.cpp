@@ -101,7 +101,7 @@ int main()
     assert (column_data_partkey.size() == column_data_orderkey.size());
     size_t num_elements = column_data_partkey.size();
 
-    uint32_t *result_buffer = (uint32_t *) malloc (num_elements * sizeof(uint32_t));
+    bool *result_buffer = (bool *) malloc (num_elements * sizeof(bool));
     assert (result_buffer != nullptr);
 
     column<uint32_t> PARTKEY(column_data_partkey.data(), column_data_partkey.data() + num_elements);
@@ -139,17 +139,32 @@ int main()
             result_set_size = 0;
 
             for (size_t i = 0; i < num_samples; i++) {
-                vpipes::pipes::materialize<uint32_t> materialize(result_buffer, &result_set_size, ORDERKEY.f, mat_batch_size);
-                using predicates = vpipes::predicates::batched_predicates<uint32_t>;
+                using namespace vpipes::pipes;
+                using namespace vpipes::maps;
+                using namespace vpipes::predicates;
+
+                auto materializer = materialize<bool>(result_buffer, &result_set_size);
+                auto mapper = map<uint32_t, bool>(&materializer,
+                                                  indicators<uint32_t>::less_than::straightforward_impl(100),
+                                                 100);
+                auto projecter = project<uint32_t, uint32_t>(&mapper, ORDERKEY.f, 100);
+
+                using predicates = batched_predicates<uint32_t>;
                 current_duration += utils::profiling::measure<std::chrono::nanoseconds>::execute(
-                        [&PARTKEY, &materialize, &scan_batch_size, &filter_batch_size]() {
-                            auto table_scan = PARTKEY.table_scan(&materialize,
+                        [&PARTKEY, &projecter, &scan_batch_size, &filter_batch_size]() {
+                            auto table_scan = PARTKEY.table_scan(&projecter,
                                                                  predicates::greater_equal::micro_optimized_impl(
                                                                          2000000, false),
-                                                                 scan_batch_size, filter_batch_size);
+                                                                 scan_batch_size, filter_batch_size, false);
                             table_scan->start();
                             free(table_scan);
                         });
+
+                cout << "---------------------------------------" << endl;
+                for (bool *it = result_buffer; it != result_buffer + result_set_size; ++it) {
+                    cout << (it - result_buffer) << ": " << *it << endl;
+                }
+                cout << "---------------------------------------" << endl;
 
             }
 
