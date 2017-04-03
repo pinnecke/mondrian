@@ -32,14 +32,14 @@ namespace mondrian
             using block_copy_t = typename block_copy<output_t, output_tupletid_t>::func_t;
 
         private:
-            consumer_t *next_operator;
+            consumer_t *destination;
             output_batch_t *result = nullptr;
             size_t size;
 
         protected:
-            void set_consumer(consumer_t *next_operator)
+            void set_destination(consumer_t *destination)
             {
-                this->next_operator = next_operator;
+                this->destination = destination;
             }
 
             void reset() {
@@ -57,9 +57,9 @@ namespace mondrian
 
             inline void send() __attribute__((always_inline))
             {
-                assert (next_operator != nullptr);
+                assert (destination != nullptr);
                 result->memory_prefetch_for_read();
-                next_operator->consume(result);
+                destination->consume(result);
                 reset();
             }
 
@@ -119,26 +119,26 @@ namespace mondrian
                     }
                     auto step = (original_num_elements - num_elements);
                     tupletids += step;
-                    tupletids += step;
+                    values += step;
                 } while (num_elements);
             }
 
             virtual void close()
             {
-                if (__builtin_expect(next_operator != nullptr, true))
+                if (__builtin_expect(destination != nullptr, true))
                 {
                     send();
                     on_close();
                     send();
-                    next_operator->close();
+                    destination->close();
                 }
                 cleanup();
                 on_cleanup();
             }
 
         public:
-            producer(consumer_t *next_operator, unsigned batch_size):
-                    next_operator(next_operator), size(batch_size)
+            producer(consumer_t *destination, unsigned batch_size):
+                    destination(destination), size(batch_size)
             {
                 result = new output_batch_t(batch_size);
             }

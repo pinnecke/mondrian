@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.6)
 project(tests)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS -O0)
 
 #add_definitions(-DNWARNING)
 #add_definitions(-DNINFO)

@@ -1,6 +1,5 @@
 
 #include <vpipes.hpp>
-#include <vpipes/storage.hpp>
 #include <storage/column.hpp>
 #include <utils/profiling.hpp>
 #include <fstream>

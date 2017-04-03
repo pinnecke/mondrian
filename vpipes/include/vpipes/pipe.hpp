@@ -41,8 +41,8 @@ namespace mondrian
             using output_super::produce;
 
         public:
-            pipe(consumer_t *consumer, unsigned batch_size):
-                    output_super(consumer, batch_size) { }
+            pipe(consumer_t *destination, unsigned batch_size):
+                    output_super(destination, batch_size) { }
 
             virtual void close() final
             {

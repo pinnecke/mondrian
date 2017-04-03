@@ -45,7 +45,7 @@ namespace mondrian
                 block_copy_t block_copy_func;
 
             public:
-                table_scan(consumer_t *consumer, const interval_t *tuplet_ids_interval_begin,
+                table_scan(consumer_t *destination, const interval_t *tuplet_ids_interval_begin,
                            const interval_t *tuplet_ids_interval_end, predicate_func_t predicate,
                            block_copy_t block_copy_func, unsigned scan_batch_size, unsigned filter_batch_size,
                            bool filter_hint_expected_avg_batch_eval_is_non_empty) :
@@ -54,9 +54,9 @@ namespace mondrian
                 {
                     assert (tuplet_ids_interval_begin != nullptr && tuplet_ids_interval_end != nullptr);
                     assert (tuplet_ids_interval_begin < tuplet_ids_interval_end);
-                    filter_operator = new filter_t(consumer, predicate, filter_batch_size,
+                    filter_operator = new filter_t(destination, predicate, filter_batch_size,
                                                    filter_hint_expected_avg_batch_eval_is_non_empty);
-                    super::set_consumer(filter_operator);
+                    super::set_destination(filter_operator);
                 }
 
                 virtual void on_start() override

@@ -25,10 +25,11 @@ TEST(TESTfilters, BasicFiltersTest) {
 
         }
     };
-    mondrian::vpipes::pipes::materialize<size_t> mat(result,&res_length,ids_copier,batch_size);
+    mondrian::vpipes::pipes::materialize<size_t> mat(result, &res_length);
+    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, batch_size);
 
-    mondrian::vpipes::pipes::filter<size_t> filter_nums_more_5(&mat , mondrian::vpipes::predicates::batched_predicates<size_t >
-    ::greater_equal::micro_optimized_impl(predicate_value,true),batch_size);
+    mondrian::vpipes::pipes::filter<size_t> filter_nums_more_5(&proj , mondrian::vpipes::predicates::batched_predicates<size_t >
+    ::greater_equal::micro_optimized_impl(predicate_value,true),batch_size, true);
 
     testing_vpipes_classes::minimal_reader<size_t > reader(&filter_nums_more_5,mondrian::vpipes::predicates::batched_predicates<size_t >
     ::greater_equal::micro_optimized_impl(0,true),input_length,batch_size,batch_size);
@@ -60,13 +61,14 @@ TEST(TESTfilters, CascadingFilters) {
 
         }
     };
-    mondrian::vpipes::pipes::materialize<size_t> mat(result,&res_length,ids_copier,batch_size);
+    mondrian::vpipes::pipes::materialize<size_t> mat(result, &res_length);
+    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, batch_size);
 
-    mondrian::vpipes::pipes::filter<size_t> filter_nums_more_5(&mat , mondrian::vpipes::predicates::batched_predicates<size_t >
-    ::greater_equal::micro_optimized_impl(5,true),batch_size);
+    mondrian::vpipes::pipes::filter<size_t> filter_nums_more_5(&proj, mondrian::vpipes::predicates::batched_predicates<size_t >
+    ::greater_equal::micro_optimized_impl(5,true),batch_size, true);
 
     mondrian::vpipes::pipes::filter<size_t> filter_nums_less_20(&filter_nums_more_5 , mondrian::vpipes::predicates::batched_predicates<size_t >
-    ::less_equal::micro_optimized_impl(30,true),batch_size);
+    ::less_equal::micro_optimized_impl(30,true),batch_size, true);
 
 
     testing_vpipes_classes::minimal_reader<size_t > reader(&filter_nums_less_20,mondrian::vpipes::predicates::batched_predicates<size_t >
@@ -99,10 +101,11 @@ TEST(TESTfilters, NoConditionSatisfied) {
 
         }
     };
-    mondrian::vpipes::pipes::materialize<size_t> mat(result,&res_length,ids_copier,batch_size);
+    mondrian::vpipes::pipes::materialize<size_t> mat(result, &res_length);
+    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, batch_size);
 
-    mondrian::vpipes::pipes::filter<size_t> filter_nums_more_100(&mat , mondrian::vpipes::predicates::batched_predicates<size_t >
-    ::greater_equal::micro_optimized_impl(predicate_value,true),batch_size);
+    mondrian::vpipes::pipes::filter<size_t> filter_nums_more_100(&proj , mondrian::vpipes::predicates::batched_predicates<size_t >
+    ::greater_equal::micro_optimized_impl(predicate_value,true),batch_size, true);
 
     testing_vpipes_classes::minimal_reader<size_t > reader(&filter_nums_more_100,mondrian::vpipes::predicates::batched_predicates<size_t >
     ::greater_equal::micro_optimized_impl(0,true),input_length,batch_size,batch_size);

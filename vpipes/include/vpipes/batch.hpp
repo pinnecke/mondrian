@@ -95,8 +95,8 @@ namespace mondrian
                 assert (cursor + 1 <= max_size);
                 auto append_max_len = std::min(max_size - cursor, num_elements);
                 auto retval = num_elements - append_max_len;
-                memcpy(tupletids + cursor, in_tuplet_ids, append_max_len);
-                memcpy(values + cursor, in_values, append_max_len);
+                memcpy(tupletids + cursor, in_tuplet_ids, append_max_len * sizeof(tupletid_t));
+                memcpy(values + cursor, in_values, append_max_len * sizeof(value_t));
                 cursor += append_max_len;
                 *out = (cursor >= max_size ? state::full : state::non_full);
                 return retval;

@@ -48,7 +48,7 @@ namespace mondrian
             protected:
                 inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
                 {
-                    memcpy(destination, data->get_values_begin(), data->get_size());
+                    memcpy(destination, data->get_values_begin(), data->get_size() * sizeof(input_t));
                     destination += data->get_size();
                     total_result_set_size += data->get_size();
                     *result_set_size = total_result_set_size;

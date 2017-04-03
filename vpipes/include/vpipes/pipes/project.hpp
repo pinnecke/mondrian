@@ -45,8 +45,8 @@ namespace mondrian
                 size_t buffer_size;
             public:
 
-                project(consumer_t *consumer, point_copy_func_t point_copy, unsigned batch_size) :
-                        super(consumer, batch_size), point_copy(point_copy)
+                project(consumer_t *destination, point_copy_func_t point_copy, unsigned batch_size) :
+                        super(destination, batch_size), point_copy(point_copy)
                 {
                     // Note here: The operator is unaware of the batch size of the input. The assignment
                     // of the batch size of this operator as the batch size of the preceding operator

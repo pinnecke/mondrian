@@ -48,8 +48,8 @@ namespace mondrian
 
             public:
 
-                map(consumer_t *consumer, map_func_t map_func, unsigned batch_size) :
-                        super(consumer, batch_size), map_func(map_func)
+                map(consumer_t *destination, map_func_t map_func, unsigned batch_size) :
+                        super(destination, batch_size), map_func(map_func)
                 {
                     // Note here: The operator is unaware of the batch size of the input. The assignment
                     // of the batch size of this operator as the batch size of the preceding operator

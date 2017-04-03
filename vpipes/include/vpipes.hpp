@@ -10,7 +10,7 @@
 #include "vpipes/macros.hpp"
 #include "vpipes/iterator.hpp"
 #include "vpipes/interval.hpp"
-#include "vpipes/storage.hpp"
+#include "vpipes/memory.hpp"
 #include "vpipes/predicate_func.hpp"
 #include "vpipes/map_func.hpp"
 #include "vpipes/batch.hpp"

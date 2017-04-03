@@ -49,9 +49,9 @@ namespace mondrian
                 predicate_func_t predicate;
             public:
 
-                filter(consumer_t *consumer, predicate_func_t predicate, unsigned batch_size,
+                filter(consumer_t *destination, predicate_func_t predicate, unsigned batch_size,
                        bool hint_avg_batch_eval_result_is_non_empty) :
-                        super(consumer, batch_size), predicate(predicate),
+                        super(destination, batch_size), predicate(predicate),
                         hint_avg_batch_eval_result_is_non_empty(hint_avg_batch_eval_result_is_non_empty)
                 {
                     // Note here: The operator is unaware of the batch size of the input. The assignment
