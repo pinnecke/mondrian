@@ -17,6 +17,23 @@
 
 #include <vpipes.hpp>
 
+#define DEFINE_INDICATE_STRAIGHT_FORWARD(name, opp)                                                                    \
+struct name                                                                                                            \
+{                                                                                                                      \
+    input_t compare_value;                                                                                             \
+                                                                                                                       \
+    name(input_t compare_value): compare_value(compare_value) { }                                                      \
+                                                                                                                       \
+    void operator()(output_t *destination, const input_t *source, size_t num_elements)                                 \
+    {                                                                                                                  \
+        assert (destination != nullptr);                                                                               \
+        assert (source != nullptr);                                                                                    \
+        while (num_elements--) {                                                                                       \
+            *destination++ = (*source++ opp compare_value);                                                            \
+        }                                                                                                              \
+    }                                                                                                                  \
+};
+
 namespace mondrian
 {
     namespace vpipes
@@ -45,46 +62,32 @@ namespace mondrian
 
                 struct less_than
                 {
-                    struct straightforward_impl
-                    {
-                        input_t compare_value;
-
-                        straightforward_impl(input_t input_t): compare_value() { }
-
-                        void operator()(output_t *destination, const input_t *source, size_t num_elements)
-                        {
-                            assert (destination != nullptr);
-                            assert (source != nullptr);
-                            while (num_elements--) {
-                                *destination++ = (*source++ == compare_value);
-                            }
-                        }
-                    };
+                    DEFINE_INDICATE_STRAIGHT_FORWARD(straightforward_impl, <);
                 };
 
                 struct less_equal
                 {
-                    // TODO ...
+                    DEFINE_INDICATE_STRAIGHT_FORWARD(straightforward_impl, <=);
                 };
 
                 struct equal_to
                 {
-                    // TODO ...
+                    DEFINE_INDICATE_STRAIGHT_FORWARD(straightforward_impl, ==);
                 };
 
                 struct unequal_to
                 {
-                    // TODO ...
+                    DEFINE_INDICATE_STRAIGHT_FORWARD(straightforward_impl, !=);
                 };
 
                 struct greater_equal
                 {
-                    // TODO ...
+                    DEFINE_INDICATE_STRAIGHT_FORWARD(straightforward_impl, >=);
                 };
 
                 struct greater_than
                 {
-                    // TODO ...
+                    DEFINE_INDICATE_STRAIGHT_FORWARD(straightforward_impl, >);
                 };
             };
         }

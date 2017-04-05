@@ -144,7 +144,7 @@ int main()
 
                 auto materializer = materialize<bool>(result_buffer, &result_set_size);
                 auto mapper = map<uint32_t, bool>(&materializer,
-                                                  indicators<uint32_t>::less_than::straightforward_impl(100),
+                                                  indicators<uint32_t>::greater_than::straightforward_impl(1000),
                                                  100);
                 auto projecter = project<uint32_t, uint32_t>(&mapper, ORDERKEY.f, 100);
 
@@ -152,7 +152,7 @@ int main()
                 current_duration += utils::profiling::measure<std::chrono::nanoseconds>::execute(
                         [&PARTKEY, &projecter, &scan_batch_size, &filter_batch_size]() {
                             auto table_scan = PARTKEY.table_scan(&projecter,
-                                                                 predicates::greater_equal::micro_optimized_impl(
+                                                                 predicates::less_equal::micro_optimized_impl(
                                                                          2000000, false),
                                                                  scan_batch_size, filter_batch_size, false);
                             table_scan->start();
