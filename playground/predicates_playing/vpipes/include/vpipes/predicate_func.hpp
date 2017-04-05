@@ -92,7 +92,7 @@ struct name                                                                     
     }                                                                                                           \
 };
 
-#define DEFINE_branch_free_impl(name, opp)                                                 \
+#define DEFINE_BRANCH_FREE_IMPL(name, opp)                                                 \
 struct name                                                                                                     \
 {                                                                                                               \
     value_t compare_value;                                                                                      \
@@ -121,13 +121,12 @@ struct name                                                                     
     }                                                                                                           \
 };
 
-
 /*
  * the optimized version of branch free is build upon the example show here
  * http://fastcpp.blogspot.de/2011/04/how-to-unroll-loop-in-c.html
  */
 
-#define DEFINE_optimized_branch_free_impl(name, opp)                                                 \
+#define DEFINE_OPTIMIZED_BRANCH_FREE_IMPL(name, opp)                                                 \
 struct name                                                                                                     \
 {                                                                                                               \
     value_t compare_value;                                                                                      \
@@ -187,8 +186,8 @@ namespace mondrian
                 {
                     DEFINE_STRAIGHT_FORWARD(straightforward_impl, <);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, <);
-                    DEFINE_branch_free_impl(branch_free_impl, <);
-                    DEFINE_optimized_branch_free_impl(optimized_branch_free_impl,<);
+                    DEFINE_BRANCH_FREE_IMPL(branch_free_impl, <);
+                    DEFINE_OPTIMIZED_BRANCH_FREE_IMPL(optimized_branch_free_impl,<);
 
                 };
 
@@ -196,40 +195,40 @@ namespace mondrian
                 {
                     DEFINE_STRAIGHT_FORWARD(straightforward_impl, <=);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, <=);
-                    DEFINE_branch_free_impl(branch_free_impl, <=);
-                    DEFINE_optimized_branch_free_impl(optimized_branch_free_impl,<=);
+                    DEFINE_BRANCH_FREE_IMPL(branch_free_impl, <=);
+                    DEFINE_OPTIMIZED_BRANCH_FREE_IMPL(optimized_branch_free_impl,<=);
                 };
 
                 struct equal_to
                 {
                     DEFINE_STRAIGHT_FORWARD(straightforward_impl, ==);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, ==);
-                    DEFINE_branch_free_impl(branch_free_impl, ==);
-                    DEFINE_optimized_branch_free_impl(optimized_branch_free_impl,==);
+                    DEFINE_BRANCH_FREE_IMPL(branch_free_impl, ==);
+                    DEFINE_OPTIMIZED_BRANCH_FREE_IMPL(optimized_branch_free_impl,==);
                 };
 
                 struct unequal_to
                 {
                     DEFINE_STRAIGHT_FORWARD(straightforward_impl, !=);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, !=);
-                    DEFINE_branch_free_impl(branch_free_impl, !=);
-                    DEFINE_optimized_branch_free_impl(optimized_branch_free_impl,!=);
+                    DEFINE_BRANCH_FREE_IMPL(branch_free_impl, !=);
+                    DEFINE_OPTIMIZED_BRANCH_FREE_IMPL(optimized_branch_free_impl,!=);
                 };
 
                 struct greater_equal
                 {
                     DEFINE_STRAIGHT_FORWARD(straightforward_impl, >=);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, >=);
-                    DEFINE_branch_free_impl(branch_free_impl, >=);
-                    DEFINE_optimized_branch_free_impl(optimized_branch_free_impl,>=);
+                    DEFINE_BRANCH_FREE_IMPL(branch_free_impl, >=);
+                    DEFINE_OPTIMIZED_BRANCH_FREE_IMPL(optimized_branch_free_impl,>=);
                 };
 
                 struct greater_than
                 {
                     DEFINE_STRAIGHT_FORWARD(straightforward_impl, >);
                     DEFINE_MICRO_OPTIMIZED_PREDICATE(micro_optimized_impl, >);
-                    DEFINE_branch_free_impl(branch_free_impl, >);
-                    DEFINE_optimized_branch_free_impl(optimized_branch_free_impl,>);
+                    DEFINE_BRANCH_FREE_IMPL(branch_free_impl, >);
+                    DEFINE_OPTIMIZED_BRANCH_FREE_IMPL(optimized_branch_free_impl,>);
                 };
             };
         }

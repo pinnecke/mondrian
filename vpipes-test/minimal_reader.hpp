@@ -10,11 +10,10 @@
 
 using namespace mondrian::vpipes;
 
-namespace testing_vpipes_classes{
+namespace testing_vpipes_classes {
 
-    template <class ValueType>
-    class minimal_reader
-    {
+    template<class ValueType>
+    class minimal_reader {
     public:
         using value_t = ValueType;
         using tupletid_t = size_t;
@@ -26,40 +25,42 @@ namespace testing_vpipes_classes{
         predicate_func_t m_predicate;
         unsigned m_scan_batch_size;
         unsigned m_filter_batch_size;
-        size_t   m_total_elements;
+        size_t m_total_elements;
     public:
         minimal_reader(consumer<value_t> *consumer_p, predicate_func_t predicate,
-                       size_t total_elements,unsigned scan_batch_size ,unsigned filter_batch_size):m_consumer(consumer_p),
-                                                                                                   m_predicate(predicate),
-                                                                                                   m_total_elements(total_elements),
-                                                                                                   m_scan_batch_size(scan_batch_size),
-                                                                                                   m_filter_batch_size(filter_batch_size)
-        {
+                       size_t total_elements, unsigned scan_batch_size, unsigned filter_batch_size) : m_consumer(
+                consumer_p),
+                                                                                                      m_predicate(
+                                                                                                              predicate),
+                                                                                                      m_total_elements(
+                                                                                                              total_elements),
+                                                                                                      m_scan_batch_size(
+                                                                                                              scan_batch_size),
+                                                                                                      m_filter_batch_size(
+                                                                                                              filter_batch_size) {
 
         }
 
-        inline virtual size_t *  materlializer(){
-            return  create_column(m_total_elements,false);
+        inline virtual size_t *materlializer() {
+            return create_column(m_total_elements, false);
         }
 
-        inline virtual void read() final __attribute__((always_inline))
-        {
+        inline virtual void read() final __attribute__((always_inline)) {
             size_t start = 0, end = m_total_elements;
             interval<size_t> all_tuplet_ids(start, end);
 
-            mondrian::vpipes::block_copy<size_t>::func_t loc_block_copy = [](size_t *out, size_t begin, size_t end){
-                auto distance = end- begin;
-                for (auto i = 0 ; i<distance ;++i){
-                    *(out+i) =begin+i;
+            mondrian::vpipes::block_copy<size_t>::func_t loc_block_copy = [](size_t *out, size_t begin, size_t end) {
+                auto distance = end - begin;
+                for (auto i = 0; i < distance; ++i) {
+                    *(out + i) = begin + i;
                 }
             };
 
             auto loc_table = pipes::table_scan<value_t>(m_consumer, &all_tuplet_ids, &all_tuplet_ids + 1, m_predicate,
-                                                        loc_block_copy   , m_scan_batch_size, m_filter_batch_size);
+                                                        loc_block_copy, m_scan_batch_size, m_filter_batch_size);
 
             loc_table.start();
         }
     };
-
 }
 

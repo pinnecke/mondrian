@@ -12,15 +12,15 @@ include_directories(
 include_directories(".")
 
 # Boost
-find_package(Boost 1.57.0 REQUIRED)
-
-if(Boost_FOUND)
-    message(STATUS "Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")
-    message(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
-    message(STATUS "Boost_VERSION: ${Boost_VERSION}")
-
-    include_directories(${Boost_INCLUDE_DIRS})
-endif()
+#find_package(Boost 1.57.0 REQUIRED)
+#
+#if(Boost_FOUND)
+#    message(STATUS "Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")
+#    message(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
+#    message(STATUS "Boost_VERSION: ${Boost_VERSION}")
+#
+#    include_directories(${Boost_INCLUDE_DIRS})
+#endif()
 
 # GTest
 enable_testing()

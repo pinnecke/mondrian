@@ -1,0 +1,7 @@
+/home/pegasus/Dokumente/work/clion-2016.3.2/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/pegasus/Schreibtisch/work/MondrianDB/vpipes-test
+-- Google Test was found (version )!
+-- 	include dir: /usr/include
+-- 	libs dir: /usr/lib/libgtest.a;/usr/lib/libgtest_main.a
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/pegasus/Schreibtisch/work/MondrianDB/vpipes-test/cmake-build-debug
