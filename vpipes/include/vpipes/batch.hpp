@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include <vpipes.hpp>
+#include "../vpipes.hpp"
 
 namespace mondrian
 {
@@ -32,21 +32,10 @@ namespace mondrian
             using block_copy_t = typename block_copy<value_t, tupletid_t>::func_t;
 
         private:
-            tupletid_t *tupletids;
-            value_t *values;
+            mtl::list<tupletid_t> tupletids;
+            mtl::list<value_t> values;
+
             size_t max_size, cursor;
-
-            void allocate_buffers()
-            {
-                tupletids = (tupletid_t *) malloc(this->max_size * sizeof(tupletid_t));
-                values = (value_t *) malloc(this->max_size * sizeof(value_t));
-            }
-
-            void copy_buffers(const tupletid_t *src_tupletids, const value_t *src_values)
-            {
-                memcpy(tupletids, src_tupletids, cursor * sizeof(tupletid_t));
-                memcpy(values, src_values, cursor * sizeof(value_t));
-            }
 
         public:
             enum class state
@@ -54,17 +43,10 @@ namespace mondrian
                 full, non_full
             };
 
-            batch(size_t num_of_elements) : max_size(num_of_elements), cursor(0)
+            batch(size_t num_of_elements) : max_size(num_of_elements), cursor(0),
+                                            tupletids(num_of_elements),
+                                            values(num_of_elements)
             {
-                allocate_buffers();
-            }
-
-            batch(const batch<value_t, tupletid_t> *other)
-            {
-                max_size = other->max_size;
-                cursor = other->cursor;
-                allocate_buffers();
-                copy_buffers(other->tupletids, other->values);
             }
 
             inline void reset()
@@ -75,11 +57,11 @@ namespace mondrian
             inline void prefetch(cpu_hint hint)
             {
                 if (hint == cpu_hint::for_read) {
-                    __builtin_prefetch(tupletids, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
-                    __builtin_prefetch(values, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
+                    tupletids.prefetch(mtl::cpu_hint::for_read);
+                    values.prefetch(mtl::cpu_hint::for_read);
                 } else {
-                    __builtin_prefetch(tupletids + cursor, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
-                    __builtin_prefetch(values + cursor, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
+                    tupletids.prefetch(mtl::cpu_hint::for_write, cursor);
+                    values.prefetch(mtl::cpu_hint::for_write, cursor);
                 }
             }
 
@@ -87,10 +69,9 @@ namespace mondrian
             {
                 assert (num_of_values <= max_size);
                 num_of_values = MIN(max_size, num_of_values);
-                auto offset = tupletids + cursor;
-                std::iota(offset, offset + num_of_values, start);
 
-                block_copy_func(values, start, start + num_of_values);
+                tupletids.iota(cursor, num_of_values, start);
+                block_copy_func(values.get_raw_data(), start, start + num_of_values);
                 cursor += num_of_values;
             }
 
@@ -99,14 +80,11 @@ namespace mondrian
             {
                 assert (cursor + 1 <= max_size);
                 auto append_max_len = std::min(max_size - cursor, num_indices);
-                if (append_max_len > 10){
-                    printf("");
-                }
                 auto retval = num_indices - append_max_len;
                 while (append_max_len--) {
                     auto idx = *indices++;
-                    *(values + cursor) = in_values[idx];
-                    *(tupletids + cursor++) = in_tuplet_ids[idx];
+                    values[cursor] = in_values[idx];
+                    tupletids[cursor++] = in_tuplet_ids[idx];
                 }
                 *out = (cursor >= max_size ? state::full : state::non_full);
                 return retval;
@@ -118,16 +96,11 @@ namespace mondrian
                 assert (cursor + 1 <= max_size);
                 auto append_max_len = std::min(max_size - cursor, num_elements);
                 auto retval = num_elements - append_max_len;
-                memcpy(tupletids + cursor, in_tuplet_ids, append_max_len * sizeof(tupletid_t));
-                memcpy(values + cursor, in_values, append_max_len * sizeof(value_t));
+                tupletids.set(cursor, in_tuplet_ids, append_max_len);
+                values.set(cursor, in_values, append_max_len);
                 cursor += append_max_len;
                 *out = (cursor >= max_size ? state::full : state::non_full);
                 return retval;
-            }
-
-            inline iterator <value_t> get_iterator()
-            {
-                return iterator<value_t>(tupletids, tupletids + cursor);
             }
 
             bool is_empty() const
@@ -142,29 +115,20 @@ namespace mondrian
             }
 
             void release() {
-                free(tupletids);
-                free(values);
+                tupletids.dispose();
+                values.dispose();
             }
 
-            value_t *get_values_begin() const
+            const value_t *get_values_begin() const
             {
-                return values;
+                return values.get_content();
             }
 
-            value_t *get_values_end() const
+            const tupletid_t *get_tupletids_begin() const
             {
-                return values + cursor;
+                return tupletids.get_content();
             }
 
-            tupletid_t *get_tupletids_begin() const
-            {
-                return tupletids;
-            }
-
-            tupletid_t *get_tupletids_end() const
-            {
-                return tupletids + cursor;
-            }
         };
     }
 }

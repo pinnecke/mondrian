@@ -7,6 +7,8 @@
 #include <numeric>
 #include <exception>
 
+#include "../../mtl/include/mtl"
+
 #include "vpipes/macros.hpp"
 #include "vpipes/iterator.hpp"
 #include "vpipes/interval.hpp"
