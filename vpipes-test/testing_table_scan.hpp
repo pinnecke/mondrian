@@ -21,7 +21,7 @@ TEST(TestTableScan,TestBasicFunctionality){
 
         }
     };
-    mondrian::vpipes::pipes::materialize<size_t> mat(result, &res_length);
+    mondrian::vpipes::pipes::val_materialize<size_t> mat(result, &res_length);
     mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, batch_size);
 
 

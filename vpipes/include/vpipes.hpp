@@ -20,8 +20,11 @@
 #include "vpipes/pipe_head.hpp"
 
 #include "vpipes/pipes/filter.hpp"
-#include "vpipes/pipes/materialize.hpp"
+#include "vpipes/pipes/materializer.hpp"
+#include "vpipes/pipes/materializers/val_materialize.hpp"
+#include "vpipes/pipes/materializers/tid_materialize.hpp"
 #include "vpipes/pipes/no_operation.hpp"
 #include "vpipes/pipes/table_scan.hpp"
 #include "vpipes/pipes/map.hpp"
+#include "vpipes/pipes/tee.hpp"
 #include "vpipes/pipes/project.hpp"

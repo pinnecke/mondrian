@@ -56,7 +56,7 @@ namespace mondrian
                     assert (tuplet_ids_interval_begin < tuplet_ids_interval_end);
                     filter_operator = new filter_t(destination, predicate, filter_batch_size,
                                                    filter_hint_expected_avg_batch_eval_is_non_empty);
-                    super::set_destination(filter_operator);
+                    super::add_destination(filter_operator);
                 }
 
                 virtual void on_start() override

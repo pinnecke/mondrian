@@ -19,7 +19,7 @@ TEST(TestReading, TestBasicRead  ){
             *(out+i) = *(tupletids+i);
         }
     };
-    mondrian::vpipes::pipes::materialize<size_t> mat(result, &res_length);
+    mondrian::vpipes::pipes::val_materialize<size_t> mat(result, &res_length);
     mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, batch_size);
 
     testing_vpipes_classes::minimal_reader<size_t > reader(&proj,mondrian::vpipes::predicates::batched_predicates<size_t >
@@ -47,7 +47,7 @@ TEST(TestReading, TestIfBatchSizeOddElementsNumEven  ){
 
         }
     };
-    mondrian::vpipes::pipes::materialize<size_t> mat(result, &res_length);
+    mondrian::vpipes::pipes::val_materialize<size_t> mat(result, &res_length);
     mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, batch_size);
 
     testing_vpipes_classes::minimal_reader<size_t > reader(&proj,mondrian::vpipes::predicates::batched_predicates<size_t >
@@ -74,7 +74,7 @@ TEST(TestReading, TestIfBatchSizeEvenElementsNumOdd  ){
 
         }
     };
-    mondrian::vpipes::pipes::materialize<size_t> mat(result, &res_length);
+    mondrian::vpipes::pipes::val_materialize<size_t> mat(result, &res_length);
     mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, batch_size);
 
     testing_vpipes_classes::minimal_reader<size_t > reader(&proj,mondrian::vpipes::predicates::batched_predicates<size_t >

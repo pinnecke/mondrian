@@ -100,14 +100,16 @@ int main()
     assert (column_data_partkey.size() == column_data_orderkey.size());
     size_t num_elements = column_data_partkey.size();
 
-    bool *result_buffer = (bool *) malloc (num_elements * sizeof(bool));
-    assert (result_buffer != nullptr);
+    bool *val_result_buffer = (bool *) malloc (num_elements * sizeof(bool));
+    size_t *tid_result_buffer = (size_t *) malloc (num_elements * sizeof(size_t));
+    assert (val_result_buffer != nullptr);
+    assert (tid_result_buffer != nullptr);
 
     column<uint32_t> PARTKEY(column_data_partkey.data(), column_data_partkey.data() + num_elements);
     column<uint32_t> ORDERKEY(column_data_orderkey.data(), column_data_orderkey.data() + num_elements);
 
 
-    column_data_partkey.clear();
+
 
 //    vpipes::functional::batched_materializes<uint32_t>::func_t materialize_from_orderkey = [&column_data_orderkey]
 //            (uint32_t *out_begin, uint32_t *out_end, const size_t *begin, const size_t*end)
@@ -142,28 +144,38 @@ int main()
                 using namespace vpipes::maps;
                 using namespace vpipes::predicates;
 
-                auto materializer = materialize<bool>(result_buffer, &result_set_size);
-                auto mapper = map<uint32_t, bool>(&materializer,
-                                                  indicators<uint32_t>::greater_than::straightforward_impl(1000),
+                auto val_materializer = val_materialize<bool>(val_result_buffer, &result_set_size);
+                auto tid_materializer = tid_materialize<uint32_t>(tid_result_buffer, &result_set_size);
+
+                auto mapper = map<uint32_t, bool>(&val_materializer,
+                                                  indicators<uint32_t>::greater_than::straightforward_impl(100),
                                                  100);
-                auto projecter = project<uint32_t, uint32_t>(&mapper, ORDERKEY.f, 100);
+
+                auto tee_opp = tee<uint32_t>(&mapper, &tid_materializer, 100);
+
+                auto projecter = project<uint32_t, uint32_t>(&tee_opp, ORDERKEY.f, 100);
 
                 using predicates = batched_predicates<uint32_t>;
                 current_duration += utils::profiling::measure<std::chrono::nanoseconds>::execute(
-                        [&PARTKEY, &projecter, &scan_batch_size, &filter_batch_size]() {
+                        [&PARTKEY, &projecter, &tee_opp, &tid_materializer, &scan_batch_size, &filter_batch_size]() {
                             auto table_scan = PARTKEY.table_scan(&projecter,
-                                                                 predicates::less_equal::micro_optimized_impl(
-                                                                         2000000, false),
+                                                                 predicates::less_equal::straightforward_impl(
+                                                                         2000000),
                                                                  scan_batch_size, filter_batch_size, false);
                             table_scan->start();
                             free(table_scan);
                         });
 
-                cout << "---------------------------------------" << endl;
-                for (bool *it = result_buffer; it != result_buffer + result_set_size; ++it) {
-                    cout << (it - result_buffer) << ": " << *it << endl;
+                /*cout << "---------------------------------------" << endl;
+                for (auto i = 0; i < result_set_size; ++i) {
+                    cout << i
+                         << " (tid = " << tid_result_buffer[i]
+                         << ", val = " << column_data_orderkey.data()[tid_result_buffer[i]]
+                         << "): map result = " << val_result_buffer[i] << endl;
                 }
+
                 cout << "---------------------------------------" << endl;
+                exit(2);*/
 
             }
 
@@ -195,8 +207,10 @@ int main()
 
     }
 
+    column_data_partkey.clear();
     column_data_orderkey.clear();
-    free (result_buffer);
+    free (val_result_buffer);
+    free (tid_result_buffer);
 
 
     return EXIT_SUCCESS;

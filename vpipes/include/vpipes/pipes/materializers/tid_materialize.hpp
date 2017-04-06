@@ -24,34 +24,24 @@ namespace mondrian
         namespace pipes
         {
             template<class Input, class InputTupletIdType = size_t>
-            class materialize : public consumer<Input, InputTupletIdType>
+            class tid_materialize : public materialize<Input, InputTupletIdType, InputTupletIdType>
             {
-                using super = consumer<Input, InputTupletIdType>;
+                using super = materialize<Input, InputTupletIdType, InputTupletIdType>;
 
             public:
                 using typename super::input_t;
                 using typename super::input_tupletid_t;
                 using typename super::input_batch_t;
-            private:
-                size_t total_result_set_size;
-                input_t *destination;
-                size_t *result_set_size;
+                using typename super::destination_t;
 
             public:
-                materialize(Input *destination, size_t *result_set_size) :
-                        destination(destination), total_result_set_size(0), result_set_size(result_set_size)
-                {
-                    assert (destination != nullptr);
-                    assert (result_set_size != nullptr);
-                };
+                tid_materialize(destination_t *destination, size_t *result_set_size): super(destination, result_set_size) { }
 
             protected:
-                inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
+                inline virtual void invoke_memcpy(destination_t *destination, const input_batch_t *data)
+                                                  override final __attribute__((always_inline))
                 {
-                    memcpy(destination, data->get_values_begin(), data->get_size() * sizeof(input_t));
-                    destination += data->get_size();
-                    total_result_set_size += data->get_size();
-                    *result_set_size = total_result_set_size;
+                    memcpy(destination, data->get_tupletids_begin(), data->get_size() * sizeof(destination_t));
                 }
             };
         }

@@ -21,6 +21,8 @@ namespace mondrian
 {
     namespace vpipes
     {
+        enum cpu_hint { for_read, for_write };
+
         template<class ValueType, class TupletIdType = size_t>
         class batch
         {
@@ -30,9 +32,21 @@ namespace mondrian
             using block_copy_t = typename block_copy<value_t, tupletid_t>::func_t;
 
         private:
-            tupletid_t * tupletids;
+            tupletid_t *tupletids;
             value_t *values;
             size_t max_size, cursor;
+
+            void allocate_buffers()
+            {
+                tupletids = (tupletid_t *) malloc(this->max_size * sizeof(tupletid_t));
+                values = (value_t *) malloc(this->max_size * sizeof(value_t));
+            }
+
+            void copy_buffers(const tupletid_t *src_tupletids, const value_t *src_values)
+            {
+                memcpy(tupletids, src_tupletids, cursor * sizeof(tupletid_t));
+                memcpy(values, src_values, cursor * sizeof(value_t));
+            }
 
         public:
             enum class state
@@ -42,8 +56,15 @@ namespace mondrian
 
             batch(size_t num_of_elements) : max_size(num_of_elements), cursor(0)
             {
-                tupletids = (tupletid_t *) malloc(this->max_size * sizeof(tupletid_t));
-                values = (value_t *) malloc(this->max_size * sizeof(value_t));
+                allocate_buffers();
+            }
+
+            batch(const batch<value_t, tupletid_t> *other)
+            {
+                max_size = other->max_size;
+                cursor = other->cursor;
+                allocate_buffers();
+                copy_buffers(other->tupletids, other->values);
             }
 
             inline void reset()
@@ -51,16 +72,15 @@ namespace mondrian
                 cursor = 0;
             }
 
-            inline void memory_prefetch_for_read()
+            inline void prefetch(cpu_hint hint)
             {
-                __builtin_prefetch(tupletids, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
-                __builtin_prefetch(values, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
-            }
-
-            inline void memory_prefetch_for_write()
-            {
-                __builtin_prefetch(tupletids + cursor, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
-                __builtin_prefetch(values + cursor, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
+                if (hint == cpu_hint::for_read) {
+                    __builtin_prefetch(tupletids, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
+                    __builtin_prefetch(values, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
+                } else {
+                    __builtin_prefetch(tupletids + cursor, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
+                    __builtin_prefetch(values + cursor, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
+                }
             }
 
             inline void iota(tupletid_t start, size_t num_of_values, block_copy_t block_copy_func) __attribute__((always_inline))
@@ -79,6 +99,9 @@ namespace mondrian
             {
                 assert (cursor + 1 <= max_size);
                 auto append_max_len = std::min(max_size - cursor, num_indices);
+                if (append_max_len > 10){
+                    printf("");
+                }
                 auto retval = num_indices - append_max_len;
                 while (append_max_len--) {
                     auto idx = *indices++;

@@ -32,14 +32,17 @@ namespace mondrian
             using block_copy_t = typename block_copy<output_t, output_tupletid_t>::func_t;
 
         private:
-            consumer_t *destination;
+            consumer_t **destinations;
             output_batch_t *result = nullptr;
-            size_t size;
+            size_t batch_size, num_destintations;
 
         protected:
-            void set_destination(consumer_t *destination)
+            void add_destination(consumer_t *destination)
             {
-                this->destination = destination;
+                assert (destination != nullptr);
+                destinations = (consumer_t **) realloc(destinations, ++num_destintations * sizeof(consumer_t*));
+                assert (destinations != nullptr);
+                destinations[num_destintations - 1] = destination;
             }
 
             void reset() {
@@ -57,9 +60,11 @@ namespace mondrian
 
             inline void send() __attribute__((always_inline))
             {
-                assert (destination != nullptr);
-                result->memory_prefetch_for_read();
-                destination->consume(result);
+                assert (destinations != nullptr);
+                result->prefetch(cpu_hint::for_read);
+                for (size_t idx = 0; idx < num_destintations; ++idx) {
+                    destinations[idx]->consume(result);
+                }
                 reset();
             }
 
@@ -78,7 +83,7 @@ namespace mondrian
 
                 output_tupletid_t offset = start;
                 while (offset < end) {
-                    size_t this_batch_size = MIN(size, end - offset);
+                    size_t this_batch_size = MIN(batch_size, end - offset);
                     result->iota(offset, this_batch_size, block_copy_func);
                     send();
                     offset += this_batch_size;
@@ -87,60 +92,70 @@ namespace mondrian
 
         protected:
 
-            virtual inline void produce(const output_tupletid_t *tupletids, const output_t * values,
+            virtual inline void produce(const output_tupletid_t *tupletids, const output_t *values,
                                         const size_t *indices, size_t num_indices,
-                                        bool expect_output_batch_is_full_afterwards) final __attribute__((always_inline))
+                                        bool hint_hit_out_batch_size) final __attribute__((always_inline))
             {
-                auto original_num_indices =num_indices;
-                result->memory_prefetch_for_write();
+                auto total = num_indices, remaining = num_indices;
                 do {
                     typename output_batch_t::state batch_state;
-                    num_indices = result->add(&batch_state, tupletids, values, indices, num_indices);
-                    if (__builtin_expect(batch_state == output_batch_t::state::full,
-                                         expect_output_batch_is_full_afterwards)) {
+                    auto step = (total - remaining);
+                    result->prefetch(cpu_hint::for_write);
+                    remaining = result->add(&batch_state, tupletids, values, indices + step, remaining);
+                    if (__builtin_expect(batch_state == output_batch_t::state::full, hint_hit_out_batch_size)) {
                         send();
                     }
-                    indices = indices + (original_num_indices  - num_indices);
-                } while (num_indices);
+                } while (remaining);
             }
 
             virtual inline void produce(const output_tupletid_t *tupletids, const output_t * values,
-                                        size_t num_elements, bool expect_output_batch_is_full_afterwards)
+                                        size_t num_elements, bool hint_hit_out_batch_size)
                                         final __attribute__((always_inline))
             {
-                auto original_num_elements = num_elements;
-                result->memory_prefetch_for_write();
+                auto total_num = num_elements, remaining_num = num_elements;
                 do {
                     typename output_batch_t::state batch_state;
-                    num_elements = result->add(&batch_state, tupletids, values, num_elements);
-                    if (__builtin_expect(batch_state == output_batch_t::state::full,
-                                         expect_output_batch_is_full_afterwards)) {
+                    auto step = (total_num - remaining_num);
+                    result->prefetch(cpu_hint::for_write);
+                    remaining_num = result->add(&batch_state, tupletids + step, values + step, remaining_num);
+                    if (__builtin_expect(batch_state == output_batch_t::state::full, hint_hit_out_batch_size)) {
                         send();
                     }
-                    auto step = (original_num_elements - num_elements);
-                    tupletids += step;
-                    values += step;
-                } while (num_elements);
+                } while (remaining_num);
+            }
+
+            virtual void close_consumers()
+            {
+                for (size_t idx = 0; idx != num_destintations; ++idx) {
+                    consumer_t *dest = destinations[idx];
+                    if (__builtin_expect(dest != nullptr, true)) {
+                        dest->close();
+                    }
+                }
             }
 
             virtual void close()
             {
-                if (__builtin_expect(destination != nullptr, true))
-                {
-                    send();
-                    on_close();
-                    send();
-                    destination->close();
-                }
+                send();
+                on_close();
+                send();
+                close_consumers();
                 cleanup();
                 on_cleanup();
             }
 
         public:
             producer(consumer_t *destination, unsigned batch_size):
-                    destination(destination), size(batch_size)
+                    num_destintations(0), batch_size(batch_size)
             {
                 result = new output_batch_t(batch_size);
+
+                destinations = (consumer_t **) malloc (sizeof(consumer_t*));
+                if (destination != nullptr) {
+                    add_destination(destination);
+                }
+
+                assert (destinations != nullptr);
             }
 
             inline virtual void start() final
