@@ -61,9 +61,11 @@ namespace mondrian
                 if (hint == cpu_hint::for_read) {
                     tupletids.prefetch(mtl::cpu_hint::for_read);
                     values.prefetch(mtl::cpu_hint::for_read);
+                    null_mask.prefetch(mtl::cpu_hint::for_read);
                 } else {
                     tupletids.prefetch(mtl::cpu_hint::for_write, cursor);
                     values.prefetch(mtl::cpu_hint::for_write, cursor);
+                    null_mask.prefetch(mtl::cpu_hint::for_write, cursor);
                 }
             }
 

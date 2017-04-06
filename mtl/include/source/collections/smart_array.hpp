@@ -21,10 +21,6 @@ namespace mondrian
 {
     namespace mtl
     {
-        enum cpu_hint { for_read, for_write };
-
-        enum init_value_policy { dont_care, zero_memory };
-
         template<class Type>
         class smart_array
         {
@@ -149,13 +145,13 @@ namespace mondrian
                 return content;
             }
 
-            virtual inline void iota(size_t start_idx, size_t num_values, size_t inital_value)
+            virtual inline void iota(size_t start_idx, size_t num_values, size_t inital_value) final __attribute__((always_inline))
             {
                 auto base = content + start_idx;
                 std::iota(base, base + num_values, inital_value);
             }
 
-            virtual inline void prefetch(cpu_hint hint, size_t idx = 0)
+            virtual inline void prefetch(cpu_hint hint, size_t idx = 0) final __attribute__((always_inline))
             {
                 if (hint == cpu_hint::for_read) {
                     __builtin_prefetch(content + idx, 0, 0);

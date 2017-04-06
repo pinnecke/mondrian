@@ -17,6 +17,22 @@
 
 #include <cmath>
 
+namespace mondrian
+{
+    namespace mtl
+    {
+        enum cpu_hint
+        {
+            for_read, for_write
+        };
+
+        enum init_value_policy
+        {
+            dont_care, zero_memory
+        };
+    }
+}
+
 #include "source/collections/smart_array.hpp"
 #include "source/collections/smart_bitmask.hpp"
 

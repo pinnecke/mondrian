@@ -98,6 +98,16 @@ namespace mondrian
                 return proxy;
             }
 
+            virtual inline void prefetch(cpu_hint hint, size_t idx = 0) final __attribute__((always_inline))
+            {
+                auto block_id = IDX_TO_BLOCK(idx);
+                if (hint == cpu_hint::for_read) {
+                    __builtin_prefetch(content.get_raw_data() + block_id, 0, 0);
+                } else {
+                    __builtin_prefetch(content.get_raw_data() + block_id, 1, 0);
+                }
+            }
+
         };
     }
 }
