@@ -77,6 +77,49 @@ std::vector<Type> read_from_file(std::string file_name)
 
 int main()
 {
+    mtl::smart_bitmask mask(1);
+    mask[0] = true;
+    mask.set(2, true);
+    mask.set(4, true);
+    mask.set(6, true);
+    mask.set(63, true);
+    mask.set(64, true);
+    mask[65] = true;
+    mask.set(112, true);
+    mask.set(128, true);
+    assert (mask.get(0) == true);
+    assert (mask.get(1) == false);
+    assert (mask.get(2) == true);
+    assert (mask.get(3) == false);
+    assert (mask.get(4) == true);
+    assert (mask.get(5) == false);
+    assert (mask.get(6) == true);
+
+    assert (mask.get(62) == false);
+    assert (mask.get(63) == true);
+    assert (mask.get(64) == true);
+    assert (mask.get(65) == true);
+    assert (mask.get(66) == false);
+
+    assert (mask[111] != true);
+    assert (!mask[111] == true);
+    assert (!mask[111] == !mask[111]);
+    assert (mask.get(111) == false);
+    assert (mask.get(112) == true);
+    assert (mask.get(113) == false);
+
+    assert (mask.get(127) == false);
+    assert (mask.get(128) == true);
+    assert (mask.get(129) == false);
+
+    assert (mask[42000] == false);
+
+    mask.set(42000, true);
+    assert (mask.get(42000) == true);
+
+
+
+
     std::string path_partkey_data, path_orderkey_data;
     if (false) {
         path_partkey_data = "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";  // "/home/sebastian/cogadb_databases/tpch_sf10_new/tables/LINEITEM/LINEITEM.L_PARTKEY.data";

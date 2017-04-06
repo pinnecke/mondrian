@@ -23,26 +23,28 @@ namespace mondrian
     {
         enum cpu_hint { for_read, for_write };
 
+        enum init_value_policy { dont_care, zero_memory };
+
         template<class Type>
-        class list
+        class smart_array
         {
-            using self = list<Type>;
+            using self = smart_array<Type>;
         public:
             using type_t = Type;
 
-            class update_proxy
+            class assignment_proxy
             {
-                friend class list;
+                friend class smart_array;
                 type_t *ref;
 
             public:
-                update_proxy &operator=(const type_t &value)
+                assignment_proxy &operator=(const type_t &value)
                 {
                     *ref = value;
                     return *this;
                 }
 
-                const type_t *get_address() const
+                type_t *get_address() const
                 {
                     return ref;
                 }
@@ -53,31 +55,45 @@ namespace mondrian
             size_t size, capacity;
             float grow_factor;
             bool disposed;
+            init_value_policy policy;
 
-            update_proxy proxy;
+            assignment_proxy proxy;
 
         public:
-            list(size_t initial_capacity, float grow_factor = 1.5f): capacity(initial_capacity), grow_factor(grow_factor),
-                                                              disposed(false), size(0)
+            smart_array(size_t initial_capacity, float grow_factor = 1.5f,
+                        init_value_policy policy = init_value_policy::dont_care):
+                    capacity(initial_capacity), grow_factor(grow_factor), disposed(false), size(0), policy(policy)
             {
                 assert (capacity > 0);
                 assert (grow_factor > 0);
                 content = (type_t *) malloc (capacity * sizeof(type_t));
                 assert (content != nullptr);
+                if (policy == init_value_policy::zero_memory) {
+                    memset(content, 0, capacity * sizeof(type_t));
+                }
             }
 
-            list() = delete;
-            list(const self &other) = delete;
-            list(self && other) = delete;
+            smart_array() = delete;
+            smart_array(const self &other) = delete;
+            smart_array(self && other) = delete;
 
             virtual inline void auto_resize(size_t required_size) final __attribute__((always_inline))
             {
                 if (required_size > capacity) {
+                    auto old_capacity = capacity;
                     while (required_size > capacity)
-                        capacity *= grow_factor;
+                        capacity = std::ceil(capacity * grow_factor);
                     content = (type_t *) realloc (content, capacity * sizeof(type_t));
                     assert (content != nullptr);
+                    if (policy == init_value_policy::zero_memory) {
+                        memset(content + old_capacity, 0, (capacity - old_capacity) * sizeof(type_t));
+                    }
                 }
+            }
+
+            constexpr size_t get_value_size() const
+            {
+                return sizeof(type_t);
             }
 
             virtual inline void set(size_t idx, const type_t &other) final __attribute__((always_inline))
@@ -148,7 +164,7 @@ namespace mondrian
                 }
             }
 
-            update_proxy& operator[](size_t idx)
+            assignment_proxy& operator[](size_t idx)
             {
                 auto idx_size = idx + 1;
                 auto_resize (idx_size);

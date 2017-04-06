@@ -32,8 +32,8 @@ namespace mondrian
             using block_copy_t = typename block_copy<value_t, tupletid_t>::func_t;
 
         private:
-            mtl::list<tupletid_t> tupletids;
-            mtl::list<value_t> values;
+            mtl::smart_array<tupletid_t> tupletids;
+            mtl::smart_array<value_t> values;
 
             size_t max_size, cursor;
 

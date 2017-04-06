@@ -15,5 +15,8 @@
 
 #pragma once
 
-#include "source/collections/list.hpp"
+#include <cmath>
+
+#include "source/collections/smart_array.hpp"
+#include "source/collections/smart_bitmask.hpp"
 
