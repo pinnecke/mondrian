@@ -41,7 +41,7 @@ namespace mondrian
                 inline virtual void invoke_memcpy(destination_t *destination, const input_batch_t *data)
                 override final __attribute__((always_inline))
                 {
-                    memcpy(destination, data->get_values_begin(), data->get_size() * sizeof(destination_t));
+                    memcpy(destination, data->get_values(), data->get_size() * sizeof(destination_t));
                 }
             };
         }

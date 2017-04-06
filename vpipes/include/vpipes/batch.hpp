@@ -34,6 +34,7 @@ namespace mondrian
         private:
             mtl::smart_array<tupletid_t> tupletids;
             mtl::smart_array<value_t> values;
+            mtl::smart_bitmask null_mask;
 
             size_t max_size, cursor;
 
@@ -45,7 +46,8 @@ namespace mondrian
 
             batch(size_t num_of_elements) : max_size(num_of_elements), cursor(0),
                                             tupletids(num_of_elements),
-                                            values(num_of_elements)
+                                            values(num_of_elements),
+                                            null_mask(num_of_elements)
             {
             }
 
@@ -119,12 +121,12 @@ namespace mondrian
                 values.dispose();
             }
 
-            const value_t *get_values_begin() const
+            const value_t *get_values() const
             {
                 return values.get_content();
             }
 
-            const tupletid_t *get_tupletids_begin() const
+            const tupletid_t *get_tupletids() const
             {
                 return tupletids.get_content();
             }

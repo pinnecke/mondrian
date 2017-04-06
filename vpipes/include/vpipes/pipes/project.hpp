@@ -59,8 +59,8 @@ namespace mondrian
                 inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
                 {
                     auto input_batch_size = data->get_size();
-                    auto in_tupletids = data->get_tupletids_begin();
-                    auto in_values = data->get_values_begin();
+                    auto in_tupletids = data->get_tupletids();
+                    auto in_values = data->get_values();
 
                     if (__builtin_expect(input_batch_size > buffer_size, false)) {
                         buffer_size = input_batch_size;

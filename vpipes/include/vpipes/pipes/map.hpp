@@ -69,8 +69,8 @@ namespace mondrian
                         assert (value_buffer != nullptr);
                     }
 
-                    map_func(value_buffer, data->get_values_begin(), input_batch_size);
-                    super::produce(data->get_tupletids_begin(), value_buffer, input_batch_size, true);
+                    map_func(value_buffer, data->get_values(), input_batch_size);
+                    super::produce(data->get_tupletids(), value_buffer, input_batch_size, true);
                 }
 
                 virtual void on_cleanup() override
