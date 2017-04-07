@@ -75,7 +75,7 @@ namespace mondrian
 
             virtual inline void auto_resize(size_t required_size) final __attribute__((always_inline))
             {
-                if (required_size > capacity) {
+                if (__builtin_expect((required_size > capacity), false)) {
                     auto old_capacity = capacity;
                     while (required_size > capacity)
                         capacity = std::ceil(capacity * grow_factor);
@@ -117,6 +117,11 @@ namespace mondrian
             virtual inline type_t *get_raw_data() const final __attribute__((always_inline))
             {
                 return content;
+            }
+
+            virtual inline size_t get_num_elements() const final __attribute__((always_inline))
+            {
+                return size;
             }
 
             virtual inline void add_all(const type_t *source, size_t num_elements) final __attribute__((always_inline))
@@ -170,6 +175,11 @@ namespace mondrian
                 assert (idx < capacity);
                 assert (idx < size);
                 return proxy;
+            }
+
+            virtual inline void set_all(const type_t &value) final __attribute__((always_inline))
+            {
+                memset (content, value, size * sizeof(type_t));
             }
         };
     }

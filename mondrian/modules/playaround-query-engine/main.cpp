@@ -78,7 +78,10 @@ std::vector<Type> read_from_file(std::string file_name)
 int main()
 {
     mtl::smart_bitmask mask(1);
-    mask[0] = true;
+    for (size_t i = 0; i < 80; ++i) {
+        mask.set(i, true);
+    }
+   /* mask[0] = true;
     mask.set(2, true);
     mask.set(4, true);
     mask.set(6, true);
@@ -94,8 +97,8 @@ int main()
     assert (mask.get(4) == true);
     assert (mask.get(5) == false);
     assert (mask.get(6) == true);
-
-    assert (mask.get(62) == false);
+    mask.get_safe(62);
+    assert (mask.get_safe(62) == false);
     assert (mask.get(63) == true);
     assert (mask.get(64) == true);
     assert (mask.get(65) == true);
@@ -115,7 +118,7 @@ int main()
     assert (mask[42000] == false);
 
     mask.set(42000, true);
-    assert (mask.get(42000) == true);
+    assert (mask.get(42000) == true);*/
 
 
 
@@ -190,18 +193,18 @@ int main()
                 auto val_materializer = val_materialize<bool>(val_result_buffer, &result_set_size);
                 auto tid_materializer = tid_materialize<uint32_t>(tid_result_buffer, &result_set_size);
 
-                auto mapper = map<uint32_t, bool>(&val_materializer,
-                                                  indicators<uint32_t>::greater_than::straightforward_impl(100),
-                                                 100);
+                map<uint32_t, bool> mapper(&val_materializer,
+                                           indicators<uint32_t>::greater_than::xxx_impl(100),
+                                           100);
 
                 auto tee_opp = tee<uint32_t>(&mapper, &tid_materializer, 100);
 
-                auto projecter = project<uint32_t, uint32_t>(&tee_opp, ORDERKEY.f, 100);
+                project<uint32_t, uint32_t> projecter(&tee_opp, ORDERKEY.f, ORDERKEY.null_mask_f, 100);
 
                 using predicates = batched_predicates<uint32_t>;
                 current_duration += utils::profiling::measure<std::chrono::nanoseconds>::execute(
-                        [&PARTKEY, &projecter, &tee_opp, &tid_materializer, &scan_batch_size, &filter_batch_size]() {
-                            auto table_scan = PARTKEY.table_scan(&projecter,
+                        [&PARTKEY, &projecter, &tee_opp, &tid_materializer, &val_materializer, &scan_batch_size, &filter_batch_size]() {
+                            auto table_scan = PARTKEY.table_scan(&tid_materializer,
                                                                  predicates::less_equal::straightforward_impl(
                                                                          2000000),
                                                                  scan_batch_size, filter_batch_size, false);

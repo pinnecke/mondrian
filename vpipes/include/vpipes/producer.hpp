@@ -93,6 +93,7 @@ namespace mondrian
         protected:
 
             virtual inline void produce(const output_tupletid_t *tupletids, const output_t *values,
+                                        const mtl::smart_bitmask *null_mask,
                                         const size_t *indices, size_t num_indices,
                                         bool hint_hit_out_batch_size) final __attribute__((always_inline))
             {
@@ -101,7 +102,7 @@ namespace mondrian
                     typename output_batch_t::state batch_state;
                     auto step = (total - remaining);
                     result->prefetch(cpu_hint::for_write);
-                    remaining = result->add(&batch_state, tupletids, values, indices + step, remaining);
+                    remaining = result->add(&batch_state, tupletids, values, null_mask, indices + step, remaining);
                     if (__builtin_expect(batch_state == output_batch_t::state::full, hint_hit_out_batch_size)) {
                         send();
                     }
@@ -109,19 +110,24 @@ namespace mondrian
             }
 
             virtual inline void produce(const output_tupletid_t *tupletids, const output_t * values,
+                                        const mtl::smart_bitmask *null_mask,
                                         size_t num_elements, bool hint_hit_out_batch_size)
                                         final __attribute__((always_inline))
             {
                 auto total_num = num_elements, remaining_num = num_elements;
                 do {
+                    result->prefetch(cpu_hint::for_write);
+
                     typename output_batch_t::state batch_state;
                     auto step = (total_num - remaining_num);
-                    result->prefetch(cpu_hint::for_write);
-                    remaining_num = result->add(&batch_state, tupletids + step, values + step, remaining_num);
+                    const_cast<mtl::smart_bitmask *>(null_mask)->set_offset(step);
+                    remaining_num = result->add(&batch_state, tupletids + step, values + step,
+                                                null_mask, remaining_num);
                     if (__builtin_expect(batch_state == output_batch_t::state::full, hint_hit_out_batch_size)) {
                         send();
                     }
                 } while (remaining_num);
+                const_cast<mtl::smart_bitmask *>(null_mask)->set_offset(0);
             }
 
             virtual void close_consumers()

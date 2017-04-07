@@ -8,6 +8,11 @@
 #include <minimal_reader.hpp>
 using namespace mondrian::vpipes;
 
+mondrian::vpipes::point_null_copy<size_t>::func_t null_copier = [] (mondrian::mtl::smart_bitmask *out, const size_t *tupletids, size_t num_of_ids)
+{
+    out->unset_all();
+};
+
 TEST(TestReading, TestBasicRead  ){
     size_t res_length = 500;
     auto batch_size = 10;
@@ -20,7 +25,7 @@ TEST(TestReading, TestBasicRead  ){
         }
     };
     mondrian::vpipes::pipes::val_materialize<size_t> mat(result, &res_length);
-    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, batch_size);
+    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, null_copier, batch_size);
 
     testing_vpipes_classes::minimal_reader<size_t > reader(&proj,mondrian::vpipes::predicates::batched_predicates<size_t >
     ::greater_equal::micro_optimized_impl(0,true),input_length,batch_size,batch_size);
@@ -48,7 +53,7 @@ TEST(TestReading, TestIfBatchSizeOddElementsNumEven  ){
         }
     };
     mondrian::vpipes::pipes::val_materialize<size_t> mat(result, &res_length);
-    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, batch_size);
+    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, null_copier, batch_size);
 
     testing_vpipes_classes::minimal_reader<size_t > reader(&proj,mondrian::vpipes::predicates::batched_predicates<size_t >
     ::greater_equal::micro_optimized_impl(0,true),input_length,batch_size,batch_size);
@@ -75,7 +80,7 @@ TEST(TestReading, TestIfBatchSizeEvenElementsNumOdd  ){
         }
     };
     mondrian::vpipes::pipes::val_materialize<size_t> mat(result, &res_length);
-    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, batch_size);
+    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, null_copier, batch_size);
 
     testing_vpipes_classes::minimal_reader<size_t > reader(&proj,mondrian::vpipes::predicates::batched_predicates<size_t >
     ::greater_equal::micro_optimized_impl(0,true),input_length,batch_size,batch_size);

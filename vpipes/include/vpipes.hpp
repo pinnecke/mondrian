@@ -9,6 +9,14 @@
 
 #include "../../mtl/include/mtl"
 
+namespace mondrian
+{
+    namespace vpipes
+    {
+        enum class null_info { contains_null, non_null };
+    }
+}
+
 #include "vpipes/macros.hpp"
 #include "vpipes/iterator.hpp"
 #include "vpipes/interval.hpp"

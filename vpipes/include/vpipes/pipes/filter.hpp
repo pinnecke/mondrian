@@ -75,12 +75,12 @@ namespace mondrian
 
                     size_t result_size = 0;
                     predicate(matching_indices_buffer, &result_size,
-                              data->get_tupletids(), data->get_values(), input_batch_size);
+                              data->get_tupletids(), data->get_values(), data->get_null_mask(), input_batch_size);
                     assert (result_size <= buffer_size);
 
                     if (__builtin_expect(result_size != 0, hint_avg_batch_eval_result_is_non_empty)) {
-                        super::produce(data->get_tupletids(), data->get_values(), matching_indices_buffer,
-                                       result_size, false);
+                        super::produce(data->get_tupletids(), data->get_values(), data->get_null_mask(),
+                                       matching_indices_buffer, result_size, false);
                     }
                 }
 

@@ -22,7 +22,7 @@ TEST(TestTableScan,TestBasicFunctionality){
         }
     };
     mondrian::vpipes::pipes::val_materialize<size_t> mat(result, &res_length);
-    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, batch_size);
+    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, null_copier, batch_size);
 
 
     interval<size_t> all_tuplet_ids(0, input_length);

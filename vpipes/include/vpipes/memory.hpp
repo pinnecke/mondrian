@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include <vpipes.hpp>
+#include "../vpipes.hpp"
 
 namespace mondrian
 {
@@ -35,6 +35,13 @@ namespace mondrian
             using value_t = ValueType;
             using tupletid_t = TupletIdType;
             using func_t = std::function<void(value_t *out, tupletid_t begin, tupletid_t end)>;
+        };
+
+        template <class TupletIdType = size_t>
+        struct point_null_copy
+        {
+            using tupletid_t = TupletIdType;
+            using func_t = std::function<void(mtl::smart_bitmask *out, const tupletid_t *tupletids, size_t num_of_ids)>;
         };
     }
 }

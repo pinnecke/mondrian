@@ -30,6 +30,11 @@ namespace mondrian
         {
             dont_care, zero_memory
         };
+
+        enum bitset_info
+        {
+            contains_true, non_true
+        };
     }
 }
 

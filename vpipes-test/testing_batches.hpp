@@ -18,16 +18,18 @@ TEST(Testbatches, TestAddStateAfterFilling) {
     auto values = create_column(batch_size,false);
     auto indices_num = 20 ;
     auto indices = new size_t [indices_num];
+    mondrian::mtl::smart_bitmask non_null_mask(1);
     for (auto i =0 ; i < indices_num; ++i) {
         indices [i] = i;
     }
     mondrian::vpipes::batch<size_t >::state rat_batch_state = mondrian::vpipes::batch<size_t >::state::non_full;
-    rat_batch.add(&rat_batch_state,ids,values,indices,indices_num);
+    rat_batch.add(&rat_batch_state,ids,values,&non_null_mask,indices,indices_num);
     EXPECT_NE(rat_batch_state,mondrian::vpipes::batch<size_t >::state::non_full )<<"after filling the batch the state will change";
     delete [] indices;
     delete_column(ids);
     delete_column(values);
     rat_batch.release();
+    non_null_mask.dispose();
 
 }
 
@@ -39,16 +41,18 @@ TEST(Testbatches, TestAddStateAfterNotFilling) {
     auto values =create_column(batch_size,false);
     auto indices_num = 5 ;
     auto indices = new size_t [indices_num];
+    mondrian::mtl::smart_bitmask non_null_mask(1);
     for (auto i =0 ; i <indices_num ;++i){
         indices [i] = i;
     }
     mondrian::vpipes::batch<size_t >::state  rat_batch_state =  mondrian::vpipes::batch<size_t >::state::non_full;
-    rat_batch.add(&rat_batch_state,ids,values,indices,indices_num);
+    rat_batch.add(&rat_batch_state,ids,values,&non_null_mask,indices,indices_num);
     EXPECT_EQ(rat_batch_state,mondrian::vpipes::batch<size_t >::state::non_full )<<"if the batch is not filled the state won't change";
     delete [] indices;
     delete_column(ids);
     delete_column(values);
     rat_batch.release();
+    non_null_mask.dispose();
 
 }
 
@@ -60,16 +64,18 @@ TEST(Testbatches, TestAddReturnValue) {
     auto values =create_column(batch_size,false);
     auto indices_num = 20 ;
     auto indices = new size_t [indices_num];
+    mondrian::mtl::smart_bitmask non_null_mask(1);
     for (auto i =0 ; i <indices_num ;++i){
         indices [i] = i;
     }
     mondrian::vpipes::batch<size_t >::state  rat_batch_state =  mondrian::vpipes::batch<size_t >::state::non_full;
-    auto add_res = rat_batch.add(&rat_batch_state,ids,values,indices,indices_num);
+    auto add_res = rat_batch.add(&rat_batch_state,ids,values,&non_null_mask,indices,indices_num);
     EXPECT_EQ(add_res, indices_num - batch_size )<<"add will return, how many elements it couldn't add because it is fulled";
     delete [] indices;
     delete_column(ids);
     delete_column(values);
     rat_batch.release();
+    non_null_mask.dispose();
 
 }
 
@@ -80,19 +86,21 @@ TEST(TestBatches, TestReset) {
     auto values =create_column(batch_size,false);
     auto indices_num = 20 ;
     auto indices = new size_t [indices_num];
+    mondrian::mtl::smart_bitmask non_null_mask;
     for (auto i =0 ; i <indices_num ;++i){
         indices [i] = i;
     }
     mondrian::vpipes::batch<size_t >::state  rat_batch_state =  mondrian::vpipes::batch<size_t >::state::non_full;
-    auto indices_left  = rat_batch.add(&rat_batch_state,ids,values,indices,indices_num);
+    auto indices_left  = rat_batch.add(&rat_batch_state,ids,values,&non_null_mask,indices,indices_num);
     EXPECT_EQ(indices_left,indices_num-batch_size )<<"this number denotes the left to be added";
     rat_batch.reset();
-    indices_left = rat_batch.add(&rat_batch_state,ids,values,indices,indices_left);
+    indices_left = rat_batch.add(&rat_batch_state,ids,values,&non_null_mask,indices,indices_left);
     EXPECT_EQ(indices_left,0 )<<"now all indices are added nothing left to be added";
 
     delete [] indices;
     delete_column(ids);
     delete_column(values);
     rat_batch.release();
+    non_null_mask.dispose();
 
 }

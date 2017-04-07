@@ -48,7 +48,8 @@ namespace mondrian
 
                 inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
                 {
-                    super::produce(data->get_tupletids(), data->get_values(), data->get_size(), true);
+                    super::produce(data->get_tupletids(), data->get_values(), data->get_null_mask(), data->get_size(),
+                                   true);
                 }
             };
         }

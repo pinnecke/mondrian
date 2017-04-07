@@ -46,7 +46,12 @@ namespace mondrian
                 using input_t = Input;
                 using output_t = Output;
 
-                using func_t = std::function<void(output_t *destination, const input_t *source, size_t num_elements)>;
+                using func_t = std::function<void(output_t *out_values,
+                                                  mtl::smart_bitmask *out_null_mask,
+                                                  const input_t *in_values,
+                                                  const mtl::smart_bitmask *in_null_mask,
+                                                  null_info in_null_info,
+                                                  size_t num_elements)>;
             };
 
             template<class Input>
@@ -88,6 +93,40 @@ namespace mondrian
                 struct greater_than
                 {
                     DEFINE_INDICATE_STRAIGHT_FORWARD(straightforward_impl, >);
+
+                    struct xxx_impl
+                    {
+                        input_t compare_value;
+
+                        xxx_impl(input_t compare_value): compare_value(compare_value) { }
+
+                        void operator()(output_t *out_values,
+                                        mtl::smart_bitmask *out_null_mask,
+                                        const input_t *in_values,
+                                        const mtl::smart_bitmask *in_null_mask,
+                                        null_info in_null_info,
+                                        size_t num_elements)
+                        {
+                            assert (out_values != nullptr);
+                            assert (out_null_mask != nullptr);
+                            assert (in_values != nullptr);
+                            assert (in_null_mask != nullptr);
+
+                            if (in_null_info == null_info::non_null) {
+                                while (num_elements--) {
+                                    *out_values++ = (*in_values++ > compare_value); // TODO replace > by opp
+                                }
+                            } else {
+                                for (size_t idx = 0; idx < num_elements; ++idx) {
+                                    if (in_null_mask->get(idx)) {
+                                        out_null_mask->set(idx, true);
+                                    } else {
+                                        out_values[idx] = in_values[idx] > compare_value;
+                                    }
+                                }
+                            }
+                        }
+                    };
                 };
             };
         }

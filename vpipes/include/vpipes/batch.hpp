@@ -80,28 +80,33 @@ namespace mondrian
             }
 
             inline size_t add(state *out, const tupletid_t *in_tuplet_ids, const value_t *in_values,
-                                   const size_t *indices, size_t num_indices) __attribute__((always_inline))
+                              const mtl::smart_bitmask *in_null_mask, const size_t *indices, size_t num_indices)
+                              __attribute__((always_inline))
             {
                 assert (cursor + 1 <= max_size);
+                assert (out != nullptr && in_tuplet_ids != nullptr && in_values != nullptr && in_null_mask != nullptr);
+
                 auto append_max_len = std::min(max_size - cursor, num_indices);
                 auto retval = num_indices - append_max_len;
                 while (append_max_len--) {
                     auto idx = *indices++;
                     values[cursor] = in_values[idx];
-                    tupletids[cursor++] = in_tuplet_ids[idx];
+                    tupletids[cursor] = in_tuplet_ids[idx];
+                    null_mask.set(cursor++, in_null_mask->get(idx));
                 }
                 *out = (cursor >= max_size ? state::full : state::non_full);
                 return retval;
             }
 
             inline size_t add(state *out, const tupletid_t *in_tuplet_ids, const value_t *in_values,
-                              size_t num_elements) __attribute__((always_inline))
+                              const mtl::smart_bitmask *in_null_mask, size_t num_elements) __attribute__((always_inline))
             {
                 assert (cursor + 1 <= max_size);
                 auto append_max_len = std::min(max_size - cursor, num_elements);
                 auto retval = num_elements - append_max_len;
                 tupletids.set(cursor, in_tuplet_ids, append_max_len);
                 values.set(cursor, in_values, append_max_len);
+                null_mask.set(cursor, in_null_mask, append_max_len);
                 cursor += append_max_len;
                 *out = (cursor >= max_size ? state::full : state::non_full);
                 return retval;
@@ -121,6 +126,7 @@ namespace mondrian
             void release() {
                 tupletids.dispose();
                 values.dispose();
+                null_mask.dispose();
             }
 
             const value_t *get_values() const
@@ -133,6 +139,16 @@ namespace mondrian
                 return tupletids.get_content();
             }
 
+            const mtl::smart_bitmask *get_null_mask() const
+            {
+                return &null_mask;
+            }
+
+            null_info get_null_info() const
+            {
+                auto info = null_mask.get_info();
+                return (info == mtl::bitset_info::non_true ? null_info::non_null : null_info::contains_null);
+            }
         };
     }
 }

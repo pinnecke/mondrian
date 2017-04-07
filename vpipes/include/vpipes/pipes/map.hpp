@@ -43,13 +43,14 @@ namespace mondrian
 
             private:
                 output_t *value_buffer;
+                mtl::smart_bitmask null_mask_buffer;
                 size_t buffer_size;
                 map_func_t map_func;
 
             public:
 
                 map(consumer_t *destination, map_func_t map_func, unsigned batch_size) :
-                        super(destination, batch_size), map_func(map_func)
+                        super(destination, batch_size), map_func(map_func), null_mask_buffer(batch_size)
                 {
                     // Note here: The operator is unaware of the batch size of the input. The assignment
                     // of the batch size of this operator as the batch size of the preceding operator
@@ -69,8 +70,11 @@ namespace mondrian
                         assert (value_buffer != nullptr);
                     }
 
-                    map_func(value_buffer, data->get_values(), input_batch_size);
-                    super::produce(data->get_tupletids(), value_buffer, input_batch_size, true);
+                    null_mask_buffer.unset_all();
+                    map_func(value_buffer, &null_mask_buffer, data->get_values(), data->get_null_mask(),
+                             data->get_null_info(), input_batch_size);
+
+                    super::produce(data->get_tupletids(), value_buffer, &null_mask_buffer, input_batch_size, true);
                 }
 
                 virtual void on_cleanup() override

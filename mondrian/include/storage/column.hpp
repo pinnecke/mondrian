@@ -24,6 +24,7 @@ namespace mondrian
             using table_scan_t = pipes::table_scan<ValueType>;
             using predicate_func_t = typename table_scan_t::predicate_func_t;
             using point_copy_t = typename point_copy<value_t, size_t>::func_t;
+            using point_null_copy_t = typename point_null_copy<size_t>::func_t;
 
         private:
             value_t *data;
@@ -81,6 +82,12 @@ namespace mondrian
 
             point_copy_t f = [&] (value_t *out, const tupletid_t *tupletids, size_t num_of_ids) {
                 this->materialize(out, tupletids, num_of_ids);
+            };
+
+            point_null_copy_t null_mask_f = [&] (mtl::smart_bitmask *out, const tupletid_t *tupletids, size_t num_of_ids) {
+                for (size_t idx = 0; idx < num_of_ids; ++idx) {
+                    out->set(idx, false); // TODO: For Testing
+                }
             };
 
             inline virtual producer<value_t> *table_scan(consumer<value_t> *consumer, predicate_func_t predicate,
