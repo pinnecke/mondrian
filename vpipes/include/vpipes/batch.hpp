@@ -90,8 +90,8 @@ namespace mondrian
                 auto retval = num_indices - append_max_len;
                 while (append_max_len--) {
                     auto idx = *indices++;
-                    values[cursor] = in_values[idx];
-                    tupletids[cursor] = in_tuplet_ids[idx];
+                    values.set(cursor, in_values[idx]);
+                    tupletids.set(cursor, in_tuplet_ids[idx]);
                     null_mask.set(cursor++, in_null_mask->get(idx));
                 }
                 *out = (cursor >= max_size ? state::full : state::non_full);

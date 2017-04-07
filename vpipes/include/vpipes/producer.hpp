@@ -98,10 +98,10 @@ namespace mondrian
                                         bool hint_hit_out_batch_size) final __attribute__((always_inline))
             {
                 auto total = num_indices, remaining = num_indices;
+                result->prefetch(cpu_hint::for_write);
                 do {
                     typename output_batch_t::state batch_state;
                     auto step = (total - remaining);
-                    result->prefetch(cpu_hint::for_write);
                     remaining = result->add(&batch_state, tupletids, values, null_mask, indices + step, remaining);
                     if (__builtin_expect(batch_state == output_batch_t::state::full, hint_hit_out_batch_size)) {
                         send();
@@ -115,9 +115,8 @@ namespace mondrian
                                         final __attribute__((always_inline))
             {
                 auto total_num = num_elements, remaining_num = num_elements;
+                result->prefetch(cpu_hint::for_write);
                 do {
-                    result->prefetch(cpu_hint::for_write);
-
                     typename output_batch_t::state batch_state;
                     auto step = (total_num - remaining_num);
                     const_cast<mtl::smart_bitmask *>(null_mask)->set_offset(step);

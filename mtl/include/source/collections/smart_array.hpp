@@ -94,6 +94,9 @@ namespace mondrian
 
             virtual inline void set(size_t idx, const type_t &other) final __attribute__((always_inline))
             {
+                auto upper = idx >= size ? idx + 1 : size;
+                auto_resize (upper);
+                size = upper;
                 assert (idx < size);
                 content[idx] = other;
             }
@@ -165,16 +168,20 @@ namespace mondrian
                 }
             }
 
-            assignment_proxy& operator[](size_t idx)
+            virtual inline const type_t *get(size_t idx) final __attribute__((always_inline))
+            {
+                return get_unsafe(idx);
+            }
+
+            virtual inline type_t *get_unsafe(size_t idx) final __attribute__((always_inline))
             {
                 auto idx_size = idx + 1;
                 auto_resize (idx_size);
-                proxy.ref = (content + idx);
                 size = (idx_size > size) ? idx_size : size;
                 assert (size <= capacity);
                 assert (idx < capacity);
                 assert (idx < size);
-                return proxy;
+                return content + idx;
             }
 
             virtual inline void set_all(const type_t &value) final __attribute__((always_inline))

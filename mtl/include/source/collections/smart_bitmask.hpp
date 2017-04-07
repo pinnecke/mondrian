@@ -98,7 +98,7 @@ namespace mondrian
                 idx += offset;
                 auto block_id = IDX_TO_BLOCK(idx);
                 auto bit_id = IDX_TO_BIT(idx, block_id);
-                auto block = content[block_id].get_address();
+                auto block = content.get_unsafe(block_id);
                 *block |= (1 << bit_id);
             }
 
@@ -126,7 +126,7 @@ namespace mondrian
                 auto block_id = IDX_TO_BLOCK(idx);
                 auto bit_id = IDX_TO_BIT(idx, block_id);
                 auto mask = (1 << bit_id);
-                return ((*(content[block_id].get_address()) & mask) == mask);
+                return ((*content.get(block_id) & mask) == mask);
             }
 
             virtual inline assignment_proxy& operator[](size_t idx) final __attribute__((always_inline))
