@@ -5,7 +5,7 @@
 #pragma once
 
 #include <vpipes.hpp>
-#include <testing_utilities.hpp>
+#include "testing_utilities.hpp"
 
 
 using namespace mondrian::vpipes;
@@ -20,20 +20,24 @@ namespace testing_vpipes_classes{
         using tupletid_t = size_t;
         using table_scan_t = pipes::table_scan<ValueType>;
         using predicate_func_t = typename table_scan_t::predicate_func_t;
-        using point_copy_t = typename point_copy<value_t, size_t>::func_t;
+        using block_copy_t = typename   mondrian::vpipes::block_copy<value_t>::func_t;
+
     private:
         consumer<value_t> *m_consumer;
         predicate_func_t m_predicate;
         unsigned m_scan_batch_size;
         unsigned m_filter_batch_size;
         size_t   m_total_elements;
+        block_copy_t m_block_copy;
     public:
-        minimal_reader(consumer<value_t> *consumer_p, predicate_func_t predicate,
+        minimal_reader(consumer<value_t> *consumer_p, predicate_func_t predicate,block_copy_t copy_fun,
                        size_t total_elements,unsigned scan_batch_size ,unsigned filter_batch_size):m_consumer(consumer_p),
                                                                                                    m_predicate(predicate),
                                                                                                    m_total_elements(total_elements),
                                                                                                    m_scan_batch_size(scan_batch_size),
-                                                                                                   m_filter_batch_size(filter_batch_size)
+                                                                                                   m_filter_batch_size(filter_batch_size),
+                                                                                                   m_block_copy(copy_fun)
+
         {
 
         }
@@ -46,16 +50,8 @@ namespace testing_vpipes_classes{
         {
             size_t start = 0, end = m_total_elements;
             interval<size_t> all_tuplet_ids(start, end);
-
-            mondrian::vpipes::block_copy<size_t>::func_t loc_block_copy = [](size_t *out, size_t begin, size_t end){
-                auto distance = end- begin;
-                for (auto i = 0 ; i<distance ;++i){
-                    *(out+i) =begin+i;
-                }
-            };
-
             auto loc_table = pipes::table_scan<value_t>(m_consumer, &all_tuplet_ids, &all_tuplet_ids + 1, m_predicate,
-                                                        loc_block_copy   , m_scan_batch_size, m_filter_batch_size, true);
+                                                        m_block_copy   , m_scan_batch_size, m_filter_batch_size,true);
 
             loc_table.start();
         }

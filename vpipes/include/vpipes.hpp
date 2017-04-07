@@ -18,6 +18,8 @@
 #include "vpipes/producer.hpp"
 #include "vpipes/pipe.hpp"
 #include "vpipes/pipe_head.hpp"
+#include "vpipes/datastructrues/datastructure.hpp"
+#include "vpipes/datastructrues/red_black_tree.hpp"
 
 #include "vpipes/pipes/filter.hpp"
 #include "vpipes/pipes/materializer.hpp"
@@ -28,3 +30,4 @@
 #include "vpipes/pipes/map.hpp"
 #include "vpipes/pipes/tee.hpp"
 #include "vpipes/pipes/project.hpp"
+#include "vpipes/pipes/dedup.hpp"

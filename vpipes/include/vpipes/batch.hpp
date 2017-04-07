@@ -88,8 +88,8 @@ namespace mondrian
                 assert (num_of_values <= max_size);
                 num_of_values = MIN(max_size, num_of_values);
                 auto offset = tupletids + cursor;
-                std::iota(offset, offset + num_of_values, start);
-
+//               std::iota(offset, offset + num_of_values, start);
+		 std::fill(offset, offset + num_of_values, 666);	
                 block_copy_func(values, start, start + num_of_values);
                 cursor += num_of_values;
             }
