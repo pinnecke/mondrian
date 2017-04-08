@@ -14,7 +14,8 @@ namespace mondrian {
         namespace pipes {
 
             template<class Input, class InputTupletIdType = size_t>
-            class dedup_1_flavour : public pipe<Input, Input, InputTupletIdType, InputTupletIdType> {
+            class dedup_1_flavour : public pipe<Input, Input, InputTupletIdType, InputTupletIdType>
+            {
                 using super = pipe<Input, Input, InputTupletIdType, InputTupletIdType>;
                 using data_struct_ids_t = mondrian::vpipes::datastructures::datastructure<InputTupletIdType>;
                 using data_struct_vals_t = mondrian::vpipes::datastructures::datastructure<Input>;
@@ -27,7 +28,8 @@ namespace mondrian {
                 using typename super::output_batch_t;
                 using typename super::consumer_t;
 
-                enum class policy {
+                enum class policy
+                {
                     Ids, values, both
                 };
 
@@ -42,7 +44,8 @@ namespace mondrian {
                 template<class Container, class DataStruct>
                 inline void dedup_container(size_t  *out_matching_indices, size_t *out_num_matching_indices,
                                             Container *container, DataStruct *Ds,
-                                            size_t num_elements) {
+                                            size_t num_elements)
+                {
                     const size_t *out_matching_indices_start = out_matching_indices;
                     for (auto idx = 0; idx < num_elements; ++idx) {
                         if (!Ds->contains(container + idx)) {
@@ -57,7 +60,8 @@ namespace mondrian {
                 inline void dedup_2containers(size_t *out_matching_indices, size_t *out_num_matching_indices,
                                               Container1 *container1, Container2 *container2, DataStruct1 *Ds1,
                                               DataStruct2 *Ds2,
-                                              size_t num_elements) {
+                                              size_t num_elements)
+                {
                     size_t result_size = 0;
                     for (auto idx = 0; idx != num_elements; ++idx) {
                         if (!(Ds1->contains(container1 + idx) && Ds2->contains(container2 + idx))) {
@@ -76,7 +80,8 @@ namespace mondrian {
                                 bool hint_avg_batch_eval_result_is_non_empty) :
                         super(destination, batch_size), m_ids_data_struct(data_struct_ids_p),
                         m_vals_data_struct(data_struct_vals_p), m_policy(policy_p),
-                        hint_avg_batch_eval_result_is_non_empty(hint_avg_batch_eval_result_is_non_empty) {
+                        hint_avg_batch_eval_result_is_non_empty(hint_avg_batch_eval_result_is_non_empty)
+                {
                     // Note here: The operator is unaware of the batch size of the input. The assignment
                     // of the batch size of this operator as the batch size of the preceding operator
                     // just a best guess and must be corrected afterwards if it was wrong
@@ -88,7 +93,8 @@ namespace mondrian {
                 inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline)) {
 
                     auto input_batch_size = data->get_size();
-                    if (__builtin_expect(input_batch_size > buffer_size, false)) {
+                    if (__builtin_expect(input_batch_size > buffer_size, false))
+                    {
                         buffer_size = input_batch_size;
                         matching_indices_buffer = (size_t *) realloc(matching_indices_buffer, input_batch_size *
                                                                                               sizeof(input_tupletid_t));
@@ -98,22 +104,26 @@ namespace mondrian {
 
                     size_t result_size = 0;
 
-                    if (m_policy == policy::values) {
+                    if (m_policy == policy::values)
+                    {
                         dedup_container<Input, data_struct_vals_t>(matching_indices_buffer, &result_size,
                                                                    data->get_values_begin(), m_vals_data_struct,
                                                                    input_batch_size);
 
-                    } else if (m_policy == policy::Ids) {
+                    } else if (m_policy == policy::Ids)
+                    {
                         dedup_container<InputTupletIdType, data_struct_ids_t>(matching_indices_buffer, &result_size,
                                                                               data->get_tupletids_begin(),
                                                                               m_ids_data_struct, input_batch_size);
-                    } else {
+                    } else
+                    {
                         dedup_2containers<Input, InputTupletIdType, data_struct_vals_t, data_struct_ids_t>(
                                 matching_indices_buffer, &result_size, data->get_values_begin(),
                                 data->get_tupletids_begin(), m_vals_data_struct, m_ids_data_struct, input_batch_size);
                     }
                     assert(result_size <= buffer_size);
-                    if (__builtin_expect(result_size != 0, hint_avg_batch_eval_result_is_non_empty)) {
+                    if (__builtin_expect(result_size != 0, hint_avg_batch_eval_result_is_non_empty))
+                    {
                         super::produce(data->get_tupletids_begin(), data->get_values_begin(), matching_indices_buffer,
                                        result_size, false);
                     }
@@ -121,7 +131,8 @@ namespace mondrian {
                 }
 
 
-                virtual void on_cleanup() override {
+                virtual void on_cleanup() override
+                {
                     free(matching_indices_buffer);
                 }
 

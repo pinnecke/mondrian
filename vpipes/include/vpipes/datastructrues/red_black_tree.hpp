@@ -13,7 +13,8 @@ namespace mondrian {
         namespace datastructures
         {
             template<class elements_type>
-            class red_black_tree : public datastructure<elements_type> {
+            class red_black_tree : public datastructure<elements_type>
+            {
             private:
                 std::map<elements_type,bool> elements_tree;
 

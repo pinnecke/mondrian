@@ -11,7 +11,8 @@ namespace mondrian {
         namespace datastructures
         {
             template<class elements_type>
-            class datastructure{
+            class datastructure
+            {
             public:
                 virtual void insert(const elements_type* element)=0;
                 virtual bool contains(const elements_type* element)=0;
