@@ -156,11 +156,14 @@ namespace mondrian
             {
                 auto num_elems = content.get_num_elements();
                 auto base = content.get_raw_data();
+                std::cout << "------------------\n";
                 while (num_elems--) {
+                    std::cout << num_elems  << "\n";
                     if ((*base++) > 0) {
                         return bitset_info::contains_true;
                     }
                 }
+                std::cout << "------------------\n";
                 return bitset_info::non_true;
             }
 

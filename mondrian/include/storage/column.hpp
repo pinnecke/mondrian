@@ -85,9 +85,9 @@ namespace mondrian
             };
 
             point_null_copy_t null_mask_f = [&] (mtl::smart_bitmask *out, const tupletid_t *tupletids, size_t num_of_ids) {
-                for (size_t idx = 0; idx < num_of_ids; ++idx) {
-                    out->set(idx, false); // TODO: For Testing
-                }
+                //for (size_t idx = 0; idx < num_of_ids; ++idx) {
+                //    out->set(idx, false); // TODO: For Testing
+                //}
             };
 
             inline virtual producer<value_t> *table_scan(consumer<value_t> *consumer, predicate_func_t predicate,
