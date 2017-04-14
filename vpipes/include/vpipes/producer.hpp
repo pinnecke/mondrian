@@ -30,11 +30,14 @@ namespace mondrian
             using consumer_t = consumer<output_t, output_tupletid_t>;
             using output_batch_t = batch<output_t, output_tupletid_t>;
             using block_copy_t = typename block_copy<output_t, output_tupletid_t>::func_t;
+            using block_null_copy_t = typename block_null_copy<output_tupletid_t>::func_t;
 
         private:
             consumer_t **destinations;
             output_batch_t *result = nullptr;
             size_t batch_size, num_destintations;
+
+            operator_statistics statistics;
 
         protected:
             void add_destination(consumer_t *destination)
@@ -62,6 +65,7 @@ namespace mondrian
             {
                 assert (destinations != nullptr);
                 result->prefetch(cpu_hint::for_read);
+                statistics.num_batches++;
                 for (size_t idx = 0; idx < num_destintations; ++idx) {
                     destinations[idx]->consume(result);
                 }
@@ -77,14 +81,15 @@ namespace mondrian
             virtual void on_start() { };
 
             inline virtual void produce_tupletid_range(output_tupletid_t start, output_tupletid_t end,
-                                                       block_copy_t block_copy_func) final __attribute__((always_inline))
+                                                       block_copy_t block_copy_func,
+                                                       block_null_copy_t block_null_copy_func) final __attribute__((always_inline))
             {
                 assert (start <= end);
 
                 output_tupletid_t offset = start;
                 while (offset < end) {
                     size_t this_batch_size = MIN(batch_size, end - offset);
-                    result->iota(offset, this_batch_size, block_copy_func);
+                    result->iota(offset, this_batch_size, block_copy_func, block_null_copy_func);
                     send();
                     offset += this_batch_size;
                 }
@@ -167,6 +172,11 @@ namespace mondrian
             {
                 on_start();
                 close();
+            }
+
+            const operator_statistics *get_output_statistics() const
+            {
+                return &statistics;
             }
         };
     }

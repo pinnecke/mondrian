@@ -32,6 +32,10 @@ TEST(TestReading, TestBasicRead  ){
 
     reader.read();
 
+    //std::cout << "proj #batches [in]: " << proj.get_input_statistics()->num_batches << ", #empty " << proj.get_input_statistics()->num_empty_batches << std::endl;
+    //std::cout << "proj #batches [out]: " << proj.get_output_statistics()->num_batches << ", #empty " << proj.get_input_statistics()->num_empty_batches << std::endl;
+    //std::cout << "mat #batches  [in]: " << mat.get_input_statistics()->num_batches << ", #empty " << proj.get_input_statistics()->num_empty_batches << std::endl;
+
     auto input = reader.materlializer();
 
     EXPECT_EQ( has_same_vals(input,result,res_length) , true  );

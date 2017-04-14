@@ -82,13 +82,13 @@ namespace mondrian
         private:
             smart_array<uint32_t> content;
             assignment_proxy proxy;
-            size_t offset;
+            size_t offset, max_idx;
 
         public:
 
             smart_bitmask(size_t initial_capacity = 16, float grow_factor = 1.5f):
                     content(std::ceil(initial_capacity / float(8 * sizeof(content.get_value_size()))), grow_factor,
-                            init_value_policy::zero_memory), proxy(this), offset(0) { }
+                            init_value_policy::zero_memory), proxy(this), offset(0), max_idx(0) { }
 
             smart_bitmask(const smart_bitmask &other) = delete;
             smart_bitmask(smart_bitmask && other) = delete;
@@ -99,7 +99,9 @@ namespace mondrian
                 auto block_id = IDX_TO_BLOCK(idx);
                 auto bit_id = IDX_TO_BIT(idx, block_id);
                 auto block = content.get_unsafe(block_id);
-                *block |= (1 << bit_id);
+                *block |= (value << bit_id);
+                max_idx = std::max(max_idx, idx);
+                assert (get(idx - offset) == value);
             }
 
             virtual inline void set(size_t idx, const smart_bitmask *bits, size_t num_values) final __attribute__((always_inline))
@@ -109,6 +111,7 @@ namespace mondrian
                     set(idx, bits->get(idx));
                     idx++;
                 }
+                max_idx = std::max(max_idx, idx);
             }
 
             virtual inline bool get(size_t idx) const final __attribute__((always_inline))
@@ -127,6 +130,11 @@ namespace mondrian
                 auto bit_id = IDX_TO_BIT(idx, block_id);
                 auto mask = (1 << bit_id);
                 return ((*content.get(block_id) & mask) == mask);
+            }
+
+            virtual inline size_t get_num_elements() const final __attribute__((always_inline))
+            {
+                return max_idx - offset + 1;
             }
 
             virtual inline assignment_proxy& operator[](size_t idx) final __attribute__((always_inline))
@@ -170,6 +178,18 @@ namespace mondrian
             virtual void unset_all() final __attribute__((always_inline))
             {
                 content.set_all(0);
+            }
+
+            virtual void unset_some(size_t begin, size_t end) final __attribute__((always_inline))
+            {
+                for (auto idx = begin; idx != end; ++idx)
+                    this->set(idx, false);
+            }
+
+            virtual void reset() final __attribute__((always_inline))
+            {
+                unset_all();
+                offset = max_idx = 0;
             }
 
             virtual void set_offset(size_t idx) final __attribute__((always_inline))

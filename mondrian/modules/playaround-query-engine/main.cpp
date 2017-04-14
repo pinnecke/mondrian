@@ -77,10 +77,10 @@ std::vector<Type> read_from_file(std::string file_name)
 
 int main()
 {
-    mtl::smart_bitmask mask(1);
+ /*   mtl::smart_bitmask mask(1);
     for (size_t i = 0; i < 80; ++i) {
         mask.set(i, true);
-    }
+    }*/
    /* mask[0] = true;
     mask.set(2, true);
     mask.set(4, true);
@@ -194,7 +194,7 @@ int main()
                 auto tid_materializer = tid_materialize<uint32_t>(tid_result_buffer, &result_set_size);
 
                 map<uint32_t, bool> mapper(&val_materializer,
-                                           indicators<uint32_t>::greater_than::xxx_impl(100),
+                                           indicators<uint32_t>::greater_than::straightforward_impl(100),
                                            100);
 
                 auto tee_opp = tee<uint32_t>(&mapper, &tid_materializer, 100);
@@ -206,7 +206,7 @@ int main()
                         [&PARTKEY, &projecter, &tee_opp, &tid_materializer, &val_materializer, &scan_batch_size, &filter_batch_size]() {
                             auto table_scan = PARTKEY.table_scan(&tid_materializer,
                                                                  predicates::less_equal::straightforward_impl(
-                                                                         2000000),
+                                                                         1000000),
                                                                  scan_batch_size, filter_batch_size, false);
                             table_scan->start();
                             free(table_scan);

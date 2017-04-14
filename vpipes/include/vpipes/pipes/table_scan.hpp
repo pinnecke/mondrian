@@ -37,20 +37,24 @@ namespace mondrian
                 using filter_t = filter<input_t>;
                 using predicate_func_t = typename filter_t::predicate_func_t;
                 using block_copy_t = typename block_copy<input_t, input_tupletid_t>::func_t;
+                using block_null_copy_t = typename block_null_copy<input_tupletid_t>::func_t;
                 using interval_t = interval<InputTupletIdType>;
 
             private:
                 const interval_t *tuplet_ids_interval_begin, *tuplet_ids_interval_end;
                 filter_t *filter_operator;
                 block_copy_t block_copy_func;
+                block_null_copy_t block_null_copy_func;
 
             public:
                 table_scan(consumer_t *destination, const interval_t *tuplet_ids_interval_begin,
                            const interval_t *tuplet_ids_interval_end, predicate_func_t predicate,
-                           block_copy_t block_copy_func, unsigned scan_batch_size, unsigned filter_batch_size,
+                           block_copy_t block_copy_func, block_null_copy_t block_null_copy_func,
+                           unsigned scan_batch_size, unsigned filter_batch_size,
                            bool filter_hint_expected_avg_batch_eval_is_non_empty) :
                         super(nullptr, scan_batch_size), tuplet_ids_interval_begin(tuplet_ids_interval_begin),
-                        tuplet_ids_interval_end(tuplet_ids_interval_end), block_copy_func(block_copy_func)
+                        tuplet_ids_interval_end(tuplet_ids_interval_end), block_copy_func(block_copy_func),
+                        block_null_copy_func(block_null_copy_func)
                 {
                     assert (tuplet_ids_interval_begin != nullptr && tuplet_ids_interval_end != nullptr);
                     assert (tuplet_ids_interval_begin < tuplet_ids_interval_end);
@@ -73,7 +77,7 @@ namespace mondrian
                             last_upperbound = interval->get_upper_bound();
                         );
                         super::produce_tupletid_range(interval->get_lower_bound(), interval->get_upper_bound(),
-                                                      block_copy_func);
+                                                      block_copy_func, block_null_copy_func);
                         ++interval;
                     }
                 }

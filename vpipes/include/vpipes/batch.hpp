@@ -30,6 +30,7 @@ namespace mondrian
             using value_t = ValueType;
             using tupletid_t = TupletIdType;
             using block_copy_t = typename block_copy<value_t, tupletid_t>::func_t;
+            using block_null_copy_t = typename block_null_copy<tupletid_t>::func_t;
 
         private:
             mtl::smart_array<tupletid_t> tupletids;
@@ -69,13 +70,19 @@ namespace mondrian
                 }
             }
 
-            inline void iota(tupletid_t start, size_t num_of_values, block_copy_t block_copy_func) __attribute__((always_inline))
+            inline void iota(tupletid_t start, size_t num_of_values, block_copy_t block_copy_func,
+                             block_null_copy_t block_null_copy_func) __attribute__((always_inline))
             {
                 assert (num_of_values <= max_size);
                 num_of_values = MIN(max_size, num_of_values);
 
                 tupletids.iota(cursor, num_of_values, start);
                 block_copy_func(values.get_raw_data(), start, start + num_of_values);
+
+                null_mask.reset();
+                block_null_copy_func(&null_mask, start, start + num_of_values);
+                assert (null_mask.get_num_elements() == num_of_values);
+
                 cursor += num_of_values;
             }
 
@@ -92,6 +99,7 @@ namespace mondrian
                     auto idx = *indices++;
                     values.set(cursor, in_values[idx]);
                     tupletids.set(cursor, in_tuplet_ids[idx]);
+                    assert (in_null_mask->get(idx) == false); // TODO: remove
                     null_mask.set(cursor++, in_null_mask->get(idx));
                 }
                 *out = (cursor >= max_size ? state::full : state::non_full);

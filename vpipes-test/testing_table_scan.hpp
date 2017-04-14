@@ -35,10 +35,17 @@ TEST(TestTableScan,TestBasicFunctionality){
         }
     };
 
+    mondrian::vpipes::block_null_copy<size_t>::func_t loc_block_null_copy = [] (mondrian::mtl::smart_bitmask *out, size_t begin, size_t end)
+    {
+        assert (out != nullptr);
+        assert (begin < end);
+        out->unset_some(0, (end - begin));
+    };
+
 
     auto loc_table = pipes::table_scan<size_t >(&proj, &all_tuplet_ids, &all_tuplet_ids + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
                                                 ::greater_equal::micro_optimized_impl(predicate_value,true),
-                                                loc_block_copy   , batch_size, batch_size, true);
+                                                loc_block_copy, loc_block_null_copy, batch_size, batch_size, true);
 
     loc_table.start();
 

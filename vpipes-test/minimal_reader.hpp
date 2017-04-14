@@ -54,10 +54,20 @@ namespace testing_vpipes_classes{
                 }
             };
 
+            mondrian::vpipes::block_null_copy<size_t>::func_t loc_block_null_copy = [] (mondrian::mtl::smart_bitmask *out, size_t begin, size_t end)
+            {
+                assert (out != nullptr);
+                assert (begin < end);
+                out->unset_some(0, (end - begin));
+            };
+
             auto loc_table = pipes::table_scan<value_t>(m_consumer, &all_tuplet_ids, &all_tuplet_ids + 1, m_predicate,
-                                                        loc_block_copy   , m_scan_batch_size, m_filter_batch_size, true);
+                                                        loc_block_copy, loc_block_null_copy, m_scan_batch_size, m_filter_batch_size, true);
 
             loc_table.start();
+
+            //std::cout << "loc_table #batches [out]: " << loc_table.get_output_statistics()->num_batches
+            //          << ", #empty " << loc_table.get_output_statistics()->num_empty_batches << std::endl;
         }
     };
 

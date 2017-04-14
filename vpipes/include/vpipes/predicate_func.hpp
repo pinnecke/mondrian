@@ -80,7 +80,7 @@ struct name                                                                     
         __builtin_prefetch(tupletids, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);                   \
         __builtin_prefetch(values, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);                      \
         for (size_t idx = 0; idx != num_elements; ++idx) {                                                          \
-            if (__builtin_expect((!null_mask->get(idx)) && (values[idx] opp compare_value), hint_expected_true)) {  \
+            if (__builtin_expect(!null_mask->get(idx) && (values[idx] opp compare_value), hint_expected_true)) {    \
                   *out_matching_indices++ = idx;                                                                    \
             }                                                                                                       \
         }                                                                                                           \

@@ -14,6 +14,12 @@ namespace mondrian
     namespace vpipes
     {
         enum class null_info { contains_null, non_null };
+
+        struct operator_statistics
+        {
+            size_t num_batches = 0;
+            size_t num_empty_batches = 0;
+        };
     }
 }
 

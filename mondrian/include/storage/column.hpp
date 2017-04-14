@@ -102,8 +102,15 @@ namespace mondrian
                                                             assert (out != nullptr);
                                                             assert (begin < end);
                                                             memcpy(out, data + begin, (end - begin) * sizeof(value_t));
-                                                        }, scan_batch_size, filter_batch_size,
-                                                      filter_hint_expected_avg_batch_eval_is_non_empty);
+                                                        },
+                                                        [&] (mtl::smart_bitmask *out, tupletid_t begin, tupletid_t end)
+                                                        {
+                                                            assert (out != nullptr);
+                                                            assert (begin < end);
+                                                            out->unset_some(0, (end - begin));
+                                                        },
+                                                        scan_batch_size, filter_batch_size,
+                                                        filter_hint_expected_avg_batch_eval_is_non_empty);
             }
         };
     }

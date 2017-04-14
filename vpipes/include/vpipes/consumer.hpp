@@ -24,6 +24,8 @@ namespace mondrian
         template<class Input, class InputTupletIdType = size_t>
         class consumer
         {
+            operator_statistics statistics;
+
         public:
             using input_t = Input;
             using input_tupletid_t = InputTupletIdType;
@@ -44,9 +46,15 @@ namespace mondrian
 
             inline virtual void consume(const input_batch_t *data) final __attribute__((always_inline))
             {
+                statistics.num_batches++;
                 if (__builtin_expect(!data->is_empty(), true)) {
                     on_consume(data);
-                }
+                } else statistics.num_empty_batches++;
+            }
+
+            const operator_statistics *get_input_statistics() const
+            {
+                return &statistics;
             }
         };
     }

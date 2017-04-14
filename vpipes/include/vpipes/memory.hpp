@@ -43,6 +43,13 @@ namespace mondrian
             using tupletid_t = TupletIdType;
             using func_t = std::function<void(mtl::smart_bitmask *out, const tupletid_t *tupletids, size_t num_of_ids)>;
         };
+
+        template <class TupletIdType = size_t>
+        struct block_null_copy
+        {
+            using tupletid_t = TupletIdType;
+            using func_t = std::function<void(mtl::smart_bitmask *out, tupletid_t begin, tupletid_t end)>;
+        };
     }
 }
 
