@@ -29,66 +29,15 @@ namespace mondrian
     {
         class smart_bitmask
         {
-        public:
-            class assignment_proxy
-            {
-                friend class smart_bitmask;
-                size_t idx;
-                smart_bitmask *parent;
-
-            public:
-                assignment_proxy(smart_bitmask *parent): parent(parent) { }
-
-                assignment_proxy &operator=(bool value)
-                {
-                    parent->set(idx, value);
-                    return *this;
-                }
-
-                assignment_proxy &operator=(const assignment_proxy& other)
-                {
-                    parent->set(idx, other.parent->get(other.idx));
-                    return *this;
-                }
-
-                assignment_proxy &operator=(const assignment_proxy *other)
-                {
-                    parent->set(idx, other->parent->get(other->idx));
-                    return *this;
-                }
-
-                virtual inline bool operator==(bool value) final __attribute__((always_inline))
-                {
-                    return (parent->get(idx) == value);
-                }
-
-                virtual inline bool operator==(const assignment_proxy& other) final __attribute__((always_inline))
-                {
-                    return (parent->get(idx) == other.parent->get(other.idx));
-                }
-
-                virtual inline bool operator!=(bool value) final __attribute__((always_inline))
-                {
-                    return !(this->operator==(value));
-                }
-
-                virtual inline bool operator!() final __attribute__((always_inline))
-                {
-                    return !(parent->get(idx));
-                }
-
-            };
-
         private:
             smart_array<uint32_t> content;
-            assignment_proxy proxy;
             size_t offset, max_idx;
 
         public:
 
             smart_bitmask(size_t initial_capacity = 16, float grow_factor = 1.5f):
                     content(std::ceil(initial_capacity / float(8 * sizeof(content.get_value_size()))), grow_factor,
-                            init_value_policy::zero_memory), proxy(this), offset(0), max_idx(0) { }
+                            init_value_policy::zero_memory), offset(0), max_idx(0) { }
 
             smart_bitmask(const smart_bitmask &other) = delete;
             smart_bitmask(smart_bitmask && other) = delete;
@@ -135,13 +84,6 @@ namespace mondrian
             virtual inline size_t get_num_elements() const final __attribute__((always_inline))
             {
                 return max_idx - offset + 1;
-            }
-
-            virtual inline assignment_proxy& operator[](size_t idx) final __attribute__((always_inline))
-            {
-                idx += offset;
-                proxy.idx = idx;
-                return proxy;
             }
 
             virtual inline void prefetch(cpu_hint hint, size_t idx = 0) final __attribute__((always_inline))

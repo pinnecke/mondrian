@@ -206,7 +206,7 @@ int main()
                         [&PARTKEY, &projecter, &tee_opp, &tid_materializer, &val_materializer, &scan_batch_size, &filter_batch_size]() {
                             auto table_scan = PARTKEY.table_scan(&tid_materializer,
                                                                  predicates::less_equal::straightforward_impl(
-                                                                         1000000),
+                                                                         2000000),
                                                                  scan_batch_size, filter_batch_size, false);
                             table_scan->start();
                             free(table_scan);
