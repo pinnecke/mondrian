@@ -146,7 +146,7 @@ int main()
     assert (column_data_partkey.size() == column_data_orderkey.size());
     size_t num_elements = column_data_partkey.size();
 
-    bool *val_result_buffer = (bool *) malloc (num_elements * sizeof(bool));
+    uint32_t *val_result_buffer = (uint32_t *) malloc (num_elements * sizeof(uint32_t));
     size_t *tid_result_buffer = (size_t *) malloc (num_elements * sizeof(size_t));
     assert (val_result_buffer != nullptr);
     assert (tid_result_buffer != nullptr);
@@ -190,23 +190,23 @@ int main()
                 using namespace vpipes::maps;
                 using namespace vpipes::predicates;
 
-                auto val_materializer = val_materialize<bool>(val_result_buffer, &result_set_size);
+                auto val_materializer = val_materialize<uint32_t>(val_result_buffer, &result_set_size);
                 auto tid_materializer = tid_materialize<uint32_t>(tid_result_buffer, &result_set_size);
 
-                map<uint32_t, bool> mapper(&val_materializer,
+/*                map<uint32_t, bool> mapper(&val_materializer,
                                            indicators<uint32_t>::greater_than::straightforward_impl(100),
-                                           100);
+                                           100);*/
 
-                auto tee_opp = tee<uint32_t>(&mapper, &tid_materializer, 100);
+          //      auto tee_opp = tee<uint32_t>(&mapper, &tid_materializer, 100);
 
-                project<uint32_t, uint32_t> projecter(&tee_opp, ORDERKEY.f, ORDERKEY.null_mask_f, 100);
+      //          project<uint32_t, uint32_t> projecter(&tee_opp, ORDERKEY.f, ORDERKEY.null_mask_f, 100);
 
                 using predicates = batched_predicates<uint32_t>;
                 current_duration += utils::profiling::measure<std::chrono::nanoseconds>::execute(
-                        [&PARTKEY, &projecter, &tee_opp, &tid_materializer, &val_materializer, &scan_batch_size, &filter_batch_size]() {
-                            auto table_scan = PARTKEY.table_scan(&tid_materializer,
-                                                                 predicates::less_equal::straightforward_impl(
-                                                                         2000000),
+                        [&PARTKEY, &val_materializer, &scan_batch_size, &filter_batch_size]() {
+                            auto table_scan = PARTKEY.table_scan(&val_materializer,
+                                                                 predicates::less_equal::micro_optimized_impl(
+                                                                         2000000, false),
                                                                  scan_batch_size, filter_batch_size, false);
                             table_scan->start();
                             free(table_scan);

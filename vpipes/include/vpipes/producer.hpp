@@ -124,13 +124,13 @@ namespace mondrian
                 do {
                     typename output_batch_t::state batch_state;
                     auto step = (total - remaining);
-                    const_cast<mtl::smart_bitmask *>(null_mask)->set_offset(step);
+                   // const_cast<mtl::smart_bitmask *>(null_mask)->set_offset(step);
                     remaining = result->add(&batch_state, tupletids + step, values + step, null_mask, remaining);
                     if (__builtin_expect(batch_state == output_batch_t::state::full, hint_hit_out_batch_size)) {
                         send();
                     }
                 } while (remaining);
-                const_cast<mtl::smart_bitmask *>(null_mask)->set_offset(0);
+               // const_cast<mtl::smart_bitmask *>(null_mask)->set_offset(0);
             }
 
             virtual void close_consumers()

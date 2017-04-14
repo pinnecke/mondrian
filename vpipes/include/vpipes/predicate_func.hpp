@@ -52,7 +52,7 @@ struct name                                                                     
         ASSERT_VALID_BATCHED_PREDICATE_ARGS2();                                                                     \
         const size_t *out_matching_indices_start = out_matching_indices;                                            \
         for (size_t idx = 0; idx != num_elements; ++idx) {                                                          \
-            if (!null_mask->get_unsafe(idx) && values[idx] opp compare_value) {                                     \
+            if (values[idx] opp compare_value) {                                     \
                   *out_matching_indices++ = idx;                                                                    \
             }                                                                                                       \
         }                                                                                                           \
@@ -80,7 +80,7 @@ struct name                                                                     
         __builtin_prefetch(tupletids, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);                      \
         __builtin_prefetch(values, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);                         \
         for (size_t idx = 0; idx != num_elements; ++idx) {                                                             \
-            if (__builtin_expect(!null_mask->get_unsafe(idx) && (values[idx] opp compare_value), hint_expected_true)){ \
+            if (__builtin_expect((values[idx] opp compare_value), hint_expected_true)){ \
                   *out_matching_indices++ = idx;                                                                       \
             }                                                                                                          \
         }                                                                                                              \
