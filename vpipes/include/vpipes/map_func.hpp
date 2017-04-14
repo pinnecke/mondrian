@@ -43,7 +43,7 @@ struct name                                                                     
         } else {                                                                                                       \
             for (size_t idx = 0; idx < num_elements; ++idx) {                                                          \
                 if (in_null_mask->get_unsafe(idx)) {                                                                   \
-                    out_null_mask->set(idx, true);                                                                     \
+                    out_null_mask->set_unsafe(idx, true);                                                              \
                 } else {                                                                                               \
                     out_values[idx] = in_values[idx] opp compare_value;                                                \
                 }                                                                                                      \

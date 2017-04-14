@@ -50,6 +50,7 @@ namespace mondrian
                                             values(num_of_elements),
                                             null_mask(num_of_elements)
             {
+                null_mask.resize(num_of_elements);
             }
 
             inline void reset()
@@ -80,6 +81,7 @@ namespace mondrian
                 block_copy_func(values.get_raw_data(), start, start + num_of_values);
 
                 null_mask.reset();
+                null_mask.resize(num_of_values);
                 block_null_copy_func(&null_mask, start, start + num_of_values);
                 assert (null_mask.get_num_elements() == num_of_values);
 
@@ -95,12 +97,20 @@ namespace mondrian
 
                 auto append_max_len = std::min(max_size - cursor, num_indices);
                 auto retval = num_indices - append_max_len;
-                while (append_max_len--) {
-                    auto idx = *indices++;
-                    values.set(cursor, in_values[idx]);
-                    tupletids.set(cursor, in_tuplet_ids[idx]);
-                    null_mask.set(cursor++, in_null_mask->get_unsafe(idx));
-                }
+
+                /*  while (append_max_len--) {
+                      auto idx = *indices++;
+                      values.set(cursor, in_values[idx]);
+                      tupletids.set(cursor, in_tuplet_ids[idx]);
+                      null_mask.set_unsafe(cursor++, in_null_mask->get_unsafe(idx));
+                  }
+  */
+
+                  values.gather_unsafe(indices, append_max_len, in_values, cursor);
+                  tupletids.gather_unsafe(indices, append_max_len, in_tuplet_ids, cursor);
+                  null_mask.gather_unsafe(indices, append_max_len, in_null_mask, cursor);
+
+                  cursor += append_max_len;
                 *out = (cursor >= max_size ? state::full : state::non_full);
                 return retval;
             }

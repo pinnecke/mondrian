@@ -107,7 +107,7 @@ namespace mondrian
                                                         {
                                                             assert (out != nullptr);
                                                             assert (begin < end);
-                                                            out->unset_range(0, (end - begin));
+                                                            out->unset_range_safe(0, (end - begin));
                                                         },
                                                         scan_batch_size, filter_batch_size,
                                                         filter_hint_expected_avg_batch_eval_is_non_empty);

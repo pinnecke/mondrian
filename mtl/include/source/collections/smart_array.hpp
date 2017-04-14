@@ -92,13 +92,23 @@ namespace mondrian
                 return sizeof(type_t);
             }
 
-            virtual inline void set(size_t idx, const type_t &other) final __attribute__((always_inline))
+            virtual inline void set(size_t idx, const type_t &value) final __attribute__((always_inline))
             {
                 auto upper = idx >= size ? idx + 1 : size;
                 auto_resize (upper);
                 size = upper;
                 assert (idx < size);
-                content[idx] = other;
+                set_unsafe(idx, value);
+            }
+
+            virtual inline void set_unsafe(size_t idx, const type_t &value) final __attribute__((always_inline))
+            {
+                content[idx] = value;
+            }
+
+            virtual inline void set_unsafe(size_t idx, const type_t *value) final __attribute__((always_inline))
+            {
+                content[idx] = *value;
             }
 
             virtual inline void set(size_t idx, const type_t *data, size_t num_values) final __attribute__((always_inline))
@@ -168,12 +178,7 @@ namespace mondrian
                 }
             }
 
-            virtual inline const type_t *get(size_t idx) final __attribute__((always_inline))
-            {
-                return get_unsafe(idx);
-            }
-
-            virtual inline type_t *get_unsafe(size_t idx) final __attribute__((always_inline))
+            virtual inline const type_t *get_safe(size_t idx) final __attribute__((always_inline))
             {
                 auto idx_size = idx + 1;
                 auto_resize (idx_size);
@@ -181,12 +186,39 @@ namespace mondrian
                 assert (size <= capacity);
                 assert (idx < capacity);
                 assert (idx < size);
+                return get_unsafe(idx);
+            }
+
+            virtual inline type_t *get_unsafe(size_t idx) const final __attribute__((always_inline))
+            {
                 return content + idx;
             }
 
             virtual inline void set_all(const type_t &value) final __attribute__((always_inline))
             {
                 memset (content, value, size * sizeof(type_t));
+            }
+
+            virtual inline void gather_unsafe(const size_t *indices, size_t num_indices, const smart_array *src,
+                                              size_t this_start_idx = 0) final __attribute__((always_inline))
+            {
+                while (num_indices--) {
+                    set_unsafe(this_start_idx++, src->get_unsafe(*indices++));
+                }
+            }
+
+            virtual inline void gather_unsafe(const size_t *indices, size_t num_indices, const type_t *src,
+                                              size_t this_start_idx = 0) final __attribute__((always_inline))
+            {
+                while (num_indices--) {
+                    set_unsafe(this_start_idx++, src + (*indices++));
+                }
+            }
+
+            virtual void resize(size_t num_elements) final __attribute__((always_inline))
+            {
+                auto_resize(num_elements);
+                size = num_elements;
             }
         };
     }

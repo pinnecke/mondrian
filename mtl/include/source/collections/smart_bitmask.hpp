@@ -42,7 +42,19 @@ namespace mondrian
             smart_bitmask(const smart_bitmask &other) = delete;
             smart_bitmask(smart_bitmask && other) = delete;
 
-            virtual inline void set(size_t idx, bool value) final __attribute__((always_inline))
+            virtual inline void set_safe(size_t idx, bool value) final __attribute__((always_inline))
+            {
+                idx += offset;
+                auto block_id = IDX_TO_BLOCK(idx);
+                auto bit_id = IDX_TO_BIT(idx, block_id);
+                auto block = *content.get_safe(block_id);
+                block |= (value << bit_id);
+                content.set(block_id, block);
+                max_idx = std::max(max_idx, idx);
+                assert (get_unsafe(idx - offset) == value);
+            }
+
+            virtual inline void set_unsafe(size_t idx, bool value) final __attribute__((always_inline))
             {
                 idx += offset;
                 auto block_id = IDX_TO_BLOCK(idx);
@@ -57,10 +69,18 @@ namespace mondrian
             {
                 idx += offset;
                 while (num_values--) {
-                    set(idx, bits->get_unsafe(idx));
+                    set_unsafe(idx, bits->get_unsafe(idx));
                     idx++;
                 }
                 max_idx = std::max(max_idx, idx);
+            }
+
+            virtual inline void gather_unsafe(const size_t *indices, size_t num_indices, const smart_bitmask *src,
+                                              size_t this_start_idx = 0) final __attribute__((always_inline))
+            {
+                while (num_indices--) {
+                    set_unsafe(this_start_idx++, src->get_unsafe(*indices++));
+                }
             }
 
             virtual inline bool get_unsafe(size_t idx) const final __attribute__((always_inline))
@@ -78,7 +98,7 @@ namespace mondrian
                 auto block_id = IDX_TO_BLOCK(idx);
                 auto bit_id = IDX_TO_BIT(idx, block_id);
                 auto mask = (1 << bit_id);
-                return ((*content.get(block_id) & mask) == mask);
+                return ((*content.get_safe(block_id) & mask) == mask);
             }
 
             virtual inline size_t get_num_elements() const final __attribute__((always_inline))
@@ -122,10 +142,16 @@ namespace mondrian
                 content.set_all(0);
             }
 
-            virtual void unset_range(size_t begin, size_t end) final __attribute__((always_inline))
+            virtual void unset_range_unsafe(size_t begin, size_t end) final __attribute__((always_inline))
             {
                 for (auto idx = begin; idx != end; ++idx)
-                    this->set(idx, false);
+                    this->set_unsafe(idx, false);
+            }
+
+            virtual void unset_range_safe(size_t begin, size_t end) final __attribute__((always_inline))
+            {
+                for (auto idx = begin; idx != end; ++idx)
+                    this->set_safe(idx, false);
             }
 
             virtual void reset() final __attribute__((always_inline))
@@ -142,6 +168,13 @@ namespace mondrian
             virtual size_t get_offset()  final __attribute__((always_inline))
             {
                 return offset;
+            }
+
+            virtual void resize(size_t num_elements) final __attribute__((always_inline))
+            {
+                content.resize(IDX_TO_BLOCK(num_elements));
+                max_idx = num_elements - 1;
+                unset_all();
             }
 
         };

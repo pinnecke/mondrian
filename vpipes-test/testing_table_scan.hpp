@@ -39,7 +39,7 @@ TEST(TestTableScan,TestBasicFunctionality){
     {
         assert (out != nullptr);
         assert (begin < end);
-        out->unset_some(0, (end - begin));
+        out->unset_range(0, (end - begin));
     };
 
 

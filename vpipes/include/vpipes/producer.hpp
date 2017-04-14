@@ -119,18 +119,17 @@ namespace mondrian
                                         size_t num_elements, bool hint_hit_out_batch_size)
                                         final __attribute__((always_inline))
             {
-                auto total_num = num_elements, remaining_num = num_elements;
+                auto total = num_elements, remaining = num_elements;
                 result->prefetch(cpu_hint::for_write);
                 do {
                     typename output_batch_t::state batch_state;
-                    auto step = (total_num - remaining_num);
+                    auto step = (total - remaining);
                     const_cast<mtl::smart_bitmask *>(null_mask)->set_offset(step);
-                    remaining_num = result->add(&batch_state, tupletids + step, values + step,
-                                                null_mask, remaining_num);
+                    remaining = result->add(&batch_state, tupletids + step, values + step, null_mask, remaining);
                     if (__builtin_expect(batch_state == output_batch_t::state::full, hint_hit_out_batch_size)) {
                         send();
                     }
-                } while (remaining_num);
+                } while (remaining);
                 const_cast<mtl::smart_bitmask *>(null_mask)->set_offset(0);
             }
 

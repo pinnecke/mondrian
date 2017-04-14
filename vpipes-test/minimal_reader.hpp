@@ -58,7 +58,7 @@ namespace testing_vpipes_classes{
             {
                 assert (out != nullptr);
                 assert (begin < end);
-                out->unset_some(0, (end - begin));
+                out->unset_range(0, (end - begin));
             };
 
             auto loc_table = pipes::table_scan<value_t>(m_consumer, &all_tuplet_ids, &all_tuplet_ids + 1, m_predicate,
