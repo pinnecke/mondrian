@@ -50,20 +50,20 @@ namespace mondrian
                 auto block = content.get_unsafe(block_id);
                 *block |= (value << bit_id);
                 max_idx = std::max(max_idx, idx);
-                assert (get(idx - offset) == value);
+                assert (get_unsafe(idx - offset) == value);
             }
 
             virtual inline void set(size_t idx, const smart_bitmask *bits, size_t num_values) final __attribute__((always_inline))
             {
                 idx += offset;
                 while (num_values--) {
-                    set(idx, bits->get(idx));
+                    set(idx, bits->get_unsafe(idx));
                     idx++;
                 }
                 max_idx = std::max(max_idx, idx);
             }
 
-            virtual inline bool get(size_t idx) const final __attribute__((always_inline))
+            virtual inline bool get_unsafe(size_t idx) const final __attribute__((always_inline))
             {
                 idx += offset;
                 auto block_id = IDX_TO_BLOCK(idx);
@@ -122,7 +122,7 @@ namespace mondrian
                 content.set_all(0);
             }
 
-            virtual void unset_some(size_t begin, size_t end) final __attribute__((always_inline))
+            virtual void unset_range(size_t begin, size_t end) final __attribute__((always_inline))
             {
                 for (auto idx = begin; idx != end; ++idx)
                     this->set(idx, false);

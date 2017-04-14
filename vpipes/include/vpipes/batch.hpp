@@ -99,8 +99,7 @@ namespace mondrian
                     auto idx = *indices++;
                     values.set(cursor, in_values[idx]);
                     tupletids.set(cursor, in_tuplet_ids[idx]);
-                    assert (in_null_mask->get(idx) == false); // TODO: remove
-                    null_mask.set(cursor++, in_null_mask->get(idx));
+                    null_mask.set(cursor++, in_null_mask->get_unsafe(idx));
                 }
                 *out = (cursor >= max_size ? state::full : state::non_full);
                 return retval;
