@@ -82,7 +82,10 @@ namespace mondrian
 
                 null_mask.reset();
                 null_mask.resize(num_of_values);
-                block_null_copy_func(&null_mask, start, start + num_of_values);
+                auto null_mask_pos_start = 0;
+                auto null_mask_pos_end = (num_of_values % (max_size + 1));
+                assert (null_mask_pos_start < null_mask_pos_end);
+                block_null_copy_func(&null_mask, null_mask_pos_start, null_mask_pos_end);
                 assert (null_mask.get_num_elements() == num_of_values);
 
                 cursor += num_of_values;

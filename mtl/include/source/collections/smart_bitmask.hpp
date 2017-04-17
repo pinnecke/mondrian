@@ -23,6 +23,22 @@
 #define IDX_TO_BIT(idx,block)                               \
     idx - (block << 5);
 
+#define PREPARE_BIT_SET(idx, value)                         \
+    set_flag |= value;                                      \
+    idx += offset;                                          \
+    auto block_id = IDX_TO_BLOCK(idx);                      \
+    auto bit_id = IDX_TO_BIT(idx, block_id);                \
+
+#define REBUILD_SET_FLAG()                                      \
+    {                                                           \
+        set_flag = false;                                       \
+        auto block_idx = content.get_num_elements();            \
+        auto content_data = content.get_raw_data();             \
+        while (block_idx--) {                                   \
+            set_flag |= *content_data++;                        \
+        }                                                       \
+    };
+
 namespace mondrian
 {
     namespace mtl
@@ -32,21 +48,20 @@ namespace mondrian
         private:
             smart_array<uint32_t> content;
             size_t offset, max_idx;
+            bool set_flag;
 
         public:
 
             smart_bitmask(size_t initial_capacity = 16, float grow_factor = 1.5f):
                     content(std::ceil(initial_capacity / float(8 * sizeof(content.get_value_size()))), grow_factor,
-                            init_value_policy::zero_memory), offset(0), max_idx(0) { }
+                            init_value_policy::zero_memory), offset(0), max_idx(0), set_flag(false) { }
 
             smart_bitmask(const smart_bitmask &other) = delete;
             smart_bitmask(smart_bitmask && other) = delete;
 
             virtual inline void set_safe(size_t idx, bool value) final __attribute__((always_inline))
             {
-                idx += offset;
-                auto block_id = IDX_TO_BLOCK(idx);
-                auto bit_id = IDX_TO_BIT(idx, block_id);
+                PREPARE_BIT_SET(idx, value);
                 auto block = *content.get_safe(block_id);
                 block |= (value << bit_id);
                 content.set(block_id, block);
@@ -56,9 +71,7 @@ namespace mondrian
 
             virtual inline void set_unsafe(size_t idx, bool value) final __attribute__((always_inline))
             {
-                idx += offset;
-                auto block_id = IDX_TO_BLOCK(idx);
-                auto bit_id = IDX_TO_BIT(idx, block_id);
+                PREPARE_BIT_SET(idx, value);
                 auto block = content.get_unsafe(block_id);
                 *block |= (value << bit_id);
                 max_idx = std::max(max_idx, idx);
@@ -69,7 +82,9 @@ namespace mondrian
             {
                 idx += offset;
                 while (num_values--) {
-                    set_unsafe(idx, bits->get_unsafe(idx));
+                    bool value = bits->get_unsafe(idx);
+                    set_flag |= value;
+                    set_unsafe(idx, set_flag);
                     idx++;
                 }
                 max_idx = std::max(max_idx, idx);
@@ -79,7 +94,9 @@ namespace mondrian
                                               size_t this_start_idx = 0) final __attribute__((always_inline))
             {
                 while (num_indices--) {
-                    set_unsafe(this_start_idx++, src->get_unsafe(*indices++));
+                    bool value = src->get_unsafe(*indices++);
+                    set_flag |= value;
+                    set_unsafe(this_start_idx++, value);
                 }
             }
 
@@ -140,18 +157,21 @@ namespace mondrian
             virtual void unset_all() final __attribute__((always_inline))
             {
                 content.set_all(0);
+                set_flag = false;
             }
 
             virtual void unset_range_unsafe(size_t begin, size_t end) final __attribute__((always_inline))
             {
                 for (auto idx = begin; idx != end; ++idx)
                     this->set_unsafe(idx, false);
+                REBUILD_SET_FLAG();
             }
 
             virtual void unset_range_safe(size_t begin, size_t end) final __attribute__((always_inline))
             {
                 for (auto idx = begin; idx != end; ++idx)
                     this->set_safe(idx, false);
+                REBUILD_SET_FLAG();
             }
 
             virtual void reset() final __attribute__((always_inline))
@@ -179,7 +199,7 @@ namespace mondrian
 
             virtual bool is_unset() const final __attribute__((always_inline))
             {
-                return true;
+                return !set_flag;
             }
 
         };
