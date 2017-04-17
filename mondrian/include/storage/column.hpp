@@ -108,7 +108,6 @@ namespace mondrian
                                                             assert (out != nullptr);
                                                             assert (begin < end);
                                                             out->set_unsafe(begin, true);
-                                                            //out->unset_range_safe(0, (end - begin)); // TODO: Unsetting always required?
                                                         },
                                                         scan_batch_size, filter_batch_size,
                                                         filter_hint_expected_avg_batch_eval_is_non_empty);

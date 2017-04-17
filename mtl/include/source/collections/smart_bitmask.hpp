@@ -17,8 +17,8 @@
 
 #include "../../mtl"
 
-#define IDX_TO_BLOCK(idx)                                                   \
-    size_t(std::ceil(idx / (sizeof(content.get_value_size()) << 2)))
+#define IDX_TO_BLOCK(idx,bitmask_ptr)                                                   \
+    size_t(std::ceil(idx / (sizeof(bitmask_ptr->get_content()->get_value_size()) << 2)))
 
 #define IDX_TO_BIT(idx,block)                               \
     idx - (block << 5);
@@ -26,7 +26,7 @@
 #define PREPARE_BIT_SET(idx, value)                         \
     set_flag |= value;                                      \
     idx += offset;                                          \
-    auto block_id = IDX_TO_BLOCK(idx);                      \
+    auto block_id = IDX_TO_BLOCK(idx, this);                \
     auto bit_id = IDX_TO_BIT(idx, block_id);                \
 
 #define REBUILD_SET_FLAG()                                      \
@@ -38,6 +38,18 @@
             set_flag |= *content_data++;                        \
         }                                                       \
     };
+
+#define SMART_BITMASK_GET_UNSAFE_FAST(out_bool_is_set, bit_mask, idx)                           \
+    {                                                                                           \
+        auto __idx = idx;                                                                       \
+        __idx += bit_mask->get_offset();                                                        \
+        auto block_id = IDX_TO_BLOCK(__idx, bit_mask);                                          \
+        auto bit_id = IDX_TO_BIT(__idx, block_id);                                              \
+        auto mask = (1 << bit_id);                                                              \
+        auto modable_raw = const_cast<uint32_t *>(bit_mask->get_content()->get_raw_data());     \
+        out_bool_is_set = ((modable_raw[block_id] & mask) == mask);                             \
+    }
+
 
 namespace mondrian
 {
@@ -100,10 +112,20 @@ namespace mondrian
                 }
             }
 
+            virtual inline const uint32_t* get_raw_data() const final __attribute__((always_inline))
+            {
+                return content.get_raw_data();
+            }
+
+            virtual inline const smart_array<uint32_t> *get_content() const final __attribute__((always_inline))
+            {
+                return &content;
+            }
+
             virtual inline bool get_unsafe(size_t idx) const final __attribute__((always_inline))
             {
                 idx += offset;
-                auto block_id = IDX_TO_BLOCK(idx);
+                auto block_id = IDX_TO_BLOCK(idx, this);
                 auto bit_id = IDX_TO_BIT(idx, block_id);
                 auto mask = (1 << bit_id);
                 return ((content.get_raw_data()[block_id] & mask) == mask);
@@ -112,7 +134,7 @@ namespace mondrian
             virtual inline bool get_safe(size_t idx) final __attribute__((always_inline))
             {
                 idx += offset;
-                auto block_id = IDX_TO_BLOCK(idx);
+                auto block_id = IDX_TO_BLOCK(idx, this);
                 auto bit_id = IDX_TO_BIT(idx, block_id);
                 auto mask = (1 << bit_id);
                 return ((*content.get_safe(block_id) & mask) == mask);
@@ -126,7 +148,7 @@ namespace mondrian
             virtual inline void prefetch(cpu_hint hint, size_t idx = 0) final __attribute__((always_inline))
             {
                 idx += offset;
-                auto block_id = IDX_TO_BLOCK(idx);
+                auto block_id = IDX_TO_BLOCK(idx, this);
                 if (hint == cpu_hint::for_read) {
                     __builtin_prefetch(content.get_raw_data() + block_id, 0, 0);
                 } else {
@@ -185,14 +207,14 @@ namespace mondrian
                 offset = idx;
             }
 
-            virtual size_t get_offset()  final __attribute__((always_inline))
+            virtual size_t get_offset() const final __attribute__((always_inline))
             {
                 return offset;
             }
 
             virtual void resize(size_t num_elements) final __attribute__((always_inline))
             {
-                content.resize(IDX_TO_BLOCK(num_elements));
+                content.resize(IDX_TO_BLOCK(num_elements, this));
                 max_idx = num_elements - 1;
                 unset_all();
             }

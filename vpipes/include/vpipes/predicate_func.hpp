@@ -58,8 +58,10 @@ struct name                                                                     
                 }                                                                                                      \
             }                                                                                                          \
         } else {                                                                                                       \
+            bool is_non_null;                                                                                          \
             for (size_t idx = 0; idx != num_elements; ++idx) {                                                         \
-                if (!null_mask->get_unsafe(idx) && values[idx] opp compare_value) {                                    \
+                SMART_BITMASK_GET_UNSAFE_FAST(is_non_null, null_mask, idx);                                            \
+                if (is_non_null && values[idx] opp compare_value) {                                                    \
                       *out_matching_indices++ = idx;                                                                   \
                 }                                                                                                      \
             }                                                                                                          \
@@ -95,8 +97,9 @@ struct name                                                                     
             }																										   \
         } else {                                                                                                       \
             for (size_t idx = 0; idx != num_elements; ++idx) {                                                         \
-                if (__builtin_expect(!null_mask->get_unsafe(idx) && 											 	   \
-            	    				 (values[idx] opp compare_value), hint_expected_true)){ 						   \
+            bool is_non_null;                                                                                          \
+                SMART_BITMASK_GET_UNSAFE_FAST(is_non_null, null_mask, idx);                                            \
+                if (__builtin_expect(is_non_null && (values[idx] opp compare_value), hint_expected_true)) { 		   \
                     *out_matching_indices++ = idx;                                                                     \
                 }                                                                                                      \
             }                                                                                                          \
