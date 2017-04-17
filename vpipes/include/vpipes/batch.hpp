@@ -56,6 +56,7 @@ namespace mondrian
             inline void reset()
             {
                 cursor = 0;
+                null_mask.reset();
             }
 
             inline void prefetch(cpu_hint hint)
@@ -63,11 +64,11 @@ namespace mondrian
                 if (hint == cpu_hint::for_read) {
                     tupletids.prefetch(mtl::cpu_hint::for_read);
                     values.prefetch(mtl::cpu_hint::for_read);
-                    //null_mask.prefetch(mtl::cpu_hint::for_read);// TODO: FIX lowers performance?
+                    null_mask.prefetch(mtl::cpu_hint::for_read);
                 } else {
                     tupletids.prefetch(mtl::cpu_hint::for_write, cursor);
                     values.prefetch(mtl::cpu_hint::for_write, cursor);
-                    //null_mask.prefetch(mtl::cpu_hint::for_write, cursor); // TODO: FIX lowers performance?
+                    null_mask.prefetch(mtl::cpu_hint::for_write, cursor);
                 }
             }
 
@@ -103,7 +104,7 @@ namespace mondrian
 
                 values.gather_unsafe(indices, append_max_len, in_values, cursor);
                 tupletids.gather_unsafe(indices, append_max_len, in_tuplet_ids, cursor);
-                 // null_mask.gather_unsafe(indices, append_max_len, in_null_mask, cursor); // TODO: FIX This is bottlneck and point of failure
+              //  null_mask.gather_unsafe(indices, append_max_len, in_null_mask, cursor); // TODO: FIX This is bottlneck and point of failure
 
                 cursor += append_max_len;
                 *out = (cursor >= max_size ? state::full : state::non_full);
@@ -118,7 +119,7 @@ namespace mondrian
                 auto retval = num_elements - append_max_len;
                 tupletids.set(cursor, in_tuplet_ids, append_max_len);
                 values.set(cursor, in_values, append_max_len);
-                //null_mask.set(cursor, in_null_mask, append_max_len);
+                null_mask.set(cursor, in_null_mask, append_max_len);
                 cursor += append_max_len;
                 *out = (cursor >= max_size ? state::full : state::non_full);
                 return retval;
