@@ -38,26 +38,34 @@
 #define POINTER_DISTANCE(begin, end)                                    \
     (end - begin)
 
-#define DEFINE_STRAIGHT_FORWARD(name, opp)                                                                          \
-struct name                                                                                                         \
-{                                                                                                                   \
-    value_t compare_value;                                                                                          \
-                                                                                                                    \
-    explicit name(value_t compare_value): compare_value(compare_value)  { }                                         \
-                                                                                                                    \
-    virtual inline void operator()(size_t *out_matching_indices, size_t *out_num_matching_indices,                  \
-                           const tupletid_t *tupletids, const value_t *values, const mtl::smart_bitmask *null_mask, \
-                           size_t num_elements) final __attribute__((always_inline))                                \
-    {                                                                                                               \
-        ASSERT_VALID_BATCHED_PREDICATE_ARGS2();                                                                     \
-        const size_t *out_matching_indices_start = out_matching_indices;                                            \
-        for (size_t idx = 0; idx != num_elements; ++idx) {                                                          \
-            if (!null_mask->get_unsafe(idx) && values[idx] opp compare_value) {                                     \
-                  *out_matching_indices++ = idx;                                                                    \
-            }                                                                                                       \
-        }                                                                                                           \
-        *out_num_matching_indices = (out_matching_indices - out_matching_indices_start);                            \
-    }                                                                                                               \
+#define DEFINE_STRAIGHT_FORWARD(name, opp)                                                                             \
+struct name                                                                                                            \
+{                                                                                                                      \
+    value_t compare_value;                                                                                             \
+                                                                                                                       \
+    explicit name(value_t compare_value): compare_value(compare_value)  { }                                            \
+                                                                                                                       \
+    virtual inline void operator()(size_t *out_matching_indices, size_t *out_num_matching_indices,                     \
+                           const tupletid_t *tupletids, const value_t *values, const mtl::smart_bitmask *null_mask,    \
+                           size_t num_elements) final __attribute__((always_inline))                                   \
+    {                                                                                                                  \
+        ASSERT_VALID_BATCHED_PREDICATE_ARGS2();                                                                        \
+        const size_t *out_matching_indices_start = out_matching_indices;                                               \
+        if (null_mask->is_unset()) {																				   \
+            for (size_t idx = 0; idx != num_elements; ++idx) {                                                         \
+                if (values[idx] opp compare_value) {                                                                   \
+                      *out_matching_indices++ = idx;                                                                   \
+                }                                                                                                      \
+            }                                                                                                          \
+        } else {                                                                                                       \
+            for (size_t idx = 0; idx != num_elements; ++idx) {                                                         \
+                if (!null_mask->get_unsafe(idx) && values[idx] opp compare_value) {                                    \
+                      *out_matching_indices++ = idx;                                                                   \
+                }                                                                                                      \
+            }                                                                                                          \
+        }                                                                                                              \
+        *out_num_matching_indices = (out_matching_indices - out_matching_indices_start);                               \
+    }                                                                                                                  \
 };
 
 #define DEFINE_MICRO_OPTIMIZED_PREDICATE(name, opp)                                                                    \
@@ -79,9 +87,18 @@ struct name                                                                     
         __builtin_prefetch(out_num_matching_indices, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);      \
         __builtin_prefetch(tupletids, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);                      \
         __builtin_prefetch(values, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);                         \
-        for (size_t idx = 0; idx != num_elements; ++idx) {                                                             \
-            if (__builtin_expect(!null_mask->get_unsafe(idx) && (values[idx] opp compare_value), hint_expected_true)){ \
-                  *out_matching_indices++ = idx;                                                                       \
+        if (null_mask->is_unset()) {																				   \
+	        for (size_t idx = 0; idx != num_elements; ++idx) {                                                         \
+                if (__builtin_expect((values[idx] opp compare_value), hint_expected_true)){                            \
+                    *out_matching_indices++ = idx;                                                                     \
+                }                                                                                                      \
+            }																										   \
+        } else {                                                                                                       \
+            for (size_t idx = 0; idx != num_elements; ++idx) {                                                         \
+                if (__builtin_expect(!null_mask->get_unsafe(idx) && 											 	   \
+            	    				 (values[idx] opp compare_value), hint_expected_true)){ 						   \
+                    *out_matching_indices++ = idx;                                                                     \
+                }                                                                                                      \
             }                                                                                                          \
         }                                                                                                              \
         *out_num_matching_indices = (out_matching_indices - out_matching_indices_start);                               \

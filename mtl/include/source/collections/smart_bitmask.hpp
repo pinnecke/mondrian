@@ -177,6 +177,11 @@ namespace mondrian
                 unset_all();
             }
 
+            virtual bool is_unset() const final __attribute__((always_inline))
+            {
+                return true;
+            }
+
         };
     }
 }
