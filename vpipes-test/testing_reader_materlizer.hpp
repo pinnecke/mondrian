@@ -8,7 +8,7 @@
 #include <minimal_reader.hpp>
 using namespace mondrian::vpipes;
 
-mondrian::vpipes::point_null_copy<size_t>::func_t null_copier = [] (mondrian::mtl::smart_bitmask *out, const size_t *tupletids, size_t num_of_ids)
+mondrian::vpipes::point_null_copy::func_t null_copier = [] (mondrian::mtl::smart_bitmask *out, const size_t *tupletids, size_t num_of_ids)
 {
     out->unset_all();
 };

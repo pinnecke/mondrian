@@ -35,7 +35,7 @@ TEST(TestTableScan,TestBasicFunctionality){
         }
     };
 
-    mondrian::vpipes::block_null_copy<size_t>::func_t loc_block_null_copy = [] (mondrian::mtl::smart_bitmask *out, size_t begin, size_t end)
+    mondrian::vpipes::block_null_copy::func_t loc_block_null_copy = [] (mondrian::mtl::smart_bitmask *out, size_t begin, size_t end)
     {
         assert (out != nullptr);
         assert (begin < end);

@@ -20,7 +20,7 @@ namespace testing_vpipes_classes{
         using tupletid_t = size_t;
         using table_scan_t = pipes::table_scan<ValueType>;
         using predicate_func_t = typename table_scan_t::predicate_func_t;
-        using point_copy_t = typename point_copy<value_t, size_t>::func_t;
+        using point_copy_t = typename point_copy<value_t>::func_t;
     private:
         consumer<value_t> *m_consumer;
         predicate_func_t m_predicate;
@@ -54,7 +54,7 @@ namespace testing_vpipes_classes{
                 }
             };
 
-            mondrian::vpipes::block_null_copy<size_t>::func_t loc_block_null_copy = [] (mondrian::mtl::smart_bitmask *out, size_t begin, size_t end)
+            mondrian::vpipes::block_null_copy::func_t loc_block_null_copy = [] (mondrian::mtl::smart_bitmask *out, size_t begin, size_t end)
             {
                 assert (out != nullptr);
                 assert (begin < end);
