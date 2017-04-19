@@ -25,20 +25,18 @@ namespace mondrian
     {
         namespace pipes
         {
-            template<class Input, class InputTupletIdType = size_t>
-            class filter : public pipe<Input, Input, InputTupletIdType, InputTupletIdType>
+            template<class Input>
+            class filter : public pipe<Input, Input>
             {
-                using super = pipe<Input, Input, InputTupletIdType, InputTupletIdType>;
+                using super = pipe<Input, Input>;
             public:
                 using typename super::input_t;
-                using typename super::input_tupletid_t;
                 using typename super::input_batch_t;
                 using typename super::output_t;
-                using typename super::output_tupletid_t;
                 using typename super::output_batch_t;
                 using typename super::consumer_t;
 
-                using iterator_t = vpipes::iterator<input_tupletid_t *>;
+                using iterator_t = vpipes::iterator<tuplet_id_t *>;
                 using predicate_func_t = typename vpipes::predicates::batched_predicates<input_t>::func_t;
 
             private:
@@ -69,7 +67,7 @@ namespace mondrian
                     if (__builtin_expect(input_batch_size > buffer_size, false)) {
                         buffer_size = input_batch_size;
                         matching_indices_buffer = (size_t *) realloc(matching_indices_buffer, input_batch_size *
-                                                                     sizeof(input_tupletid_t));
+                                                                     sizeof(tuplet_id_t));
                         assert (matching_indices_buffer != nullptr);
                     }
 

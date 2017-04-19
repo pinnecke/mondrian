@@ -23,14 +23,13 @@ namespace mondrian
     {
         namespace pipes
         {
-            template<class Input, class InputTupletIdType = size_t>
-            class val_materialize : public materialize<Input, Input, InputTupletIdType>
+            template<class Input>
+            class val_materialize : public materialize<Input, Input>
             {
-                using super = materialize<Input, Input, InputTupletIdType>;
+                using super = materialize<Input, Input>;
 
             public:
                 using typename super::input_t;
-                using typename super::input_tupletid_t;
                 using typename super::input_batch_t;
                 using typename super::destination_t;
 

@@ -26,18 +26,17 @@ namespace mondrian
         namespace pipes
         {
             template <class InputType, class InputTupletIdType = size_t>
-            class table_scan : public producer<InputType, InputTupletIdType>
+            class table_scan : public producer<InputType>
             {
-                using super = producer<InputType, InputTupletIdType>;
+                using super = producer<InputType>;
 
             public:
                 using input_t = InputType;
-                using input_tupletid_t = InputTupletIdType;
                 using typename super::consumer_t;
                 using filter_t = filter<input_t>;
                 using predicate_func_t = typename filter_t::predicate_func_t;
-                using block_copy_t = typename block_copy<input_t, input_tupletid_t>::func_t;
-                using block_null_copy_t = typename block_null_copy<input_tupletid_t>::func_t;
+                using block_copy_t = typename block_copy<input_t>::func_t;
+                using block_null_copy_t = typename block_null_copy::func_t;
                 using interval_t = interval<InputTupletIdType>;
 
             private:

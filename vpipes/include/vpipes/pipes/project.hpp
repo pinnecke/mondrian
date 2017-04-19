@@ -23,21 +23,19 @@ namespace mondrian
     {
         namespace pipes
         {
-            template<class Input, class Output, class InputTupletIdType = size_t>
-            class project : public pipe<Input, Output, InputTupletIdType, InputTupletIdType>
+            template<class Input, class Output>
+            class project : public pipe<Input, Output>
             {
-                using super = pipe<Input, Output, InputTupletIdType, InputTupletIdType>;
+                using super = pipe<Input, Output>;
             public:
                 using typename super::input_t;
-                using typename super::input_tupletid_t;
                 using typename super::input_batch_t;
                 using typename super::output_t;
-                using typename super::output_tupletid_t;
                 using typename super::output_batch_t;
                 using typename super::consumer_t;
 
-                using point_copy_func_t = typename point_copy<output_t, output_tupletid_t>::func_t;
-                using point_null_copy_func_t = typename point_null_copy<output_tupletid_t>::func_t;
+                using point_copy_func_t = typename point_copy<output_t>::func_t;
+                using point_null_copy_func_t = typename point_null_copy::func_t;
 
             private:
                 point_copy_func_t point_copy;

@@ -21,19 +21,17 @@ namespace mondrian
 {
     namespace vpipes
     {
-        template<class Input, class Output, class InputTupletIdType = size_t, class OutputTupletIdType = size_t>
-        class pipe : public consumer<Input, InputTupletIdType>, public producer<Output, OutputTupletIdType>
+        template<class Input, class Output>
+        class pipe : public consumer<Input>, public producer<Output>
         {
-            using input_super = consumer<Input, InputTupletIdType>;
-            using output_super = producer<Output, OutputTupletIdType>;
+            using input_super = consumer<Input>;
+            using output_super = producer<Output>;
 
         public:
             using typename input_super::input_t;
-            using typename input_super::input_tupletid_t;
             using typename input_super::input_batch_t;
 
             using typename output_super::output_t;
-            using typename output_super::output_tupletid_t;
             using typename output_super::output_batch_t;
             using typename output_super::consumer_t;
 

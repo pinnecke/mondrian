@@ -23,8 +23,8 @@ namespace mondrian
             using tupletid_t = size_t;
             using table_scan_t = pipes::table_scan<ValueType>;
             using predicate_func_t = typename table_scan_t::predicate_func_t;
-            using point_copy_t = typename point_copy<value_t, size_t>::func_t;
-            using point_null_copy_t = typename point_null_copy<size_t>::func_t;
+            using point_copy_t = typename point_copy<value_t>::func_t;
+            using point_null_copy_t = typename point_null_copy::func_t;
 
         private:
             value_t *data;
@@ -107,7 +107,7 @@ namespace mondrian
                                                         {
                                                             assert (out != nullptr);
                                                             assert (begin < end);
-                                                            out->set_unsafe(begin, true);
+                                                            //out->set_unsafe(begin, true);
                                                         },
                                                         scan_batch_size, filter_batch_size,
                                                         filter_hint_expected_avg_batch_eval_is_non_empty);

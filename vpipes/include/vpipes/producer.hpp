@@ -21,16 +21,15 @@ namespace mondrian
 {
     namespace vpipes
     {
-        template<class Output, class OutputTupletIdType = size_t>
+        template<class Output>
         class producer
         {
         public:
             using output_t = Output;
-            using output_tupletid_t = OutputTupletIdType;
-            using consumer_t = consumer<output_t, output_tupletid_t>;
-            using output_batch_t = batch<output_t, output_tupletid_t>;
-            using block_copy_t = typename block_copy<output_t, output_tupletid_t>::func_t;
-            using block_null_copy_t = typename block_null_copy<output_tupletid_t>::func_t;
+            using consumer_t = consumer<output_t>;
+            using output_batch_t = batch<output_t>;
+            using block_copy_t = typename block_copy<output_t>::func_t;
+            using block_null_copy_t = typename block_null_copy::func_t;
 
         private:
             consumer_t **destinations;
@@ -80,13 +79,13 @@ namespace mondrian
 
             virtual void on_start() { };
 
-            inline virtual void produce_tupletid_range(output_tupletid_t start, output_tupletid_t end,
+            inline virtual void produce_tupletid_range(tuplet_id_t start, tuplet_id_t end,
                                                        block_copy_t block_copy_func,
                                                        block_null_copy_t block_null_copy_func) final __attribute__((always_inline))
             {
                 assert (start <= end);
 
-                output_tupletid_t offset = start;
+                tuplet_id_t offset = start;
                 while (offset < end) {
                     size_t this_batch_size = MIN(batch_size, end - offset);
                     result->iota(offset, this_batch_size, block_copy_func, block_null_copy_func);
@@ -97,7 +96,7 @@ namespace mondrian
 
         protected:
 
-            virtual inline void produce(const output_tupletid_t *tupletids, const output_t *values,
+            virtual inline void produce(const tuplet_id_t *tupletids, const output_t *values,
                                         const mtl::smart_bitmask *null_mask,
                                         const size_t *indices, size_t num_indices,
                                         bool hint_hit_out_batch_size) final __attribute__((always_inline))
@@ -114,7 +113,7 @@ namespace mondrian
                 } while (remaining);
             }
 
-            virtual inline void produce(const output_tupletid_t *tupletids, const output_t * values,
+            virtual inline void produce(const tuplet_id_t *tupletids, const output_t * values,
                                         const mtl::smart_bitmask *null_mask,
                                         size_t num_elements, bool hint_hit_out_batch_size)
                                         final __attribute__((always_inline))

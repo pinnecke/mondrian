@@ -21,39 +21,38 @@ namespace mondrian
 {
     namespace vpipes
     {
-        template<class Output, class OutputTupletIdType = size_t>
-        class pipe_head : public pipe<Output, Output, OutputTupletIdType, OutputTupletIdType>
+        template<class Output>
+        class pipe_head : public pipe<Output, Output>
         {
-            using super = pipe<Output, Output, OutputTupletIdType, OutputTupletIdType>;
+            using super = pipe<Output, Output>;
 
         public:
             using typename super::input_t;
-            using typename super::input_tupletid_t;
             using typename super::consumer_t;
 
         private:
-            input_tupletid_t *begin, *end;
+            tuplet_id_t *begin, *end;
 
         protected:
             virtual void on_start() = 0;
 
-            inline virtual const input_tupletid_t *get_begin() final __attribute__((always_inline))
+            inline virtual const tuplet_id_t *get_begin() final __attribute__((always_inline))
             {
                 __builtin_prefetch(begin, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_KEEP_IN_CACHES_NORMAL);
                 return begin;
             }
 
-            inline virtual const input_tupletid_t *get_end() final __attribute__((always_inline))
+            inline virtual const tuplet_id_t *get_end() final __attribute__((always_inline))
             {
                 return end;
             }
 
         public:
-            pipe_head(consumer_t *destination, input_tupletid_t *begin, input_tupletid_t *end,
+            pipe_head(consumer_t *destination, tuplet_id_t *begin, tuplet_id_t *end,
                             unsigned batch_size) :
                             super(destination, batch_size), begin(begin), end(end) {};
 
-            inline virtual void on_consume(input_tupletid_t *begin, input_tupletid_t *end) override final {};
+            inline virtual void on_consume(tuplet_id_t *begin, tuplet_id_t *end) override final {};
 
             inline virtual void start() final { on_start(); }
         };

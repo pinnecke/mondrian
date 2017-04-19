@@ -20,6 +20,8 @@ namespace mondrian
             size_t num_batches = 0;
             size_t num_empty_batches = 0;
         };
+
+        using tuplet_id_t = size_t;
     }
 }
 

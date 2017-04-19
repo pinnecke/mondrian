@@ -21,15 +21,14 @@ namespace mondrian
 {
     namespace vpipes
     {
-        template<class Input, class InputTupletIdType = size_t>
+        template<class Input>
         class consumer
         {
             operator_statistics statistics;
 
         public:
             using input_t = Input;
-            using input_tupletid_t = InputTupletIdType;
-            using input_batch_t = batch<input_t, input_tupletid_t>;
+            using input_batch_t = batch<input_t>;
 
             template<class IL, class IR, class ILTID, class IRTID>
             friend class bi_pipe_tail;

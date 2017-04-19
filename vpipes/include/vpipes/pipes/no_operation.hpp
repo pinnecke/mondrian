@@ -23,14 +23,13 @@ namespace mondrian
     {
         namespace pipes
         {
-            template<class Input, class InputTupletIdType = size_t>
-            class no_operation : public consumer<Input, InputTupletIdType>
+            template<class Input>
+            class no_operation : public consumer<Input>
             {
-                using super = consumer<Input, InputTupletIdType>;
+                using super = consumer<Input>;
 
             public:
                 using typename super::input_t;
-                using typename super::input_tupletid_t;
                 using typename super::input_batch_t;
 
             protected:

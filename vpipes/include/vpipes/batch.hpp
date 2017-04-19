@@ -23,17 +23,16 @@ namespace mondrian
     {
         enum cpu_hint { for_read, for_write };
 
-        template<class ValueType, class TupletIdType = size_t>
+        template<class ValueType>
         class batch
         {
         public:
             using value_t = ValueType;
-            using tupletid_t = TupletIdType;
-            using block_copy_t = typename block_copy<value_t, tupletid_t>::func_t;
-            using block_null_copy_t = typename block_null_copy<tupletid_t>::func_t;
+            using block_copy_t = typename block_copy<value_t>::func_t;
+            using block_null_copy_t = typename block_null_copy::func_t;
 
         private:
-            mtl::smart_array<tupletid_t> tupletids;
+            mtl::smart_array<tuplet_id_t> tupletids;
             mtl::smart_array<value_t> values;
             mtl::smart_bitmask null_mask;
 
@@ -72,7 +71,7 @@ namespace mondrian
                 }
             }
 
-            inline void iota(tupletid_t start, size_t num_of_values, block_copy_t block_copy_func,
+            inline void iota(tuplet_id_t start, size_t num_of_values, block_copy_t block_copy_func,
                              block_null_copy_t block_null_copy_func) __attribute__((always_inline))
             {
                 assert (num_of_values <= max_size);
@@ -92,7 +91,7 @@ namespace mondrian
                 cursor += num_of_values;
             }
 
-            inline size_t add(state *out, const tupletid_t *in_tuplet_ids, const value_t *in_values,
+            inline size_t add(state *out, const tuplet_id_t *in_tuplet_ids, const value_t *in_values,
                               const mtl::smart_bitmask *in_null_mask, const size_t *indices, size_t num_indices)
                               __attribute__((always_inline))
             {
@@ -111,7 +110,7 @@ namespace mondrian
                 return retval;
             }
 
-            inline size_t add(state *out, const tupletid_t *in_tuplet_ids, const value_t *in_values,
+            inline size_t add(state *out, const tuplet_id_t *in_tuplet_ids, const value_t *in_values,
                               const mtl::smart_bitmask *in_null_mask, size_t num_elements) __attribute__((always_inline))
             {
                 assert (cursor + 1 <= max_size);
@@ -147,7 +146,7 @@ namespace mondrian
                 return values.get_content();
             }
 
-            const tupletid_t *get_tupletids() const
+            const tuplet_id_t *get_tupletids() const
             {
                 return tupletids.get_content();
             }

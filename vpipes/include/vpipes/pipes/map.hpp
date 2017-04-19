@@ -25,20 +25,18 @@ namespace mondrian
     {
         namespace pipes
         {
-            template<class Input, class Output, class InputTupletIdType = size_t, class OutputTupletIdType = size_t>
-            class map : public pipe<Input, Output, InputTupletIdType, OutputTupletIdType>
+            template<class Input, class Output>
+            class map : public pipe<Input, Output>
             {
-                using super = pipe<Input, Output, InputTupletIdType, OutputTupletIdType>;
+                using super = pipe<Input, Output>;
             public:
                 using typename super::input_t;
-                using typename super::input_tupletid_t;
                 using typename super::input_batch_t;
                 using typename super::output_t;
-                using typename super::output_tupletid_t;
                 using typename super::output_batch_t;
 
                 using typename super::consumer_t;
-                using iterator_t = vpipes::iterator<input_tupletid_t *>;
+                using iterator_t = vpipes::iterator<tuplet_id_t *>;
                 using map_func_t = typename vpipes::maps::batched_map<input_t, output_t>::func_t;
 
             private:
