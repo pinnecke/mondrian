@@ -71,17 +71,17 @@ namespace mondrian
                 return false;
             }
 
-            inline virtual void materialize(value_t *out, const tupletid_t *tupletids,
+            inline virtual void materialize(value_t *destination, const tupletid_t *tupletids,
                                             size_t num_of_ids) final __attribute__((always_inline))
             {
-                assert (out != nullptr && tupletids != nullptr);
+                assert (destination != nullptr && tupletids != nullptr);
                 while (num_of_ids--) {
-                    *out++ = data[*tupletids++];
+                    *destination++ = data[*tupletids++];
                 }
             }
 
-            point_copy_t f = [&] (value_t *out, const tupletid_t *tupletids, size_t num_of_ids) {
-                this->materialize(out, tupletids, num_of_ids);
+            point_copy_t f = [&] (value_t *values, const tupletid_t *tupletids, size_t num_of_ids) {
+                this->materialize(values, tupletids, num_of_ids);
             };
 
             point_null_copy_t null_mask_f = [&] (mtl::smart_bitmask *out, const tupletid_t *tupletids, size_t num_of_ids) {
@@ -97,17 +97,17 @@ namespace mondrian
                 size_t start = 0, end = size;
                 interval<size_t> all_tuplet_ids(start, end);
                 return new pipes::table_scan<value_t>(consumer, &all_tuplet_ids, &all_tuplet_ids + 1, predicate,
-                                                        [&] (value_t *out, tupletid_t begin, tupletid_t end)
+                                                        [&] (value_t *destination, tupletid_t begin, tupletid_t end)
                                                         {
-                                                            assert (out != nullptr);
+                                                            assert (destination != nullptr);
                                                             assert (begin < end);
-                                                            memcpy(out, data + begin, (end - begin) * sizeof(value_t));
+                                                            memcpy(destination, data + begin, (end - begin) * sizeof(value_t));
                                                         },
-                                                        [&] (mtl::smart_bitmask *out, tupletid_t begin, tupletid_t end)
+                                                        [&] (mtl::smart_bitmask *null_mask, tupletid_t begin, tupletid_t end)
                                                         {
-                                                            assert (out != nullptr);
+                                                            assert (null_mask != nullptr);
                                                             assert (begin < end);
-                                                            //out->set_unsafe(begin, true);
+                                                            //null_mask->set_unsafe(begin, true);
                                                         },
                                                         scan_batch_size, filter_batch_size,
                                                         filter_hint_expected_avg_batch_eval_is_non_empty);

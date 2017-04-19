@@ -47,18 +47,18 @@ namespace testing_vpipes_classes{
             size_t start = 0, end = m_total_elements;
             interval<size_t> all_tuplet_ids(start, end);
 
-            mondrian::vpipes::block_copy<size_t>::func_t loc_block_copy = [](size_t *out, size_t begin, size_t end){
+            mondrian::vpipes::block_copy<size_t>::func_t loc_block_copy = [](size_t *values, size_t begin, size_t end){
                 auto distance = end- begin;
                 for (auto i = 0 ; i<distance ;++i){
-                    *(out+i) =begin+i;
+                    *(values+i) =begin+i;
                 }
             };
 
-            mondrian::vpipes::block_null_copy::func_t loc_block_null_copy = [] (mondrian::mtl::smart_bitmask *out, size_t begin, size_t end)
+            mondrian::vpipes::block_null_copy::func_t loc_block_null_copy = [] (mondrian::mtl::smart_bitmask *mask, size_t begin, size_t end)
             {
-                assert (out != nullptr);
+                assert (mask != nullptr);
                 assert (begin < end);
-                out->unset_range_safe(0, (end - begin));
+                mask->unset_range_safe(0, (end - begin));
             };
 
             auto loc_table = pipes::table_scan<value_t>(m_consumer, &all_tuplet_ids, &all_tuplet_ids + 1, m_predicate,

@@ -44,7 +44,7 @@ namespace mondrian
                 full, non_full
             };
 
-            batch(size_t num_of_elements) : max_size(num_of_elements), cursor(0),
+            batch(__in__ size_t num_of_elements) : max_size(num_of_elements), cursor(0),
                                             tupletids(num_of_elements),
                                             values(num_of_elements),
                                             null_mask(num_of_elements)
@@ -71,8 +71,10 @@ namespace mondrian
                 }
             }
 
-            inline void iota(tuplet_id_t start, size_t num_of_values, block_copy_t block_copy_func,
-                             block_null_copy_t block_null_copy_func) __attribute__((always_inline))
+            inline void iota(__in__ tuplet_id_t start,
+                             __in__ size_t num_of_values,
+                             __in__ block_copy_t block_copy_func,
+                             __in__ block_null_copy_t block_null_copy_func) __attribute__((always_inline))
             {
                 assert (num_of_values <= max_size);
                 num_of_values = MIN(max_size, num_of_values);
@@ -91,12 +93,16 @@ namespace mondrian
                 cursor += num_of_values;
             }
 
-            inline size_t add(state *out, const tuplet_id_t *in_tuplet_ids, const value_t *in_values,
-                              const mtl::smart_bitmask *in_null_mask, const size_t *indices, size_t num_indices)
+            inline size_t add(__out__ state *out_state,
+                              __in__ const tuplet_id_t *in_tuplet_ids,
+                              __in__ const value_t *in_values,
+                              __in__ const mtl::smart_bitmask *in_null_mask,
+                              __in__ const size_t *indices,
+                              __in__ size_t num_indices)
                               __attribute__((always_inline))
             {
                 assert (cursor + 1 <= max_size);
-                assert (out != nullptr && in_tuplet_ids != nullptr && in_values != nullptr && in_null_mask != nullptr);
+                assert (out_state != nullptr && in_tuplet_ids != nullptr && in_values != nullptr && in_null_mask != nullptr);
 
                 auto append_max_len = std::min(max_size - cursor, num_indices);
                 auto retval = num_indices - append_max_len;
@@ -106,12 +112,15 @@ namespace mondrian
                 null_mask.override_by(0, in_null_mask, append_max_len); // TODO: FIX This is bottlneck and point of failure
 
                 cursor += append_max_len;
-                *out = (cursor >= max_size ? state::full : state::non_full);
+                *out_state = (cursor >= max_size ? state::full : state::non_full);
                 return retval;
             }
 
-            inline size_t add(state *out, const tuplet_id_t *in_tuplet_ids, const value_t *in_values,
-                              const mtl::smart_bitmask *in_null_mask, size_t num_elements) __attribute__((always_inline))
+            inline size_t add(__out__ state *out_state,
+                              __in__ const tuplet_id_t *in_tuplet_ids,
+                              __in__ const value_t *in_values,
+                              __in__ const mtl::smart_bitmask *in_null_mask,
+                              __in__ size_t num_elements) __attribute__((always_inline))
             {
                 assert (cursor + 1 <= max_size);
                 auto append_max_len = std::min(max_size - cursor, num_elements);
@@ -120,7 +129,7 @@ namespace mondrian
                 values.set(cursor, in_values, append_max_len);
                 null_mask.override_by(cursor, in_null_mask, append_max_len);
                 cursor += append_max_len;
-                *out = (cursor >= max_size ? state::full : state::non_full);
+                *out_state = (cursor >= max_size ? state::full : state::non_full);
                 return retval;
             }
 

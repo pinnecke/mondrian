@@ -39,7 +39,8 @@ namespace mondrian
             using output_super::produce;
 
         public:
-            pipe(consumer_t *destination, unsigned batch_size):
+            pipe(__in__ consumer_t *destination,
+                 __in__ unsigned batch_size):
                     output_super(destination, batch_size) { }
 
             virtual void close() final

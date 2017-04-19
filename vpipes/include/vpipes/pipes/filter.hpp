@@ -47,8 +47,10 @@ namespace mondrian
                 predicate_func_t predicate;
             public:
 
-                filter(consumer_t *destination, predicate_func_t predicate, unsigned batch_size,
-                       bool hint_avg_batch_eval_result_is_non_empty) :
+                filter(__in__ consumer_t *destination,
+                       __in__ predicate_func_t predicate,
+                       __in__ unsigned batch_size,
+                       __in__ bool hint_avg_batch_eval_result_is_non_empty) :
                         super(destination, batch_size), predicate(predicate),
                         hint_avg_batch_eval_result_is_non_empty(hint_avg_batch_eval_result_is_non_empty)
                 {
@@ -60,7 +62,7 @@ namespace mondrian
                     assert (matching_indices_buffer != nullptr);
                 }
 
-                inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
+                inline virtual void on_consume(__in__ const input_batch_t *data) override final __attribute__((always_inline))
                 {
                     auto input_batch_size = data->get_size();
 

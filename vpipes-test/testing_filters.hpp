@@ -17,10 +17,10 @@ TEST(TESTfilters, BasicFiltersTest) {
     auto  result = create_column(res_length, true);
     auto predicate_value = 5 ;
 
-    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *out, const size_t *tupletids, size_t num_of_ids)
+    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *values, const size_t *tupletids, size_t num_of_ids)
     {
         for (auto i = 0; i< num_of_ids; ++i) {
-            *(out+i) = *(tupletids+i);
+            *(values+i) = *(tupletids+i);
 
         }
     };
@@ -53,10 +53,10 @@ TEST(TESTfilters, CascadingFilters) {
     auto  result = create_column(res_length, true);
     auto lower_bound = 5 ;
     auto upper_bound = 30 ;
-    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *out, const size_t *tupletids, size_t num_of_ids)
+    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *values, const size_t *tupletids, size_t num_of_ids)
     {
         for (auto i = 0; i< num_of_ids; ++i) {
-            *(out+i) = *(tupletids+i);
+            *(values+i) = *(tupletids+i);
 
         }
     };
@@ -93,10 +93,10 @@ TEST(TESTfilters, NoConditionSatisfied) {
     auto  result = create_column(res_length, true);
     auto expected_result =create_column(res_length, true);
     auto predicate_value = 100 ;
-    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *out, const size_t *tupletids, size_t num_of_ids)
+    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *values, const size_t *tupletids, size_t num_of_ids)
     {
         for (auto i = 0; i< num_of_ids; ++i) {
-            *(out+i) = *(tupletids+i);
+            *(values+i) = *(tupletids+i);
 
         }
     };

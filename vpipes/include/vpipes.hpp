@@ -22,6 +22,9 @@ namespace mondrian
         };
 
         using tuplet_id_t = size_t;
+
+#define __in__
+#define __out__
     }
 }
 
@@ -35,7 +38,6 @@ namespace mondrian
 #include "vpipes/consumer.hpp"
 #include "vpipes/producer.hpp"
 #include "vpipes/pipe.hpp"
-#include "vpipes/pipe_head.hpp"
 
 #include "vpipes/pipes/filter.hpp"
 #include "vpipes/pipes/materializer.hpp"

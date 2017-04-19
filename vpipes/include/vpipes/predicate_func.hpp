@@ -45,9 +45,12 @@ struct name                                                                     
                                                                                                                        \
     explicit name(value_t compare_value): compare_value(compare_value)  { }                                            \
                                                                                                                        \
-    virtual inline void operator()(size_t *out_matching_indices, size_t *out_num_matching_indices,                     \
-                           const tuplet_id_t *tupletids, const value_t *values, const mtl::smart_bitmask *null_mask,   \
-                           size_t num_elements) final __attribute__((always_inline))                                   \
+    virtual inline void operator()(__out__ size_t *out_matching_indices,                                               \
+                                   __out__ size_t *out_num_matching_indices,                                           \
+                                   __in__ const tuplet_id_t *tupletids,                                                \
+                                   __in__ const value_t *values,                                                       \
+                                   __in__ const mtl::smart_bitmask *null_mask,                                         \
+                                   __in__ size_t num_elements) final __attribute__((always_inline))                    \
     {                                                                                                                  \
         ASSERT_VALID_BATCHED_PREDICATE_ARGS2();                                                                        \
         const size_t *out_matching_indices_start = out_matching_indices;                                               \
@@ -76,11 +79,15 @@ struct name                                                                     
     value_t compare_value;                                                                                             \
     bool hint_expected_true;                                                                                           \
                                                                                                                        \
-    explicit name(value_t compare_value, bool hint_expected_true): compare_value(compare_value),                       \
-                                                                    hint_expected_true(hint_expected_true) { }         \
+    explicit name(__in__ value_t compare_value,                                                                        \
+                  __in__ bool hint_expected_true): compare_value(compare_value),                                       \
+                                                   hint_expected_true(hint_expected_true) { }                          \
                                                                                                                        \
-    virtual inline void operator()(size_t *out_matching_indices, size_t *out_num_matching_indices,                     \
-                           const tuplet_id_t *tupletids, const value_t *values, const mtl::smart_bitmask *null_mask,   \
+    virtual inline void operator()(__out__ size_t *out_matching_indices,                                               \
+                                   __out__ size_t *out_num_matching_indices,                                           \
+                                   __in__ const tuplet_id_t *tupletids,                                                \
+                                   __in__ const value_t *values,                                                       \
+                                   __in__ const mtl::smart_bitmask *null_mask,                                         \
                            size_t num_elements) final __attribute__((always_inline))                                   \
     {                                                                                                                  \
         ASSERT_VALID_BATCHED_PREDICATE_ARGS2();                                                                        \
@@ -118,10 +125,12 @@ namespace mondrian
             struct batched_predicates
             {
                 using value_t = ValueType;
-                using func_t = std::function<void(size_t *out_matching_indices, size_t *out_num_matching_indices,
-                                                  const tuplet_id_t *tupletids, const value_t *values,
-                                                  const mtl::smart_bitmask *bitmask,
-                                                  size_t num_elements)>;
+                using func_t = std::function<void(__out__ size_t *out_matching_indices,
+                                                  __out__ size_t *out_num_matching_indices,
+                                                  __in__ const tuplet_id_t *tupletids,
+                                                  __in__ const value_t *values,
+                                                  __in__ const mtl::smart_bitmask *bitmask,
+                                                  __in__ size_t num_elements)>;
 
                 struct less_than
                 {

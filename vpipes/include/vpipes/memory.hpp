@@ -25,24 +25,32 @@ namespace mondrian
         struct point_copy
         {
             using value_t = ValueType;
-            using func_t = std::function<void(value_t *out, const tuplet_id_t *tupletids, size_t num_of_ids)>;
+            using func_t = std::function<void(__out__ value_t *,
+                                              __in__ const tuplet_id_t *tupletids,
+                                              __in__ size_t num_of_ids)>;
         };
 
         template <class ValueType>
         struct block_copy
         {
             using value_t = ValueType;
-            using func_t = std::function<void(value_t *out, tuplet_id_t begin, tuplet_id_t end)>;
+            using func_t = std::function<void(__out__ value_t *,
+                                              __in__ tuplet_id_t begin,
+                                              __in__ tuplet_id_t end)>;
         };
 
         struct point_null_copy
         {
-            using func_t = std::function<void(mtl::smart_bitmask *out, const tuplet_id_t *tupletids, size_t num_of_ids)>;
+            using func_t = std::function<void(__out__ mtl::smart_bitmask *,
+                                              __in__ const tuplet_id_t *tupletids,
+                                              __in__ size_t num_of_ids)>;
         };
 
         struct block_null_copy
         {
-            using func_t = std::function<void(mtl::smart_bitmask *out, tuplet_id_t begin, tuplet_id_t end)>;
+            using func_t = std::function<void(__out__ mtl::smart_bitmask *,
+                                              __in__ tuplet_id_t begin,
+                                              __in__ tuplet_id_t end)>;
         };
     }
 }

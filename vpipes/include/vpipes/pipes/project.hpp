@@ -46,8 +46,10 @@ namespace mondrian
                 size_t buffer_size;
             public:
 
-                project(consumer_t *destination, point_copy_func_t point_copy, point_null_copy_func_t point_null_copy,
-                        unsigned batch_size) :
+                project(__in__ consumer_t *destination,
+                        __in__ point_copy_func_t point_copy,
+                        __in__ point_null_copy_func_t point_null_copy,
+                        __in__ unsigned batch_size) :
                         super(destination, batch_size), out_projected_bitmask(batch_size),
                         point_copy(point_copy), point_null_copy(point_null_copy)
                 {
@@ -59,7 +61,7 @@ namespace mondrian
                     assert (out_projected_values != nullptr);
                 }
 
-                inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
+                inline virtual void on_consume(__in__ const input_batch_t *data) override final __attribute__((always_inline))
                 {
                     auto input_batch_size = data->get_size();
                     auto in_tupletids = data->get_tupletids();

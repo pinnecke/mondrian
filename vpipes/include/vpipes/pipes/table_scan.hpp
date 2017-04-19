@@ -46,11 +46,15 @@ namespace mondrian
                 block_null_copy_t block_null_copy_func;
 
             public:
-                table_scan(consumer_t *destination, const interval_t *tuplet_ids_interval_begin,
-                           const interval_t *tuplet_ids_interval_end, predicate_func_t predicate,
-                           block_copy_t block_copy_func, block_null_copy_t block_null_copy_func,
-                           unsigned scan_batch_size, unsigned filter_batch_size,
-                           bool filter_hint_expected_avg_batch_eval_is_non_empty) :
+                table_scan(__in__ consumer_t *destination,
+                           __in__ const interval_t *tuplet_ids_interval_begin,
+                           __in__ const interval_t *tuplet_ids_interval_end,
+                           __in__ predicate_func_t predicate,
+                           __in__ block_copy_t block_copy_func,
+                           __in__ block_null_copy_t block_null_copy_func,
+                           __in__ unsigned scan_batch_size,
+                           __in__ unsigned filter_batch_size,
+                            __in__ bool filter_hint_expected_avg_batch_eval_is_non_empty) :
                         super(nullptr, scan_batch_size), tuplet_ids_interval_begin(tuplet_ids_interval_begin),
                         tuplet_ids_interval_end(tuplet_ids_interval_end), block_copy_func(block_copy_func),
                         block_null_copy_func(block_null_copy_func)

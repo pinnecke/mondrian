@@ -29,7 +29,8 @@ namespace mondrian
             tuplet_id_t *begin;
             tuplet_id_t *end;
 
-            iterator(tuplet_id_t *begin, tuplet_id_t *end) : begin(begin), end(end)
+            iterator(__in__ tuplet_id_t *begin,
+                     __in__ tuplet_id_t *end) : begin(begin), end(end)
             {
                 __builtin_prefetch(begin, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
             }

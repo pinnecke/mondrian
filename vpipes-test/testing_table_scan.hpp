@@ -14,10 +14,10 @@ TEST(TestTableScan,TestBasicFunctionality){
     auto  result = create_column(res_length, true);
     auto predicate_value = 5 ;
 
-    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *out, const size_t *tupletids, size_t num_of_ids)
+    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *values, const size_t *tupletids, size_t num_of_ids)
     {
         for (auto i = 0; i< num_of_ids; ++i) {
-            *(out+i) = *(tupletids+i);
+            *(values+i) = *(tupletids+i);
 
         }
     };
@@ -28,18 +28,18 @@ TEST(TestTableScan,TestBasicFunctionality){
     interval<size_t> all_tuplet_ids(0, input_length);
 
 
-    mondrian::vpipes::block_copy<size_t>::func_t loc_block_copy = [](size_t *out, size_t begin, size_t end){
+    mondrian::vpipes::block_copy<size_t>::func_t loc_block_copy = [](size_t *values, size_t begin, size_t end){
         auto distance = end- begin;
         for (auto i = 0 ; i<distance ;++i){
-            *(out+i) =begin+i;
+            *(values+i) =begin+i;
         }
     };
 
-    mondrian::vpipes::block_null_copy::func_t loc_block_null_copy = [] (mondrian::mtl::smart_bitmask *out, size_t begin, size_t end)
+    mondrian::vpipes::block_null_copy::func_t loc_block_null_copy = [] (mondrian::mtl::smart_bitmask *values, size_t begin, size_t end)
     {
-        assert (out != nullptr);
+        assert (values != nullptr);
         assert (begin < end);
-        out->unset_range_safe(0, (end - begin));
+        values->unset_range_safe(0, (end - begin));
     };
 
 

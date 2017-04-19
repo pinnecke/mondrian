@@ -39,7 +39,8 @@ namespace mondrian
                 size_t *result_set_size;
 
             public:
-                materialize(destination_t *destination, size_t *result_set_size) :
+                materialize(__in__ destination_t *destination,
+                            __in__ size_t *result_set_size) :
                         destination(destination), total_result_set_size(0), result_set_size(result_set_size)
                 {
                     assert (destination != nullptr);
@@ -47,9 +48,10 @@ namespace mondrian
                 };
 
             protected:
-                virtual void invoke_memcpy(destination_t *destination, const input_batch_t *data) = 0;
+                virtual void invoke_memcpy(__out__ destination_t *destination,
+                                           __in__ const input_batch_t *data) = 0;
 
-                inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
+                inline virtual void on_consume(__in__ const input_batch_t *data) override final __attribute__((always_inline))
                 {
                     invoke_memcpy(destination,data);
                     destination += data->get_size();

@@ -39,7 +39,7 @@ namespace mondrian
             operator_statistics statistics;
 
         protected:
-            void add_destination(consumer_t *destination)
+            void add_destination(__in__ consumer_t *destination)
             {
                 assert (destination != nullptr);
                 destinations = (consumer_t **) realloc(destinations, ++num_destintations * sizeof(consumer_t*));
@@ -79,9 +79,10 @@ namespace mondrian
 
             virtual void on_start() { };
 
-            inline virtual void produce_tupletid_range(tuplet_id_t start, tuplet_id_t end,
-                                                       block_copy_t block_copy_func,
-                                                       block_null_copy_t block_null_copy_func) final __attribute__((always_inline))
+            inline virtual void produce_tupletid_range(__in__ tuplet_id_t start,
+                                                       __in__ tuplet_id_t end,
+                                                       __in__ block_copy_t block_copy_func,
+                                                       __in__ block_null_copy_t block_null_copy_func) final __attribute__((always_inline))
             {
                 assert (start <= end);
 
@@ -96,10 +97,12 @@ namespace mondrian
 
         protected:
 
-            virtual inline void produce(const tuplet_id_t *tupletids, const output_t *values,
-                                        const mtl::smart_bitmask *null_mask,
-                                        const size_t *indices, size_t num_indices,
-                                        bool hint_hit_out_batch_size) final __attribute__((always_inline))
+            virtual inline void produce(__in__ const tuplet_id_t *tupletids,
+                                        __in__ const output_t *values,
+                                        __in__ const mtl::smart_bitmask *null_mask,
+                                        __in__ const size_t *indices,
+                                        __in__ size_t num_indices,
+                                        __in__ bool hint_hit_out_batch_size) final __attribute__((always_inline))
             {
                 auto total = num_indices, remaining = num_indices;
                 result->prefetch(cpu_hint::for_write);
@@ -113,9 +116,11 @@ namespace mondrian
                 } while (remaining);
             }
 
-            virtual inline void produce(const tuplet_id_t *tupletids, const output_t * values,
-                                        const mtl::smart_bitmask *null_mask,
-                                        size_t num_elements, bool hint_hit_out_batch_size)
+            virtual inline void produce(__in__ const tuplet_id_t *tupletids,
+                                        __in__ const output_t * values,
+                                        __in__ const mtl::smart_bitmask *null_mask,
+                                        __in__ size_t num_elements,
+                                        __in__ bool hint_hit_out_batch_size)
                                         final __attribute__((always_inline))
             {
                 auto total = num_elements, remaining = num_elements;
@@ -153,7 +158,8 @@ namespace mondrian
             }
 
         public:
-            producer(consumer_t *destination, unsigned batch_size):
+            producer(__in__ consumer_t *destination,
+                     __in__ unsigned batch_size):
                     num_destintations(0), batch_size(batch_size)
             {
                 result = new output_batch_t(batch_size);

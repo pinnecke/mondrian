@@ -47,7 +47,9 @@ namespace mondrian
 
             public:
 
-                map(consumer_t *destination, map_func_t map_func, unsigned batch_size) :
+                map(__in__ consumer_t *destination,
+                    __in__ map_func_t map_func,
+                    __in__ unsigned batch_size) :
                         super(destination, batch_size), map_func(map_func), null_mask_buffer(batch_size)
                 {
                     // Note here: The operator is unaware of the batch size of the input. The assignment
@@ -58,7 +60,7 @@ namespace mondrian
                     assert (value_buffer != nullptr);
                 }
 
-                inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
+                inline virtual void on_consume(__in__ const input_batch_t *data) override final __attribute__((always_inline))
                 {
                     auto input_batch_size = data->get_size();
 

@@ -8,9 +8,9 @@
 #include <minimal_reader.hpp>
 using namespace mondrian::vpipes;
 
-mondrian::vpipes::point_null_copy::func_t null_copier = [] (mondrian::mtl::smart_bitmask *out, const size_t *tupletids, size_t num_of_ids)
+mondrian::vpipes::point_null_copy::func_t null_copier = [] (mondrian::mtl::smart_bitmask *mask, const size_t *tupletids, size_t num_of_ids)
 {
-    out->unset_all();
+    mask->unset_all();
 };
 
 TEST(TestReading, TestBasicRead  ){
@@ -18,10 +18,10 @@ TEST(TestReading, TestBasicRead  ){
     auto batch_size = 10;
     auto input_length = 100;
     auto result = create_column(res_length, true);
-    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *out, const size_t *tupletids, size_t num_of_ids)
+    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *values, const size_t *tupletids, size_t num_of_ids)
     {
         for (auto i = 0; i< num_of_ids; ++i) {
-            *(out+i) = *(tupletids+i);
+            *(values+i) = *(tupletids+i);
         }
     };
     mondrian::vpipes::pipes::val_materialize<size_t> mat(result, &res_length);
@@ -49,10 +49,10 @@ TEST(TestReading, TestIfBatchSizeOddElementsNumEven  ){
     auto batch_size =9;
     auto  input_length= 100;
     auto  result = create_column(res_length, true);
-    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *out, const size_t *tupletids, size_t num_of_ids)
+    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *values, const size_t *tupletids, size_t num_of_ids)
     {
         for (auto i = 0; i< num_of_ids; ++i) {
-            *(out+i) = *(tupletids+i);
+            *(values+i) = *(tupletids+i);
 
         }
     };
@@ -76,10 +76,10 @@ TEST(TestReading, TestIfBatchSizeEvenElementsNumOdd  ){
     auto batch_size =10;
     auto  input_length= 93;
     auto  result = create_column(res_length, true);
-    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *out, const size_t *tupletids, size_t num_of_ids)
+    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *values, const size_t *tupletids, size_t num_of_ids)
     {
         for (auto i = 0; i< num_of_ids; ++i) {
-            *(out+i) = *(tupletids+i);
+            *(values+i) = *(tupletids+i);
 
         }
     };

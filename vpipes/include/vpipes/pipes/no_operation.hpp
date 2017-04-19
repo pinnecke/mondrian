@@ -33,7 +33,7 @@ namespace mondrian
                 using typename super::input_batch_t;
 
             protected:
-                inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
+                inline virtual void on_consume(__in__ const input_batch_t *data) override final __attribute__((always_inline))
                 {
                 }
             };

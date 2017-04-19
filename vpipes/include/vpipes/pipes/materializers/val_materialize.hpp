@@ -34,10 +34,12 @@ namespace mondrian
                 using typename super::destination_t;
 
             public:
-                val_materialize(destination_t *destination, size_t *result_set_size): super(destination, result_set_size) { }
+                val_materialize(__out__ destination_t *destination,
+                                __out__ size_t *result_set_size): super(destination, result_set_size) { }
 
             protected:
-                inline virtual void invoke_memcpy(destination_t *destination, const input_batch_t *data)
+                inline virtual void invoke_memcpy(__out__ destination_t *destination,
+                                                  __in__ const input_batch_t *data)
                 override final __attribute__((always_inline))
                 {
                     memcpy(destination, data->get_values(), data->get_size() * sizeof(destination_t));

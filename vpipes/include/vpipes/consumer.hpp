@@ -34,7 +34,7 @@ namespace mondrian
             friend class bi_pipe_tail;
 
         protected:
-            virtual void on_consume(const input_batch_t *data) { };
+            virtual void on_consume(__in__ const input_batch_t *data) { };
 
             virtual void on_cleanup() { };
 
@@ -43,7 +43,7 @@ namespace mondrian
                 on_cleanup();
             }
 
-            inline virtual void consume(const input_batch_t *data) final __attribute__((always_inline))
+            inline virtual void consume(__in__ const input_batch_t *data) final __attribute__((always_inline))
             {
                 statistics.num_batches++;
                 if (__builtin_expect(!data->is_empty(), true)) {

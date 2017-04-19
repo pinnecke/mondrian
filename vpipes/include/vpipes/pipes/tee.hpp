@@ -38,13 +38,15 @@ namespace mondrian
 
             public:
 
-                tee(consumer_t *destination1, consumer_t *destination2, unsigned batch_size) :
+                tee(__in__ consumer_t *destination1,
+                    __in__ consumer_t *destination2,
+                    __in__ unsigned batch_size) :
                         super(destination1, batch_size)
                 {
                     super::add_destination(destination2);
                 }
 
-                inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
+                inline virtual void on_consume(__in__ const input_batch_t *data) override final __attribute__((always_inline))
                 {
                     super::produce(data->get_tupletids(), data->get_values(), data->get_null_mask(), data->get_size(),
                                    true);

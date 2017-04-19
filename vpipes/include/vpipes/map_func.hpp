@@ -24,12 +24,12 @@ struct name                                                                     
                                                                                                                        \
     name(input_t compare_value): compare_value(compare_value) { }                                                      \
                                                                                                                        \
-    void operator()(output_t *out_values,                                                                              \
-                    mtl::smart_bitmask *out_null_mask,                                                                 \
-                    const input_t *in_values,                                                                          \
-                    const mtl::smart_bitmask *in_null_mask,                                                            \
-                    null_info in_null_info,                                                                            \
-                    size_t num_elements)                                                                               \
+    void operator()(__out__ output_t *out_values,                                                                      \
+                    __out__ mtl::smart_bitmask *out_null_mask,                                                         \
+                    __in__ const input_t *in_values,                                                                   \
+                    __in__ const mtl::smart_bitmask *in_null_mask,                                                     \
+                    __in__ null_info in_null_info,                                                                     \
+                    __in__ size_t num_elements)                                                                        \
     {                                                                                                                  \
         assert (out_values != nullptr);                                                                                \
         assert (out_null_mask != nullptr);                                                                             \
@@ -64,12 +64,12 @@ namespace mondrian
                 using input_t = Input;
                 using output_t = Output;
 
-                using func_t = std::function<void(output_t *out_values,
-                                                  mtl::smart_bitmask *out_null_mask,
-                                                  const input_t *in_values,
-                                                  const mtl::smart_bitmask *in_null_mask,
-                                                  null_info in_null_info,
-                                                  size_t num_elements)>;
+                using func_t = std::function<void(__out__ output_t *out_values,
+                                                  __out__ mtl::smart_bitmask *out_null_mask,
+                                                  __in__ const input_t *in_values,
+                                                  __in__ const mtl::smart_bitmask *in_null_mask,
+                                                  __in__ null_info in_null_info,
+                                                  __in__ size_t num_elements)>;
             };
 
             template<class Input>
