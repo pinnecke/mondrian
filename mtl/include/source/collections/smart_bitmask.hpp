@@ -90,7 +90,7 @@ namespace mondrian
                 assert (get_unsafe(idx - offset) == value);
             }
 
-            virtual inline void set(size_t idx, const smart_bitmask *bits, size_t num_values) final __attribute__((always_inline))
+            virtual inline void override_by(size_t idx, const smart_bitmask *bits, size_t num_values) final __attribute__((always_inline))
             {
                 idx += offset;
                 while (num_values--) {

@@ -104,7 +104,7 @@ namespace mondrian
 
                 values.gather_unsafe(indices, append_max_len, in_values, cursor);
                 tupletids.gather_unsafe(indices, append_max_len, in_tuplet_ids, cursor);
-              //  null_mask.gather_unsafe(indices, append_max_len, in_null_mask, cursor); // TODO: FIX This is bottlneck and point of failure
+                null_mask.override_by(0, in_null_mask, append_max_len); // TODO: FIX This is bottlneck and point of failure
 
                 cursor += append_max_len;
                 *out = (cursor >= max_size ? state::full : state::non_full);
@@ -119,7 +119,7 @@ namespace mondrian
                 auto retval = num_elements - append_max_len;
                 tupletids.set(cursor, in_tuplet_ids, append_max_len);
                 values.set(cursor, in_values, append_max_len);
-                null_mask.set(cursor, in_null_mask, append_max_len);
+                null_mask.override_by(cursor, in_null_mask, append_max_len);
                 cursor += append_max_len;
                 *out = (cursor >= max_size ? state::full : state::non_full);
                 return retval;
