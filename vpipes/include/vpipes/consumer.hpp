@@ -24,7 +24,7 @@ namespace mondrian
         template<class Input>
         class consumer
         {
-            operator_statistics statistics;
+            statistics::operator_run statistics;
 
         public:
             using input_t = Input;
@@ -51,7 +51,7 @@ namespace mondrian
                 } else statistics.num_empty_batches++;
             }
 
-            const operator_statistics *get_input_statistics() const
+            const statistics::operator_run *get_input_statistics() const
             {
                 return &statistics;
             }

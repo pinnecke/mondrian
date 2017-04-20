@@ -3,8 +3,18 @@
 //
 #pragma  once
 
+#include <vpipes.hpp>
 
+namespace utilities
+{
+    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *values, const size_t *tupletids, size_t num_of_ids)
+    {
+        for (auto i = 0; i< num_of_ids; ++i) {
+            *(values+i) = *(tupletids+i);
 
+        }
+    };
+}
 
 std::size_t *create_column(std::size_t num_of_elements, bool fill_with_fives = true, bool fill = true)
 {

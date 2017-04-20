@@ -97,6 +97,7 @@ namespace mondrian
                 size_t start = 0, end = size;
                 interval<size_t> all_tuplet_ids(start, end);
                 return new pipes::table_scan<value_t>(consumer, &all_tuplet_ids, &all_tuplet_ids + 1, predicate,
+                                                      null_value_filter_policy::skip_null_values,
                                                         [&] (value_t *destination, tupletid_t begin, tupletid_t end)
                                                         {
                                                             assert (destination != nullptr);

@@ -182,6 +182,12 @@ namespace mondrian
                 set_flag = false;
             }
 
+            virtual void set_all() final __attribute__((always_inline))
+            {
+                content.set_all(std::numeric_limits<smart_array<uint32_t>::type_t>::max());
+                set_flag = true;
+            }
+
             virtual void unset_range_unsafe(size_t begin, size_t end) final __attribute__((always_inline))
             {
                 for (auto idx = begin; idx != end; ++idx)

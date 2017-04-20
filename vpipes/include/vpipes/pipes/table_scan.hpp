@@ -50,6 +50,7 @@ namespace mondrian
                            __in__ const interval_t *tuplet_ids_interval_begin,
                            __in__ const interval_t *tuplet_ids_interval_end,
                            __in__ predicate_func_t predicate,
+                           __in__ null_value_filter_policy null_policy,
                            __in__ block_copy_t block_copy_func,
                            __in__ block_null_copy_t block_null_copy_func,
                            __in__ unsigned scan_batch_size,
@@ -61,7 +62,8 @@ namespace mondrian
                 {
                     assert (tuplet_ids_interval_begin != nullptr && tuplet_ids_interval_end != nullptr);
                     assert (tuplet_ids_interval_begin < tuplet_ids_interval_end);
-                    filter_operator = new filter_t(destination, predicate, filter_batch_size,
+                    filter_operator = new filter_t(destination, predicate, null_policy,
+                                                   filter_batch_size,
                                                    filter_hint_expected_avg_batch_eval_is_non_empty);
                     super::add_destination(filter_operator);
                 }
@@ -87,9 +89,15 @@ namespace mondrian
 
                 virtual void on_cleanup() override
                 {
-                    assert (filter_operator != nullptr);
+                    assert_non_null (filter_operator);
                     delete filter_operator;
                     filter_operator = nullptr;
+                }
+
+                virtual const filter_t *get_filter() const final
+                {
+                    assert_non_null (filter_operator);
+                    return filter_operator;
                 }
             };
         }

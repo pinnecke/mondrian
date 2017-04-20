@@ -62,6 +62,7 @@ namespace testing_vpipes_classes{
             };
 
             auto loc_table = pipes::table_scan<value_t>(m_consumer, &all_tuplet_ids, &all_tuplet_ids + 1, m_predicate,
+                                                        null_value_filter_policy::skip_null_values,
                                                         loc_block_copy, loc_block_null_copy, m_scan_batch_size, m_filter_batch_size, true);
 
             loc_table.start();

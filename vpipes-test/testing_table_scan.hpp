@@ -45,6 +45,7 @@ TEST(TestTableScan,TestBasicFunctionality){
 
     auto loc_table = pipes::table_scan<size_t >(&proj, &all_tuplet_ids, &all_tuplet_ids + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
                                                 ::greater_equal::micro_optimized_impl(predicate_value,true),
+                                                null_value_filter_policy::skip_null_values,
                                                 loc_block_copy, loc_block_null_copy, batch_size, batch_size, true);
 
     loc_table.start();

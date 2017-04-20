@@ -36,7 +36,7 @@ namespace mondrian
             output_batch_t *result = nullptr;
             size_t batch_size, num_destintations;
 
-            operator_statistics statistics;
+            statistics::operator_run statistics;
 
         protected:
             void add_destination(__in__ consumer_t *destination)
@@ -153,8 +153,6 @@ namespace mondrian
                 on_close();
                 send();
                 close_consumers();
-                cleanup();
-                on_cleanup();
             }
 
         public:
@@ -178,7 +176,13 @@ namespace mondrian
                 close();
             }
 
-            const operator_statistics *get_output_statistics() const
+            inline virtual void dispose() final
+            {
+                cleanup();
+                on_cleanup();
+            }
+
+            const statistics::operator_run *get_output_statistics() const
             {
                 return &statistics;
             }

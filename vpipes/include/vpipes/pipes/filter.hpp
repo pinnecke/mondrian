@@ -43,15 +43,18 @@ namespace mondrian
                 size_t *matching_indices_buffer;
                 size_t buffer_size;
                 bool hint_avg_batch_eval_result_is_non_empty;
+                statistics::predicate_run statistics;
+                null_value_filter_policy null_policy;
 
                 predicate_func_t predicate;
             public:
 
                 filter(__in__ consumer_t *destination,
                        __in__ predicate_func_t predicate,
+                       __in__ null_value_filter_policy null_policy,
                        __in__ unsigned batch_size,
                        __in__ bool hint_avg_batch_eval_result_is_non_empty) :
-                        super(destination, batch_size), predicate(predicate),
+                        super(destination, batch_size), predicate(predicate), null_policy(null_policy),
                         hint_avg_batch_eval_result_is_non_empty(hint_avg_batch_eval_result_is_non_empty)
                 {
                     // Note here: The operator is unaware of the batch size of the input. The assignment
@@ -74,7 +77,7 @@ namespace mondrian
                     }
 
                     size_t result_size = 0;
-                    predicate(matching_indices_buffer, &result_size,
+                    predicate(matching_indices_buffer, &result_size, &statistics, null_policy,
                               data->get_tupletids(), data->get_values(), data->get_null_mask(), input_batch_size);
                     assert (result_size <= buffer_size);
 
@@ -87,6 +90,11 @@ namespace mondrian
                 virtual void on_cleanup() override
                 {
                     free (matching_indices_buffer);
+                }
+
+                const statistics::predicate_run *get_predicate_statistics() const
+                {
+                    return &this->statistics;
                 }
             };
         }

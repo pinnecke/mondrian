@@ -19,20 +19,12 @@
 
 #define ASSERT_VALID_BATCHED_PREDICATE_ARGS()                           \
 {                                                                       \
-    assert (*result_size == 0);                                         \
-    assert (result_buffer != nullptr);                                  \
-    assert (values_begin != nullptr && values_end != nullptr);          \
-    assert (values_begin <= values_end);                                \
-    assert (tupletids_begin != nullptr && tupletids_end != nullptr);    \
-    assert (tupletids_begin <= tupletids_end);                          \
-}
-
-#define ASSERT_VALID_BATCHED_PREDICATE_ARGS2()                          \
-{                                                                       \
     assert (out_matching_indices != nullptr);                           \
     assert (out_num_matching_indices != nullptr);                       \
+    assert (statistics != nullptr);                                     \
     assert (tupletids != nullptr);                                      \
     assert (values != nullptr);                                         \
+    assert (null_mask != nullptr);                                      \
 }
 
 #define POINTER_DISTANCE(begin, end)                                    \
@@ -47,25 +39,43 @@ struct name                                                                     
                                                                                                                        \
     virtual inline void operator()(__out__ size_t *out_matching_indices,                                               \
                                    __out__ size_t *out_num_matching_indices,                                           \
+                                   __out__ statistics::predicate_run *statistics,                                      \
+                                   __in__ null_value_filter_policy null_policy,                                        \
                                    __in__ const tuplet_id_t *tupletids,                                                \
                                    __in__ const value_t *values,                                                       \
                                    __in__ const mtl::smart_bitmask *null_mask,                                         \
                                    __in__ size_t num_elements) final __attribute__((always_inline))                    \
     {                                                                                                                  \
-        ASSERT_VALID_BATCHED_PREDICATE_ARGS2();                                                                        \
+        ASSERT_VALID_BATCHED_PREDICATE_ARGS();                                                                         \
         const size_t *out_matching_indices_start = out_matching_indices;                                               \
         if (null_mask->is_unset()) {																				   \
+            statistics->count_non_null_branch_used++;                                                                  \
             for (size_t idx = 0; idx != num_elements; ++idx) {                                                         \
                 if (values[idx] opp compare_value) {                                                                   \
                       *out_matching_indices++ = idx;                                                                   \
+                      statistics->count_satisfying_values++;                                                           \
+                } else {                                                                                               \
+                      statistics->count_non_satisfying_values++;                                                       \
                 }                                                                                                      \
             }                                                                                                          \
         } else {                                                                                                       \
             bool is_non_null;                                                                                          \
+            statistics->count_null_branch_used++;                                                                      \
             for (size_t idx = 0; idx != num_elements; ++idx) {                                                         \
                 SMART_BITMASK_GET_UNSAFE_FAST(is_non_null, null_mask, idx);                                            \
-                if (is_non_null && values[idx] opp compare_value) {                                                    \
-                      *out_matching_indices++ = idx;                                                                   \
+                if (is_non_null) {                                                                                     \
+                    if (values[idx] opp compare_value) { 		                                                       \
+                        *out_matching_indices++ = idx;                                                                 \
+                        statistics->count_satisfying_values++;                                                         \
+                    } else {                                                                                           \
+                        statistics->count_non_satisfying_values++;                                                     \
+                    }                                                                                                  \
+                } else {                                                                                               \
+                    if (null_policy == null_value_filter_policy::skip_null_values) {                                   \
+                        *out_matching_indices++ = idx;                                                                 \
+                        statistics->count_skipped_values++;                                                            \
+                    }                                                                                                  \
+                    statistics->count_null_values++;                                                                   \
                 }                                                                                                      \
             }                                                                                                          \
         }                                                                                                              \
@@ -85,29 +95,47 @@ struct name                                                                     
                                                                                                                        \
     virtual inline void operator()(__out__ size_t *out_matching_indices,                                               \
                                    __out__ size_t *out_num_matching_indices,                                           \
+                                   __out__ statistics::predicate_run *statistics,                                      \
+                                   __in__ null_value_filter_policy null_policy,                                        \
                                    __in__ const tuplet_id_t *tupletids,                                                \
                                    __in__ const value_t *values,                                                       \
                                    __in__ const mtl::smart_bitmask *null_mask,                                         \
                            size_t num_elements) final __attribute__((always_inline))                                   \
     {                                                                                                                  \
-        ASSERT_VALID_BATCHED_PREDICATE_ARGS2();                                                                        \
+        ASSERT_VALID_BATCHED_PREDICATE_ARGS();                                                                         \
         const size_t *out_matching_indices_start = out_matching_indices;                                               \
         __builtin_prefetch(out_matching_indices, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);          \
         __builtin_prefetch(out_num_matching_indices, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);      \
         __builtin_prefetch(tupletids, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);                      \
         __builtin_prefetch(values, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_REMOVE_FROM_CACHE);                         \
         if (null_mask->is_unset()) {																				   \
+            statistics->count_non_null_branch_used++;                                                                  \
 	        for (size_t idx = 0; idx != num_elements; ++idx) {                                                         \
                 if (__builtin_expect((values[idx] opp compare_value), hint_expected_true)){                            \
                     *out_matching_indices++ = idx;                                                                     \
+                    statistics->count_satisfying_values++;                                                             \
+                } else {                                                                                               \
+                    statistics->count_non_satisfying_values++;                                                         \
                 }                                                                                                      \
             }																										   \
         } else {                                                                                                       \
             for (size_t idx = 0; idx != num_elements; ++idx) {                                                         \
-            bool is_non_null;                                                                                          \
+                bool is_non_null;                                                                                      \
+                statistics->count_null_branch_used++;                                                                  \
                 SMART_BITMASK_GET_UNSAFE_FAST(is_non_null, null_mask, idx);                                            \
-                if (__builtin_expect(is_non_null && (values[idx] opp compare_value), hint_expected_true)) { 		   \
-                    *out_matching_indices++ = idx;                                                                     \
+                if (is_non_null) {                                                                                     \
+                    if (__builtin_expect((values[idx] opp compare_value), hint_expected_true)) { 		               \
+                        *out_matching_indices++ = idx;                                                                 \
+                        statistics->count_satisfying_values++;                                                         \
+                    } else {                                                                                           \
+                        statistics->count_non_satisfying_values++;                                                     \
+                    }                                                                                                  \
+                } else {                                                                                               \
+                    if (null_policy == null_value_filter_policy::skip_null_values) {                                   \
+                        *out_matching_indices++ = idx;                                                                 \
+                        statistics->count_skipped_values++;                                                            \
+                    }                                                                                                  \
+                    statistics->count_null_values++;                                                                   \
                 }                                                                                                      \
             }                                                                                                          \
         }                                                                                                              \
@@ -125,8 +153,10 @@ namespace mondrian
             struct batched_predicates
             {
                 using value_t = ValueType;
-                using func_t = std::function<void(__out__ size_t *out_matching_indices,
-                                                  __out__ size_t *out_num_matching_indices,
+                using func_t = std::function<void(__out__ size_t *matching_indices,
+                                                  __out__ size_t *num_matching_indices,
+                                                  __out__ statistics::predicate_run *predicate_statistics,
+                                                  __in__ null_value_filter_policy null_policy,
                                                   __in__ const tuplet_id_t *tupletids,
                                                   __in__ const value_t *values,
                                                   __in__ const mtl::smart_bitmask *bitmask,
