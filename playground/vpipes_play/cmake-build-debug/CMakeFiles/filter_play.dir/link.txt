@@ -1,0 +1,1 @@
+/usr/bin/c++   -g   CMakeFiles/filter_play.dir/play_with_filters.cpp.o  -o filter_play 

@@ -1,0 +1,1 @@
+/usr/bin/c++   -g   CMakeFiles/table_play.dir/play_with_table_scan.cpp.o  -o table_play 

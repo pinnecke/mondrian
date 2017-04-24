@@ -1,0 +1,1 @@
+/usr/bin/c++   -g   CMakeFiles/map_play.dir/play_with_map.cpp.o  -o map_play 

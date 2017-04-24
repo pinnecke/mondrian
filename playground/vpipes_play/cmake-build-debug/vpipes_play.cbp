@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="vpipes_play"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="map_play">
+				<Option output="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/map_play" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/../../vpipes/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 map_play"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="map_play/fast">
+				<Option output="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/map_play" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/../../vpipes/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 map_play/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tee_play">
+				<Option output="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/tee_play" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/../../vpipes/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 tee_play"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tee_play/fast">
+				<Option output="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/tee_play" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/../../vpipes/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 tee_play/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="project_play">
+				<Option output="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/project_play" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/../../vpipes/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 project_play"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="project_play/fast">
+				<Option output="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/project_play" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/../../vpipes/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 project_play/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="filter_play">
+				<Option output="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/filter_play" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/../../vpipes/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 filter_play"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="filter_play/fast">
+				<Option output="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/filter_play" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/../../vpipes/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 filter_play/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="table_play">
+				<Option output="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/table_play" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/../../vpipes/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 table_play"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="table_play/fast">
+				<Option output="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/table_play" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/../../vpipes/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 table_play/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="main">
+				<Option output="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/main" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/../../vpipes/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 main"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="main/fast">
+				<Option output="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/main" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/../../vpipes/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 main/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/main.cpp">
+			<Option target="main"/>
+		</Unit>
+		<Unit filename="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/play_with_filters.cpp">
+			<Option target="filter_play"/>
+		</Unit>
+		<Unit filename="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/play_with_map.cpp">
+			<Option target="map_play"/>
+		</Unit>
+		<Unit filename="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/play_with_project.cpp">
+			<Option target="project_play"/>
+		</Unit>
+		<Unit filename="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/play_with_table_scan.cpp">
+			<Option target="table_play"/>
+		</Unit>
+		<Unit filename="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/play_with_tee.cpp">
+			<Option target="tee_play"/>
+		</Unit>
+		<Unit filename="/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

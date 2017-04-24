@@ -1,0 +1,1 @@
+/usr/bin/c++   -g   CMakeFiles/tee_play.dir/play_with_tee.cpp.o  -o tee_play 

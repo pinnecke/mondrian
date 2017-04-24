@@ -1,0 +1,8 @@
+/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/CMakeFiles/map_play.dir
+/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/CMakeFiles/tee_play.dir
+/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/CMakeFiles/project_play.dir
+/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/CMakeFiles/filter_play.dir
+/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/CMakeFiles/table_play.dir
+/home/pegasus/Dokumente/work/codes/mondrian_diff_out_branch/another/MondrianDB/playground/vpipes_play/cmake-build-debug/CMakeFiles/main.dir

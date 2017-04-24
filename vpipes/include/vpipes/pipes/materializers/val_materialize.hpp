@@ -16,7 +16,7 @@
 #pragma once
 
 #include <vpipes.hpp>
-
+#include <cstring>
 namespace mondrian
 {
     namespace vpipes
