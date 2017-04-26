@@ -20,10 +20,10 @@ namespace mondrian
         {
         public:
             using value_t = ValueType;
-            using tupletid_t = size_t;
             using table_scan_t = pipes::table_scan<ValueType>;
             using predicate_func_t = typename table_scan_t::predicate_func_t;
-            using point_copy_t = typename point_copy<value_t, size_t>::func_t;
+            using point_copy_t = typename point_copy<value_t>::func_t;
+            using point_null_copy_t = typename point_null_copy::func_t;
 
         private:
             value_t *data;
@@ -70,17 +70,23 @@ namespace mondrian
                 return false;
             }
 
-            inline virtual void materialize(value_t *out, const tupletid_t *tupletids,
+            inline virtual void materialize(value_t *destination, const tuplet_id_t *tupletids,
                                             size_t num_of_ids) final __attribute__((always_inline))
             {
-                assert (out != nullptr && tupletids != nullptr);
+                assert (destination != nullptr && tupletids != nullptr);
                 while (num_of_ids--) {
-                    *out++ = data[*tupletids++];
+                    *destination++ = data[*tupletids++];
                 }
             }
 
-            point_copy_t f = [&] (value_t *out, const tupletid_t *tupletids, size_t num_of_ids) {
-                this->materialize(out, tupletids, num_of_ids);
+            point_copy_t f = [&] (value_t *values, const tuplet_id_t *tupletids, size_t num_of_ids) {
+                this->materialize(values, tupletids, num_of_ids);
+            };
+
+            point_null_copy_t null_mask_f = [&] (mtl::smart_bitmask *out, const tuplet_id_t *tupletids, size_t num_of_ids) {
+                //for (size_t idx = 0; idx < num_of_ids; ++idx) {
+                //    out->set(idx, false); // TODO: For Testing
+                //}
             };
 
             inline virtual producer<value_t> *table_scan(consumer<value_t> *consumer, predicate_func_t predicate,
@@ -90,13 +96,21 @@ namespace mondrian
                 size_t start = 0, end = size;
                 interval<size_t> all_tuplet_ids(start, end);
                 return new pipes::table_scan<value_t>(consumer, &all_tuplet_ids, &all_tuplet_ids + 1, predicate,
-                                                        [&] (value_t *out, tupletid_t begin, tupletid_t end)
+                                                      null_value_filter_policy::skip_null_values,
+                                                        [&] (value_t *destination, tuplet_id_t begin, tuplet_id_t end)
                                                         {
-                                                            assert (out != nullptr);
+                                                            assert (destination != nullptr);
                                                             assert (begin < end);
-                                                            memcpy(out, data + begin, (end - begin) * sizeof(value_t));
-                                                        }, scan_batch_size, filter_batch_size,
-                                                      filter_hint_expected_avg_batch_eval_is_non_empty);
+                                                            memcpy(destination, data + begin, (end - begin) * sizeof(value_t));
+                                                        },
+                                                        [&] (mtl::smart_bitmask *null_mask, const mondrian::mtl::smart_array<size_t> *null_mask_indices,
+                                                             const mondrian::mtl::smart_array<tuplet_id_t> *tuplet_ids)
+                                                        {
+                                                            assert (null_mask != nullptr);
+                                                            // No nulls...
+                                                        },
+                                                        scan_batch_size, filter_batch_size,
+                                                        filter_hint_expected_avg_batch_eval_is_non_empty);
             }
         };
     }

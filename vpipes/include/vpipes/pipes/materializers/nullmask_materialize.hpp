@@ -24,17 +24,35 @@ namespace mondrian
         namespace pipes
         {
             template<class Input>
-            class no_operation : public consumer<Input>
+            class nullmask_materialize : public materialize<Input, bool>
             {
-                using super = consumer<Input>;
+                using super = materialize<Input, bool>;
 
             public:
                 using typename super::input_t;
                 using typename super::input_batch_t;
+                using typename super::destination_t;
+
+            public:
+                nullmask_materialize(__out__ destination_t *destination,
+                                     __out__ size_t *result_set_size): super(destination, result_set_size) { }
+
+                virtual const char *get_class_name() const override
+                {
+                    return "vpipes::pipes::nullmask_materialize";
+                }
 
             protected:
-                inline virtual void on_consume(__in__ const input_batch_t *data) override final __attribute__((always_inline))
+                inline virtual void invoke_memcpy(__out__ destination_t *destination,
+                                                  __in__ const input_batch_t *data)
+                override final __attribute__((always_inline))
                 {
+                    auto batch_size = data->get_size();
+                    auto null_mask = data->get_null_mask();
+                    for (auto idx = 0; idx < batch_size; ++idx) {
+                        bool is_null = null_mask->get_unsafe(idx);
+                        *destination++ = is_null;
+                    }
                 }
             };
         }

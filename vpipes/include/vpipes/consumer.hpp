@@ -21,19 +21,20 @@ namespace mondrian
 {
     namespace vpipes
     {
-        template<class Input, class InputTupletIdType = size_t>
+        template<class Input>
         class consumer
         {
+            statistics::operator_run statistics;
+
         public:
             using input_t = Input;
-            using input_tupletid_t = InputTupletIdType;
-            using input_batch_t = batch<input_t, input_tupletid_t>;
+            using input_batch_t = batch<input_t>;
 
             template<class IL, class IR, class ILTID, class IRTID>
             friend class bi_pipe_tail;
 
         protected:
-            virtual void on_consume(const input_batch_t *data) { };
+            virtual void on_consume(__in__ const input_batch_t *data) { };
 
             virtual void on_cleanup() { };
 
@@ -42,12 +43,21 @@ namespace mondrian
                 on_cleanup();
             }
 
-            inline virtual void consume(const input_batch_t *data) final __attribute__((always_inline))
+            inline virtual void consume(__in__ const input_batch_t *data) final __attribute__((always_inline))
             {
+                statistics.num_batches++;
                 if (__builtin_expect(!data->is_empty(), true)) {
+                    statistics.num_tuplets += data->get_size();
                     on_consume(data);
-                }
+                } else statistics.num_empty_batches++;
             }
+
+            const statistics::operator_run *get_input_statistics() const
+            {
+                return &statistics;
+            }
+
+            virtual const char *get_class_name() const = 0;
         };
     }
 }

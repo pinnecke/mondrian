@@ -8,24 +8,33 @@
 #include <minimal_reader.hpp>
 using namespace mondrian::vpipes;
 
+mondrian::vpipes::point_null_copy::func_t null_copier = [] (mondrian::mtl::smart_bitmask *mask, const size_t *tupletids, size_t num_of_ids)
+{
+    mask->unset_all();
+};
+
 TEST(TestReading, TestBasicRead  ){
     size_t res_length = 500;
     auto batch_size = 10;
     auto input_length = 100;
     auto result = create_column(res_length, true);
-    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *out, const size_t *tupletids, size_t num_of_ids)
+    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *values, const size_t *tupletids, size_t num_of_ids)
     {
         for (auto i = 0; i< num_of_ids; ++i) {
-            *(out+i) = *(tupletids+i);
+            *(values+i) = *(tupletids+i);
         }
     };
     mondrian::vpipes::pipes::val_materialize<size_t> mat(result, &res_length);
-    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, batch_size);
+    mondrian::vpipes::pipes::attribute_switch<size_t, size_t> proj(&mat, ids_copier, null_copier, batch_size);
 
     testing_vpipes_classes::minimal_reader<size_t > reader(&proj,mondrian::vpipes::predicates::batched_predicates<size_t >
     ::greater_equal::micro_optimized_impl(0,true),input_length,batch_size,batch_size);
 
     reader.read();
+
+    //std::cout << "proj #batches [in]: " << proj.get_input_statistics()->num_batches << ", #empty " << proj.get_input_statistics()->num_empty_batches << std::endl;
+    //std::cout << "proj #batches [out]: " << proj.get_output_statistics()->num_batches << ", #empty " << proj.get_input_statistics()->num_empty_batches << std::endl;
+    //std::cout << "mat #batches  [in]: " << mat.get_input_statistics()->num_batches << ", #empty " << proj.get_input_statistics()->num_empty_batches << std::endl;
 
     auto input = reader.materlializer();
 
@@ -40,15 +49,15 @@ TEST(TestReading, TestIfBatchSizeOddElementsNumEven  ){
     auto batch_size =9;
     auto  input_length= 100;
     auto  result = create_column(res_length, true);
-    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *out, const size_t *tupletids, size_t num_of_ids)
+    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *values, const size_t *tupletids, size_t num_of_ids)
     {
         for (auto i = 0; i< num_of_ids; ++i) {
-            *(out+i) = *(tupletids+i);
+            *(values+i) = *(tupletids+i);
 
         }
     };
     mondrian::vpipes::pipes::val_materialize<size_t> mat(result, &res_length);
-    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, batch_size);
+    mondrian::vpipes::pipes::attribute_switch<size_t, size_t> proj(&mat, ids_copier, null_copier, batch_size);
 
     testing_vpipes_classes::minimal_reader<size_t > reader(&proj,mondrian::vpipes::predicates::batched_predicates<size_t >
     ::greater_equal::micro_optimized_impl(0,true),input_length,batch_size,batch_size);
@@ -67,15 +76,15 @@ TEST(TestReading, TestIfBatchSizeEvenElementsNumOdd  ){
     auto batch_size =10;
     auto  input_length= 93;
     auto  result = create_column(res_length, true);
-    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *out, const size_t *tupletids, size_t num_of_ids)
+    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *values, const size_t *tupletids, size_t num_of_ids)
     {
         for (auto i = 0; i< num_of_ids; ++i) {
-            *(out+i) = *(tupletids+i);
+            *(values+i) = *(tupletids+i);
 
         }
     };
     mondrian::vpipes::pipes::val_materialize<size_t> mat(result, &res_length);
-    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, batch_size);
+    mondrian::vpipes::pipes::attribute_switch<size_t, size_t> proj(&mat, ids_copier, null_copier, batch_size);
 
     testing_vpipes_classes::minimal_reader<size_t > reader(&proj,mondrian::vpipes::predicates::batched_predicates<size_t >
     ::greater_equal::micro_optimized_impl(0,true),input_length,batch_size,batch_size);

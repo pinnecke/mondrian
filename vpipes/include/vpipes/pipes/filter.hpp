@@ -25,33 +25,36 @@ namespace mondrian
     {
         namespace pipes
         {
-            template<class Input, class InputTupletIdType = size_t>
-            class filter : public pipe<Input, Input, InputTupletIdType, InputTupletIdType>
+            template<class Input>
+            class filter : public pipe<Input, Input>
             {
-                using super = pipe<Input, Input, InputTupletIdType, InputTupletIdType>;
+                using super = pipe<Input, Input>;
             public:
                 using typename super::input_t;
-                using typename super::input_tupletid_t;
                 using typename super::input_batch_t;
                 using typename super::output_t;
-                using typename super::output_tupletid_t;
                 using typename super::output_batch_t;
                 using typename super::consumer_t;
 
-                using iterator_t = vpipes::iterator<input_tupletid_t *>;
+                using iterator_t = vpipes::iterator<tuplet_id_t *>;
                 using predicate_func_t = typename vpipes::predicates::batched_predicates<input_t>::func_t;
 
             private:
                 size_t *matching_indices_buffer;
                 size_t buffer_size;
                 bool hint_avg_batch_eval_result_is_non_empty;
+                statistics::predicate_run statistics;
+                null_value_filter_policy null_policy;
 
                 predicate_func_t predicate;
             public:
 
-                filter(consumer_t *destination, predicate_func_t predicate, unsigned batch_size,
-                       bool hint_avg_batch_eval_result_is_non_empty) :
-                        super(destination, batch_size), predicate(predicate),
+                filter(__in__ consumer_t *destination,
+                       __in__ predicate_func_t predicate,
+                       __in__ null_value_filter_policy null_policy,
+                       __in__ unsigned batch_size,
+                       __in__ bool hint_avg_batch_eval_result_is_non_empty) :
+                        super(destination, batch_size), predicate(predicate), null_policy(null_policy),
                         hint_avg_batch_eval_result_is_non_empty(hint_avg_batch_eval_result_is_non_empty)
                 {
                     // Note here: The operator is unaware of the batch size of the input. The assignment
@@ -62,31 +65,41 @@ namespace mondrian
                     assert (matching_indices_buffer != nullptr);
                 }
 
-                inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
+                inline virtual void on_consume(__in__ const input_batch_t *data) override final __attribute__((always_inline))
                 {
                     auto input_batch_size = data->get_size();
 
                     if (__builtin_expect(input_batch_size > buffer_size, false)) {
                         buffer_size = input_batch_size;
                         matching_indices_buffer = (size_t *) realloc(matching_indices_buffer, input_batch_size *
-                                                                     sizeof(input_tupletid_t));
+                                                                     sizeof(tuplet_id_t));
                         assert (matching_indices_buffer != nullptr);
                     }
 
                     size_t result_size = 0;
-                    predicate(matching_indices_buffer, &result_size,
-                              data->get_tupletids_begin(), data->get_values_begin(), input_batch_size);
+                    predicate(matching_indices_buffer, &result_size, &statistics, null_policy,
+                              data->get_tupletids(), data->get_values(), data->get_null_mask(), input_batch_size);
                     assert (result_size <= buffer_size);
 
                     if (__builtin_expect(result_size != 0, hint_avg_batch_eval_result_is_non_empty)) {
-                        super::produce(data->get_tupletids_begin(), data->get_values_begin(), matching_indices_buffer,
-                                       result_size, false);
+                        super::produce(data->get_tupletids(), data->get_values(), data->get_null_mask(),
+                                       matching_indices_buffer, result_size, false);
                     }
                 }
 
                 virtual void on_cleanup() override
                 {
                     free (matching_indices_buffer);
+                }
+
+                const statistics::predicate_run *get_predicate_statistics() const
+                {
+                    return &this->statistics;
+                }
+
+                virtual const char *get_class_name() const override
+                {
+                    return "vpipes::pipes::filter";
                 }
             };
         }

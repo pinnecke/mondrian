@@ -23,30 +23,35 @@ namespace mondrian
     {
         namespace pipes
         {
-            template<class Input, class Output, class InputTupletIdType = size_t>
-            class project : public pipe<Input, Output, InputTupletIdType, InputTupletIdType>
+            template<class Input, class Output>
+            class attribute_switch : public pipe<Input, Output>
             {
-                using super = pipe<Input, Output, InputTupletIdType, InputTupletIdType>;
+                using super = pipe<Input, Output>;
             public:
                 using typename super::input_t;
-                using typename super::input_tupletid_t;
                 using typename super::input_batch_t;
                 using typename super::output_t;
-                using typename super::output_tupletid_t;
                 using typename super::output_batch_t;
                 using typename super::consumer_t;
 
-                using point_copy_func_t = typename point_copy<output_t, output_tupletid_t>::func_t;
+                using point_copy_func_t = typename point_copy<output_t>::func_t;
+                using point_null_copy_func_t = typename point_null_copy::func_t;
 
             private:
                 point_copy_func_t point_copy;
+                point_null_copy_func_t point_null_copy;
 
                 output_t *out_projected_values;
+                mtl::smart_bitmask out_projected_bitmask;
                 size_t buffer_size;
             public:
 
-                project(consumer_t *destination, point_copy_func_t point_copy, unsigned batch_size) :
-                        super(destination, batch_size), point_copy(point_copy)
+                attribute_switch(__in__ consumer_t *destination,
+                        __in__ point_copy_func_t point_copy,
+                        __in__ point_null_copy_func_t point_null_copy,
+                        __in__ unsigned batch_size) :
+                        super(destination, batch_size), out_projected_bitmask(batch_size),
+                        point_copy(point_copy), point_null_copy(point_null_copy)
                 {
                     // Note here: The operator is unaware of the batch size of the input. The assignment
                     // of the batch size of this operator as the batch size of the preceding operator
@@ -56,11 +61,11 @@ namespace mondrian
                     assert (out_projected_values != nullptr);
                 }
 
-                inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
+                inline virtual void on_consume(__in__ const input_batch_t *data) override final __attribute__((always_inline))
                 {
                     auto input_batch_size = data->get_size();
-                    auto in_tupletids = data->get_tupletids_begin();
-                    auto in_values = data->get_values_begin();
+                    auto in_tupletids = data->get_tupletids();
+                    auto in_values = data->get_values();
 
                     if (__builtin_expect(input_batch_size > buffer_size, false)) {
                         buffer_size = input_batch_size;
@@ -69,13 +74,20 @@ namespace mondrian
                         assert (out_projected_values != nullptr);
                     }
 
+                    out_projected_bitmask.unset_all();
+                    point_null_copy(&out_projected_bitmask, in_tupletids, input_batch_size);
                     point_copy(out_projected_values, in_tupletids, input_batch_size);
-                    super::produce(in_tupletids, out_projected_values, input_batch_size, false);
+                    super::produce(in_tupletids, out_projected_values, &out_projected_bitmask, input_batch_size, false);
                 }
 
                 virtual void on_cleanup() override
                 {
                     free (out_projected_values);
+                }
+
+                virtual const char *get_class_name() const override
+                {
+                    return "vpipes::pipes::attribute_switch";
                 }
             };
         }

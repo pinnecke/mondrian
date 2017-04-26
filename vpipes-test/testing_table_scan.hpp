@@ -14,31 +14,40 @@ TEST(TestTableScan,TestBasicFunctionality){
     auto  result = create_column(res_length, true);
     auto predicate_value = 5 ;
 
-    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *out, const size_t *tupletids, size_t num_of_ids)
+    mondrian::vpipes::point_copy<size_t >::func_t ids_copier = [] (size_t *values, const size_t *tupletids, size_t num_of_ids)
     {
         for (auto i = 0; i< num_of_ids; ++i) {
-            *(out+i) = *(tupletids+i);
+            *(values+i) = *(tupletids+i);
 
         }
     };
     mondrian::vpipes::pipes::val_materialize<size_t> mat(result, &res_length);
-    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, batch_size);
+    mondrian::vpipes::pipes::attribute_switch<size_t, size_t> proj(&mat, ids_copier, null_copier, batch_size);
 
 
     interval<size_t> all_tuplet_ids(0, input_length);
 
 
-    mondrian::vpipes::block_copy<size_t>::func_t loc_block_copy = [](size_t *out, size_t begin, size_t end){
+    mondrian::vpipes::block_copy<size_t>::func_t loc_block_copy = [](size_t *values, size_t begin, size_t end){
         auto distance = end- begin;
         for (auto i = 0 ; i<distance ;++i){
-            *(out+i) =begin+i;
+            *(values+i) =begin+i;
         }
+    };
+
+    mondrian::vpipes::block_null_copy::func_t loc_block_null_copy = [] (mondrian::mtl::smart_bitmask *values,
+                                                                        const mondrian::mtl::smart_array<size_t> *null_mask_indices,
+                                                                        const mondrian::mtl::smart_array<tuplet_id_t> *tuplet_ids)
+    {
+        assert (values != nullptr);
+        values->unset_range_safe(0, null_mask_indices->get_num_elements());
     };
 
 
     auto loc_table = pipes::table_scan<size_t >(&proj, &all_tuplet_ids, &all_tuplet_ids + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
                                                 ::greater_equal::micro_optimized_impl(predicate_value,true),
-                                                loc_block_copy   , batch_size, batch_size, true);
+                                                null_value_filter_policy::skip_null_values,
+                                                loc_block_copy, loc_block_null_copy, batch_size, batch_size, true);
 
     loc_table.start();
 

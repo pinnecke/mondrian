@@ -20,7 +20,7 @@ namespace testing_vpipes_classes{
         using tupletid_t = size_t;
         using table_scan_t = pipes::table_scan<ValueType>;
         using predicate_func_t = typename table_scan_t::predicate_func_t;
-        using point_copy_t = typename point_copy<value_t, size_t>::func_t;
+        using point_copy_t = typename point_copy<value_t>::func_t;
     private:
         consumer<value_t> *m_consumer;
         predicate_func_t m_predicate;
@@ -47,17 +47,29 @@ namespace testing_vpipes_classes{
             size_t start = 0, end = m_total_elements;
             interval<size_t> all_tuplet_ids(start, end);
 
-            mondrian::vpipes::block_copy<size_t>::func_t loc_block_copy = [](size_t *out, size_t begin, size_t end){
+            mondrian::vpipes::block_copy<size_t>::func_t loc_block_copy = [](size_t *values, size_t begin, size_t end){
                 auto distance = end- begin;
                 for (auto i = 0 ; i<distance ;++i){
-                    *(out+i) =begin+i;
+                    *(values+i) =begin+i;
                 }
             };
 
+            mondrian::vpipes::block_null_copy::func_t loc_block_null_copy = [] (mondrian::mtl::smart_bitmask *mask,
+                                                                                const mondrian::mtl::smart_array<size_t> *null_mask_indices,
+                                                                                const mondrian::mtl::smart_array<tuplet_id_t> *tuplet_ids)
+            {
+                assert (mask != nullptr);
+                mask->unset_range_safe(0, null_mask_indices->get_num_elements());
+            };
+
             auto loc_table = pipes::table_scan<value_t>(m_consumer, &all_tuplet_ids, &all_tuplet_ids + 1, m_predicate,
-                                                        loc_block_copy   , m_scan_batch_size, m_filter_batch_size, true);
+                                                        null_value_filter_policy::skip_null_values,
+                                                        loc_block_copy, loc_block_null_copy, m_scan_batch_size, m_filter_batch_size, true);
 
             loc_table.start();
+
+            //std::cout << "loc_table #batches [out]: " << loc_table.get_output_statistics()->num_batches
+            //          << ", #empty " << loc_table.get_output_statistics()->num_empty_batches << std::endl;
         }
     };
 

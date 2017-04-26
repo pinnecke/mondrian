@@ -24,12 +24,30 @@ struct name                                                                     
                                                                                                                        \
     name(input_t compare_value): compare_value(compare_value) { }                                                      \
                                                                                                                        \
-    void operator()(output_t *destination, const input_t *source, size_t num_elements)                                 \
+    void operator()(__out__ output_t *out_values,                                                                      \
+                    __out__ mtl::smart_bitmask *out_null_mask,                                                         \
+                    __in__ const input_t *in_values,                                                                   \
+                    __in__ const mtl::smart_bitmask *in_null_mask,                                                     \
+                    __in__ null_info in_null_info,                                                                     \
+                    __in__ size_t num_elements)                                                                        \
     {                                                                                                                  \
-        assert (destination != nullptr);                                                                               \
-        assert (source != nullptr);                                                                                    \
-        while (num_elements--) {                                                                                       \
-            *destination++ = (*source++ opp compare_value);                                                            \
+        assert (out_values != nullptr);                                                                                \
+        assert (out_null_mask != nullptr);                                                                             \
+        assert (in_values != nullptr);                                                                                 \
+        assert (in_null_mask != nullptr);                                                                              \
+                                                                                                                       \
+        if (in_null_info == null_info::non_null) {                                                                     \
+            while (num_elements--) {                                                                                   \
+                *out_values++ = (*in_values++ opp compare_value);                                                      \
+            }                                                                                                          \
+        } else {                                                                                                       \
+            for (size_t idx = 0; idx < num_elements; ++idx) {                                                          \
+                if (in_null_mask->get_unsafe(idx)) {                                                                   \
+                    out_null_mask->set_unsafe(idx, true);                                                              \
+                } else {                                                                                               \
+                    out_values[idx] = in_values[idx] opp compare_value;                                                \
+                }                                                                                                      \
+            }                                                                                                          \
         }                                                                                                              \
     }                                                                                                                  \
 };
@@ -46,7 +64,12 @@ namespace mondrian
                 using input_t = Input;
                 using output_t = Output;
 
-                using func_t = std::function<void(output_t *destination, const input_t *source, size_t num_elements)>;
+                using func_t = std::function<void(__out__ output_t *out_values,
+                                                  __out__ mtl::smart_bitmask *out_null_mask,
+                                                  __in__ const input_t *in_values,
+                                                  __in__ const mtl::smart_bitmask *in_null_mask,
+                                                  __in__ null_info in_null_info,
+                                                  __in__ size_t num_elements)>;
             };
 
             template<class Input>

@@ -34,7 +34,9 @@ namespace mondrian
             bounds_policy type;
 
         public:
-            interval (type_t lower_bound, type_t upper_bound, bounds_policy type = bounds_policy::right_open):
+            interval (__in__ type_t lower_bound,
+                      __in__ type_t upper_bound,
+                      __in__ bounds_policy type = bounds_policy::right_open):
                     lower_bound(lower_bound), upper_bound(upper_bound), type(type)
             {
                 assert (lower_bound <= upper_bound);

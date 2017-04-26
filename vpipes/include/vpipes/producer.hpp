@@ -21,23 +21,25 @@ namespace mondrian
 {
     namespace vpipes
     {
-        template<class Output, class OutputTupletIdType = size_t>
+        template<class Output>
         class producer
         {
         public:
             using output_t = Output;
-            using output_tupletid_t = OutputTupletIdType;
-            using consumer_t = consumer<output_t, output_tupletid_t>;
-            using output_batch_t = batch<output_t, output_tupletid_t>;
-            using block_copy_t = typename block_copy<output_t, output_tupletid_t>::func_t;
+            using consumer_t = consumer<output_t>;
+            using output_batch_t = batch<output_t>;
+            using block_copy_t = typename block_copy<output_t>::func_t;
+            using block_null_copy_t = typename block_null_copy::func_t;
 
         private:
             consumer_t **destinations;
             output_batch_t *result = nullptr;
             size_t batch_size, num_destintations;
 
+            statistics::operator_run statistics;
+
         protected:
-            void add_destination(consumer_t *destination)
+            void add_destination(__in__ consumer_t *destination)
             {
                 assert (destination != nullptr);
                 destinations = (consumer_t **) realloc(destinations, ++num_destintations * sizeof(consumer_t*));
@@ -61,9 +63,14 @@ namespace mondrian
             inline void send() __attribute__((always_inline))
             {
                 assert (destinations != nullptr);
-                result->prefetch(cpu_hint::for_read);
-                for (size_t idx = 0; idx < num_destintations; ++idx) {
-                    destinations[idx]->consume(result);
+                if (__builtin_expect(!result->is_empty(), true)) {
+                    result->prefetch(cpu_hint::for_read);
+                    statistics.num_batches++;
+                    statistics.num_tuplets += result->get_size();
+
+                    for (size_t idx = 0; idx < num_destintations; ++idx) {
+                        destinations[idx]->consume(result);
+                    }
                 }
                 reset();
             }
@@ -76,15 +83,17 @@ namespace mondrian
 
             virtual void on_start() { };
 
-            inline virtual void produce_tupletid_range(output_tupletid_t start, output_tupletid_t end,
-                                                       block_copy_t block_copy_func) final __attribute__((always_inline))
+            inline virtual void produce_tupletid_range(__in__ tuplet_id_t start,
+                                                       __in__ tuplet_id_t end,
+                                                       __in__ block_copy_t block_copy_func,
+                                                       __in__ block_null_copy_t block_null_copy_func) final __attribute__((always_inline))
             {
                 assert (start <= end);
 
-                output_tupletid_t offset = start;
+                tuplet_id_t offset = start;
                 while (offset < end) {
                     size_t this_batch_size = MIN(batch_size, end - offset);
-                    result->iota(offset, this_batch_size, block_copy_func);
+                    result->iota(offset, this_batch_size, block_copy_func, block_null_copy_func);
                     send();
                     offset += this_batch_size;
                 }
@@ -92,36 +101,44 @@ namespace mondrian
 
         protected:
 
-            virtual inline void produce(const output_tupletid_t *tupletids, const output_t *values,
-                                        const size_t *indices, size_t num_indices,
-                                        bool hint_hit_out_batch_size) final __attribute__((always_inline))
+            virtual inline void produce(__in__ const tuplet_id_t *tupletids,
+                                        __in__ const output_t *values,
+                                        __in__ const mtl::smart_bitmask *null_mask,
+                                        __in__ const size_t *indices,
+                                        __in__ size_t num_indices,
+                                        __in__ bool hint_hit_out_batch_size) final __attribute__((always_inline))
             {
                 auto total = num_indices, remaining = num_indices;
+                result->prefetch(cpu_hint::for_write);
                 do {
                     typename output_batch_t::state batch_state;
                     auto step = (total - remaining);
-                    result->prefetch(cpu_hint::for_write);
-                    remaining = result->add(&batch_state, tupletids, values, indices + step, remaining);
+                    remaining = result->add(&batch_state, tupletids, values, null_mask, indices + step, remaining);
                     if (__builtin_expect(batch_state == output_batch_t::state::full, hint_hit_out_batch_size)) {
                         send();
                     }
                 } while (remaining);
             }
 
-            virtual inline void produce(const output_tupletid_t *tupletids, const output_t * values,
-                                        size_t num_elements, bool hint_hit_out_batch_size)
+            virtual inline void produce(__in__ const tuplet_id_t *tupletids,
+                                        __in__ const output_t * values,
+                                        __in__ const mtl::smart_bitmask *null_mask,
+                                        __in__ size_t num_elements,
+                                        __in__ bool hint_hit_out_batch_size)
                                         final __attribute__((always_inline))
             {
-                auto total_num = num_elements, remaining_num = num_elements;
+                auto total = num_elements, remaining = num_elements;
+                result->prefetch(cpu_hint::for_write);
                 do {
                     typename output_batch_t::state batch_state;
-                    auto step = (total_num - remaining_num);
-                    result->prefetch(cpu_hint::for_write);
-                    remaining_num = result->add(&batch_state, tupletids + step, values + step, remaining_num);
+                    auto step = (total - remaining);
+                    const_cast<mtl::smart_bitmask *>(null_mask)->set_offset(step);
+                    remaining = result->add(&batch_state, tupletids + step, values + step, null_mask, remaining);
                     if (__builtin_expect(batch_state == output_batch_t::state::full, hint_hit_out_batch_size)) {
                         send();
                     }
-                } while (remaining_num);
+                } while (remaining);
+                const_cast<mtl::smart_bitmask *>(null_mask)->set_offset(0);
             }
 
             virtual void close_consumers()
@@ -140,12 +157,11 @@ namespace mondrian
                 on_close();
                 send();
                 close_consumers();
-                cleanup();
-                on_cleanup();
             }
 
         public:
-            producer(consumer_t *destination, unsigned batch_size):
+            producer(__in__ consumer_t *destination,
+                     __in__ unsigned batch_size):
                     num_destintations(0), batch_size(batch_size)
             {
                 result = new output_batch_t(batch_size);
@@ -163,6 +179,19 @@ namespace mondrian
                 on_start();
                 close();
             }
+
+            inline virtual void dispose() final
+            {
+                cleanup();
+                on_cleanup();
+            }
+
+            const statistics::operator_run *get_output_statistics() const
+            {
+                return &statistics;
+            }
+
+            virtual const char *get_class_name() const = 0;
         };
     }
 }

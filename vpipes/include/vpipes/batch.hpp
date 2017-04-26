@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include <vpipes.hpp>
+#include "../vpipes.hpp"
 
 namespace mondrian
 {
@@ -23,30 +23,20 @@ namespace mondrian
     {
         enum cpu_hint { for_read, for_write };
 
-        template<class ValueType, class TupletIdType = size_t>
+        template<class ValueType>
         class batch
         {
         public:
             using value_t = ValueType;
-            using tupletid_t = TupletIdType;
-            using block_copy_t = typename block_copy<value_t, tupletid_t>::func_t;
+            using block_copy_t = typename block_copy<value_t>::func_t;
+            using block_null_copy_t = typename block_null_copy::func_t;
 
         private:
-            tupletid_t *tupletids;
-            value_t *values;
+            mtl::smart_array<tuplet_id_t> tupletids;
+            mtl::smart_array<value_t> values;
+            mtl::smart_bitmask null_mask;
+
             size_t max_size, cursor;
-
-            void allocate_buffers()
-            {
-                tupletids = (tupletid_t *) malloc(this->max_size * sizeof(tupletid_t));
-                values = (value_t *) malloc(this->max_size * sizeof(value_t));
-            }
-
-            void copy_buffers(const tupletid_t *src_tupletids, const value_t *src_values)
-            {
-                memcpy(tupletids, src_tupletids, cursor * sizeof(tupletid_t));
-                memcpy(values, src_values, cursor * sizeof(value_t));
-            }
 
         public:
             enum class state
@@ -54,80 +44,104 @@ namespace mondrian
                 full, non_full
             };
 
-            batch(size_t num_of_elements) : max_size(num_of_elements), cursor(0)
+            batch(__in__ size_t num_of_elements) :
+                        max_size(num_of_elements), cursor(0),
+                        tupletids(num_of_elements),
+                        values(num_of_elements),
+                        null_mask(num_of_elements)
             {
-                allocate_buffers();
-            }
-
-            batch(const batch<value_t, tupletid_t> *other)
-            {
-                max_size = other->max_size;
-                cursor = other->cursor;
-                allocate_buffers();
-                copy_buffers(other->tupletids, other->values);
+                null_mask.resize(num_of_elements);
             }
 
             inline void reset()
             {
                 cursor = 0;
+                null_mask.reset();
             }
 
             inline void prefetch(cpu_hint hint)
             {
                 if (hint == cpu_hint::for_read) {
-                    __builtin_prefetch(tupletids, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
-                    __builtin_prefetch(values, PREFETCH_RW_FOR_READ, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
+                    tupletids.prefetch(mtl::cpu_hint::for_read);
+                    values.prefetch(mtl::cpu_hint::for_read);
+                    null_mask.prefetch(mtl::cpu_hint::for_read);
                 } else {
-                    __builtin_prefetch(tupletids + cursor, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
-                    __builtin_prefetch(values + cursor, PREFETCH_RW_FOR_WRITE, PREFETCH_LOCALITY_KEEP_IN_CACHES_HIGH);
+                    tupletids.prefetch(mtl::cpu_hint::for_write, cursor);
+                    values.prefetch(mtl::cpu_hint::for_write, cursor);
+                    null_mask.prefetch(mtl::cpu_hint::for_write, cursor);
                 }
             }
 
-            inline void iota(tupletid_t start, size_t num_of_values, block_copy_t block_copy_func) __attribute__((always_inline))
+            inline void iota(__in__ tuplet_id_t start,
+                             __in__ size_t num_of_values,
+                             __in__ block_copy_t block_copy_func,
+                             __in__ block_null_copy_t block_null_copy_func) __attribute__((always_inline))
             {
                 assert (num_of_values <= max_size);
                 num_of_values = MIN(max_size, num_of_values);
-                auto offset = tupletids + cursor;
-                std::iota(offset, offset + num_of_values, start);
+                auto end = start + num_of_values;
 
-                block_copy_func(values, start, start + num_of_values);
+                tupletids.iota(cursor, num_of_values, start);
+                block_copy_func(values.get_raw_data(), start, end);
+
+                null_mask.reset();
+                null_mask.resize(num_of_values);
+
+                auto null_mask_pos_start = 0;
+                auto null_mask_pos_end = (num_of_values % (max_size + 1));
+                assert (null_mask_pos_start < null_mask_pos_end);
+                mtl::smart_array<size_t> null_mask_indices(null_mask_pos_end);
+                null_mask_indices.iota(null_mask_pos_start, null_mask_pos_end, null_mask_pos_start);
+
+                block_null_copy_func(&null_mask, &null_mask_indices, &tupletids);
+                assert (null_mask.get_num_elements() == num_of_values);
+                //printf("PRODUCER '%s' created batch:\t\t\t\t\t\t\t\t\t\t", creator_class_name);
+                //null_mask.to_string(stdout);
+                //printf("\n");
+
+                null_mask_indices.dispose();
+
                 cursor += num_of_values;
             }
 
-            inline size_t add(state *out, const tupletid_t *in_tuplet_ids, const value_t *in_values,
-                                   const size_t *indices, size_t num_indices) __attribute__((always_inline))
+            inline size_t add(__out__ state *out_state,
+                              __in__ const tuplet_id_t *in_tuplet_ids,
+                              __in__ const value_t *in_values,
+                              __in__ const mtl::smart_bitmask *in_null_mask,
+                              __in__ const size_t *indices,
+                              __in__ size_t num_indices)
+                              __attribute__((always_inline))
             {
                 assert (cursor + 1 <= max_size);
+                assert (out_state != nullptr && in_tuplet_ids != nullptr && in_values != nullptr && in_null_mask != nullptr);
+
                 auto append_max_len = std::min(max_size - cursor, num_indices);
-                if (append_max_len > 10){
-                    printf("");
-                }
                 auto retval = num_indices - append_max_len;
-                while (append_max_len--) {
-                    auto idx = *indices++;
-                    *(values + cursor) = in_values[idx];
-                    *(tupletids + cursor++) = in_tuplet_ids[idx];
-                }
-                *out = (cursor >= max_size ? state::full : state::non_full);
+
+                values.gather_unsafe(indices, append_max_len, in_values, cursor);
+                tupletids.gather_unsafe(indices, append_max_len, in_tuplet_ids, cursor);
+                null_mask.override_by(0, in_null_mask, append_max_len);
+
+                cursor += append_max_len;
+                *out_state = (cursor >= max_size ? state::full : state::non_full);
                 return retval;
             }
 
-            inline size_t add(state *out, const tupletid_t *in_tuplet_ids, const value_t *in_values,
-                              size_t num_elements) __attribute__((always_inline))
+            inline size_t add(__out__ state *out_state,
+                              __in__ const tuplet_id_t *in_tuplet_ids,
+                              __in__ const value_t *in_values,
+                              __in__ const mtl::smart_bitmask *in_null_mask,
+                              __in__ size_t num_elements) __attribute__((always_inline))
             {
                 assert (cursor + 1 <= max_size);
                 auto append_max_len = std::min(max_size - cursor, num_elements);
                 auto retval = num_elements - append_max_len;
-                memcpy(tupletids + cursor, in_tuplet_ids, append_max_len * sizeof(tupletid_t));
-                memcpy(values + cursor, in_values, append_max_len * sizeof(value_t));
+                tupletids.set(cursor, in_tuplet_ids, append_max_len);
+                values.set(cursor, in_values, append_max_len);
+                null_mask.override_by(cursor, in_null_mask, append_max_len);
                 cursor += append_max_len;
-                *out = (cursor >= max_size ? state::full : state::non_full);
+                *out_state = (cursor >= max_size ? state::full : state::non_full);
                 return retval;
-            }
-
-            inline iterator <value_t> get_iterator()
-            {
-                return iterator<value_t>(tupletids, tupletids + cursor);
             }
 
             bool is_empty() const
@@ -142,28 +156,30 @@ namespace mondrian
             }
 
             void release() {
-                free(tupletids);
-                free(values);
+                tupletids.dispose();
+                values.dispose();
+                null_mask.dispose();
             }
 
-            value_t *get_values_begin() const
+            const value_t *get_values() const
             {
-                return values;
+                return values.get_content();
             }
 
-            value_t *get_values_end() const
+            const tuplet_id_t *get_tupletids() const
             {
-                return values + cursor;
+                return tupletids.get_content();
             }
 
-            tupletid_t *get_tupletids_begin() const
+            const mtl::smart_bitmask *get_null_mask() const
             {
-                return tupletids;
+                return &null_mask;
             }
 
-            tupletid_t *get_tupletids_end() const
+            null_info get_null_info() const
             {
-                return tupletids + cursor;
+                auto info = null_mask.get_info();
+                return (info == mtl::bitset_info::non_true ? null_info::non_null : null_info::contains_null);
             }
         };
     }

@@ -25,30 +25,31 @@ namespace mondrian
     {
         namespace pipes
         {
-            template<class Input, class InputTupletIdType = size_t>
-            class tee : public pipe<Input, Input, InputTupletIdType, InputTupletIdType>
+            template<class Input>
+            class tee : public pipe<Input, Input>
             {
-                using super = pipe<Input, Input, InputTupletIdType, InputTupletIdType>;
+                using super = pipe<Input, Input>;
             public:
                 using typename super::input_t;
-                using typename super::input_tupletid_t;
                 using typename super::input_batch_t;
                 using typename super::output_t;
-                using typename super::output_tupletid_t;
                 using typename super::output_batch_t;
                 using typename super::consumer_t;
 
             public:
 
-                tee(consumer_t *destination1, consumer_t *destination2, unsigned batch_size) :
+                tee(__in__ consumer_t *destination1,
+                    __in__ consumer_t *destination2,
+                    __in__ unsigned batch_size) :
                         super(destination1, batch_size)
                 {
                     super::add_destination(destination2);
                 }
 
-                inline virtual void on_consume(const input_batch_t *data) override final __attribute__((always_inline))
+                inline virtual void on_consume(__in__ const input_batch_t *data) override final __attribute__((always_inline))
                 {
-                    super::produce(data->get_tupletids_begin(), data->get_values_begin(), data->get_size(), true);
+                    super::produce(data->get_tupletids(), data->get_values(), data->get_null_mask(), data->get_size(),
+                                   true);
                 }
             };
         }

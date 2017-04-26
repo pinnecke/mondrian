@@ -1,4 +1,4 @@
-// Vector-Pipes - a framework for the push-based iterator model with support of vectorized execution
+// Mondrian Template Library - data structures, explict management and algorithm tailored to modern database systems
 // Copyright (C) 2017  Marcus Pinnecke (marcus.pinnecke@ovgu.de)
 //
 // This program is free software; you can redistribute it and/or modify it under the terms of the
@@ -15,29 +15,29 @@
 
 #pragma once
 
-#include <vpipes.hpp>
+#include <cmath>
 
 namespace mondrian
 {
-    namespace vpipes
+    namespace mtl
     {
-        namespace pipes
+        enum cpu_hint
         {
-            template<class Input>
-            class no_operation : public consumer<Input>
-            {
-                using super = consumer<Input>;
+            for_read, for_write
+        };
 
-            public:
-                using typename super::input_t;
-                using typename super::input_batch_t;
+        enum init_value_policy
+        {
+            dont_care, zero_memory
+        };
 
-            protected:
-                inline virtual void on_consume(__in__ const input_batch_t *data) override final __attribute__((always_inline))
-                {
-                }
-            };
-        }
+        enum bitset_info
+        {
+            contains_true, non_true
+        };
     }
 }
+
+#include "source/collections/smart_array.hpp"
+#include "source/collections/smart_bitmask.hpp"
 

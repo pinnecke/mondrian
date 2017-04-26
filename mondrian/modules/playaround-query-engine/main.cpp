@@ -77,6 +77,52 @@ std::vector<Type> read_from_file(std::string file_name)
 
 int main()
 {
+ /*   mtl::smart_bitmask mask(1);
+    for (size_t i = 0; i < 80; ++i) {
+        mask.set(i, true);
+    }*/
+   /* mask[0] = true;
+    mask.set(2, true);
+    mask.set(4, true);
+    mask.set(6, true);
+    mask.set(63, true);
+    mask.set(64, true);
+    mask[65] = true;
+    mask.set(112, true);
+    mask.set(128, true);
+    assert (mask.get(0) == true);
+    assert (mask.get(1) == false);
+    assert (mask.get(2) == true);
+    assert (mask.get(3) == false);
+    assert (mask.get(4) == true);
+    assert (mask.get(5) == false);
+    assert (mask.get(6) == true);
+    mask.get_safe(62);
+    assert (mask.get_safe(62) == false);
+    assert (mask.get(63) == true);
+    assert (mask.get(64) == true);
+    assert (mask.get(65) == true);
+    assert (mask.get(66) == false);
+
+    assert (mask[111] != true);
+    assert (!mask[111] == true);
+    assert (!mask[111] == !mask[111]);
+    assert (mask.get(111) == false);
+    assert (mask.get(112) == true);
+    assert (mask.get(113) == false);
+
+    assert (mask.get(127) == false);
+    assert (mask.get(128) == true);
+    assert (mask.get(129) == false);
+
+    assert (mask[42000] == false);
+
+    mask.set(42000, true);
+    assert (mask.get(42000) == true);*/
+
+
+
+
     std::string path_partkey_data, path_orderkey_data;
     if (false) {
         path_partkey_data = "/home/sebastian/cogadb_databases/cogadb_reference_databases_v1/cogadb_reference_databases/tpch_sf1/tables/LINEITEM/LINEITEM.L_PARTKEY.data";  // "/home/sebastian/cogadb_databases/tpch_sf10_new/tables/LINEITEM/LINEITEM.L_PARTKEY.data";
@@ -100,7 +146,7 @@ int main()
     assert (column_data_partkey.size() == column_data_orderkey.size());
     size_t num_elements = column_data_partkey.size();
 
-    bool *val_result_buffer = (bool *) malloc (num_elements * sizeof(bool));
+    uint32_t *val_result_buffer = (uint32_t *) malloc (num_elements * sizeof(uint32_t));
     size_t *tid_result_buffer = (size_t *) malloc (num_elements * sizeof(size_t));
     assert (val_result_buffer != nullptr);
     assert (tid_result_buffer != nullptr);
@@ -144,23 +190,23 @@ int main()
                 using namespace vpipes::maps;
                 using namespace vpipes::predicates;
 
-                auto val_materializer = val_materialize<bool>(val_result_buffer, &result_set_size);
+                auto val_materializer = val_materialize<uint32_t>(val_result_buffer, &result_set_size);
                 auto tid_materializer = tid_materialize<uint32_t>(tid_result_buffer, &result_set_size);
 
-                auto mapper = map<uint32_t, bool>(&val_materializer,
-                                                  indicators<uint32_t>::greater_than::straightforward_impl(100),
-                                                 100);
+/*                map<uint32_t, bool> mapper(&val_materializer,
+                                           indicators<uint32_t>::greater_than::straightforward_impl(100),
+                                           100);*/
 
-                auto tee_opp = tee<uint32_t>(&mapper, &tid_materializer, 100);
+          //      auto tee_opp = tee<uint32_t>(&mapper, &tid_materializer, 100);
 
-                auto projecter = project<uint32_t, uint32_t>(&tee_opp, ORDERKEY.f, 100);
+      //          project<uint32_t, uint32_t> projecter(&tee_opp, ORDERKEY.f, ORDERKEY.null_mask_f, 100);
 
                 using predicates = batched_predicates<uint32_t>;
                 current_duration += utils::profiling::measure<std::chrono::nanoseconds>::execute(
-                        [&PARTKEY, &projecter, &tee_opp, &tid_materializer, &scan_batch_size, &filter_batch_size]() {
-                            auto table_scan = PARTKEY.table_scan(&projecter,
-                                                                 predicates::less_equal::straightforward_impl(
-                                                                         2000000),
+                        [&PARTKEY, &val_materializer, &scan_batch_size, &filter_batch_size]() {
+                            auto table_scan = PARTKEY.table_scan(&val_materializer,
+                                                                 predicates::less_equal::micro_optimized_impl(
+                                                                         2000000, false),
                                                                  scan_batch_size, filter_batch_size, false);
                             table_scan->start();
                             free(table_scan);

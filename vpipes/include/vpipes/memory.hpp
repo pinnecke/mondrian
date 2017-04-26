@@ -15,26 +15,42 @@
 
 #pragma once
 
-#include <vpipes.hpp>
+#include "../vpipes.hpp"
 
 namespace mondrian
 {
     namespace vpipes
     {
-        template <class ValueType, class TupletIdType = size_t>
+        template <class ValueType>
         struct point_copy
         {
             using value_t = ValueType;
-            using tupletid_t = TupletIdType;
-            using func_t = std::function<void(value_t *out, const tupletid_t *tupletids, size_t num_of_ids)>;
+            using func_t = std::function<void(__out__ value_t *,
+                                              __in__ const tuplet_id_t *tupletids,
+                                              __in__ size_t num_of_ids)>;
         };
 
-        template <class ValueType, class TupletIdType = size_t>
+        template <class ValueType>
         struct block_copy
         {
             using value_t = ValueType;
-            using tupletid_t = TupletIdType;
-            using func_t = std::function<void(value_t *out, tupletid_t begin, tupletid_t end)>;
+            using func_t = std::function<void(__out__ value_t *,
+                                              __in__ tuplet_id_t begin,
+                                              __in__ tuplet_id_t end)>;
+        };
+
+        struct point_null_copy
+        {
+            using func_t = std::function<void(__out__ mtl::smart_bitmask *,
+                                              __in__ const tuplet_id_t *tupletids,
+                                              __in__ size_t num_of_ids)>;
+        };
+
+        struct block_null_copy
+        {
+            using func_t = std::function<void(__out__ mtl::smart_bitmask *,
+                                              __in__ const mtl::smart_array<size_t> *null_mask_indicies,
+                                              __in__ const mtl::smart_array<tuplet_id_t> *tuplet_ids)>;
         };
     }
 }
