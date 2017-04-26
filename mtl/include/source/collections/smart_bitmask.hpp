@@ -57,8 +57,9 @@ namespace mondrian
     {
         class smart_bitmask
         {
+            using smart_array_t = smart_array<uint32_t>;
         private:
-            smart_array<uint32_t> content;
+            smart_array_t content;
             size_t offset, max_idx;
             bool set_flag;
 
@@ -96,7 +97,7 @@ namespace mondrian
                 while (num_values--) {
                     bool value = bits->get_unsafe(idx);
                     set_flag |= value;
-                    set_unsafe(idx, set_flag);
+                    set_unsafe(idx, value);
                     idx++;
                 }
                 max_idx = std::max(max_idx, idx);
@@ -128,7 +129,8 @@ namespace mondrian
                 auto block_id = IDX_TO_BLOCK(idx, this);
                 auto bit_id = IDX_TO_BIT(idx, block_id);
                 auto mask = (1 << bit_id);
-                return ((content.get_raw_data()[block_id] & mask) == mask);
+                bool return_value = ((content.get_raw_data()[block_id] & mask) == mask);
+                return return_value;
             }
 
             virtual inline bool get_safe(size_t idx) final __attribute__((always_inline))
@@ -165,14 +167,11 @@ namespace mondrian
             {
                 auto num_elems = content.get_num_elements();
                 auto base = content.get_raw_data();
-                std::cout << "------------------\n";
                 while (num_elems--) {
-                    std::cout << num_elems  << "\n";
                     if ((*base++) > 0) {
                         return bitset_info::contains_true;
                     }
                 }
-                std::cout << "------------------\n";
                 return bitset_info::non_true;
             }
 
@@ -220,7 +219,7 @@ namespace mondrian
 
             virtual void resize(size_t num_elements) final __attribute__((always_inline))
             {
-                content.resize(IDX_TO_BLOCK(num_elements, this));
+                content.resize(IDX_TO_BLOCK(num_elements, this) + 1);
                 max_idx = num_elements - 1;
                 unset_all();
             }
@@ -228,6 +227,20 @@ namespace mondrian
             virtual bool is_unset() const final __attribute__((always_inline))
             {
                 return !set_flag;
+            }
+
+            void to_string(FILE *file) const
+            {
+                std::string mask;
+                for (size_t i = 0; i < content.get_num_elements(); ++i) {
+                    auto value = *content.get_unsafe(i);
+                    std::bitset<sizeof(smart_array_t::type_t)*8> x(value);
+                    mask.append(x.to_string());
+                }
+
+                fprintf(file, "smart_bitmask(offset=%zu, max_idx=%zu, num_elements=%zu, set_flag=%d, size_in_byte=%zu, mask='%s'",
+                        offset, max_idx, this->get_num_elements(), set_flag, content.get_value_size() * content.get_num_elements(),
+                        mask.c_str());
             }
 
         };

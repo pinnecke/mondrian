@@ -41,6 +41,7 @@ namespace mondrian
             struct operator_run
             {
                 size_t num_batches = 0;
+                size_t num_tuplets = 0;
                 size_t num_empty_batches = 0;
             };
         }
@@ -71,4 +72,4 @@ namespace mondrian
 #include "vpipes/pipes/table_scan.hpp"
 #include "vpipes/pipes/map.hpp"
 #include "vpipes/pipes/tee.hpp"
-#include "vpipes/pipes/project.hpp"
+#include "vpipes/pipes/attribute_switch.hpp"

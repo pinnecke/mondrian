@@ -37,6 +37,11 @@ namespace mondrian
                 nullmask_materialize(__out__ destination_t *destination,
                                      __out__ size_t *result_set_size): super(destination, result_set_size) { }
 
+                virtual const char *get_class_name() const override
+                {
+                    return "vpipes::pipes::nullmask_materialize";
+                }
+
             protected:
                 inline virtual void invoke_memcpy(__out__ destination_t *destination,
                                                   __in__ const input_batch_t *data)

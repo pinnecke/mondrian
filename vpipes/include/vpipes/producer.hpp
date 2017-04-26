@@ -63,10 +63,14 @@ namespace mondrian
             inline void send() __attribute__((always_inline))
             {
                 assert (destinations != nullptr);
-                result->prefetch(cpu_hint::for_read);
-                statistics.num_batches++;
-                for (size_t idx = 0; idx < num_destintations; ++idx) {
-                    destinations[idx]->consume(result);
+                if (__builtin_expect(!result->is_empty(), true)) {
+                    result->prefetch(cpu_hint::for_read);
+                    statistics.num_batches++;
+                    statistics.num_tuplets += result->get_size();
+
+                    for (size_t idx = 0; idx < num_destintations; ++idx) {
+                        destinations[idx]->consume(result);
+                    }
                 }
                 reset();
             }
@@ -186,6 +190,8 @@ namespace mondrian
             {
                 return &statistics;
             }
+
+            virtual const char *get_class_name() const = 0;
         };
     }
 }

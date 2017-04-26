@@ -44,10 +44,11 @@ namespace mondrian
                 full, non_full
             };
 
-            batch(__in__ size_t num_of_elements) : max_size(num_of_elements), cursor(0),
-                                            tupletids(num_of_elements),
-                                            values(num_of_elements),
-                                            null_mask(num_of_elements)
+            batch(__in__ size_t num_of_elements) :
+                        max_size(num_of_elements), cursor(0),
+                        tupletids(num_of_elements),
+                        values(num_of_elements),
+                        null_mask(num_of_elements)
             {
                 null_mask.resize(num_of_elements);
             }
@@ -78,17 +79,27 @@ namespace mondrian
             {
                 assert (num_of_values <= max_size);
                 num_of_values = MIN(max_size, num_of_values);
+                auto end = start + num_of_values;
 
                 tupletids.iota(cursor, num_of_values, start);
-                block_copy_func(values.get_raw_data(), start, start + num_of_values);
+                block_copy_func(values.get_raw_data(), start, end);
 
                 null_mask.reset();
                 null_mask.resize(num_of_values);
+
                 auto null_mask_pos_start = 0;
                 auto null_mask_pos_end = (num_of_values % (max_size + 1));
                 assert (null_mask_pos_start < null_mask_pos_end);
-                block_null_copy_func(&null_mask, null_mask_pos_start, null_mask_pos_end);
+                mtl::smart_array<size_t> null_mask_indices(null_mask_pos_end);
+                null_mask_indices.iota(null_mask_pos_start, null_mask_pos_end, null_mask_pos_start);
+
+                block_null_copy_func(&null_mask, &null_mask_indices, &tupletids);
                 assert (null_mask.get_num_elements() == num_of_values);
+                //printf("PRODUCER '%s' created batch:\t\t\t\t\t\t\t\t\t\t", creator_class_name);
+                //null_mask.to_string(stdout);
+                //printf("\n");
+
+                null_mask_indices.dispose();
 
                 cursor += num_of_values;
             }
@@ -109,7 +120,7 @@ namespace mondrian
 
                 values.gather_unsafe(indices, append_max_len, in_values, cursor);
                 tupletids.gather_unsafe(indices, append_max_len, in_tuplet_ids, cursor);
-                null_mask.override_by(0, in_null_mask, append_max_len); // TODO: FIX This is bottlneck and point of failure
+                null_mask.override_by(0, in_null_mask, append_max_len);
 
                 cursor += append_max_len;
                 *out_state = (cursor >= max_size ? state::full : state::non_full);

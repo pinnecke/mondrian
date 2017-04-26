@@ -163,10 +163,13 @@ namespace mondrian
                 return content;
             }
 
-            virtual inline void iota(size_t start_idx, size_t num_values, size_t inital_value) final __attribute__((always_inline))
+            virtual inline void iota(size_t start_idx, size_t num_values, size_t initial_value) final __attribute__((always_inline))
             {
-                auto base = content + start_idx;
-                std::iota(base, base + num_values, inital_value);
+                auto_resize(start_idx + num_values);
+                auto start = content + start_idx;
+                auto end = start + num_values;
+                std::iota(start, end, initial_value);
+                size = (end - content);
             }
 
             virtual inline void prefetch(cpu_hint hint, size_t idx = 0) final __attribute__((always_inline))

@@ -25,7 +25,7 @@ TEST(TESTfilters, BasicFiltersTest) {
         }
     };
     mondrian::vpipes::pipes::val_materialize<size_t> mat(result, &res_length);
-    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, null_copier, batch_size);
+    mondrian::vpipes::pipes::attribute_switch<size_t, size_t> proj(&mat, ids_copier, null_copier, batch_size);
 
     mondrian::vpipes::pipes::filter<size_t> filter_nums_more_5(&proj , mondrian::vpipes::predicates::batched_predicates<size_t >
     ::greater_equal::micro_optimized_impl(predicate_value,true), null_value_filter_policy::skip_null_values, batch_size, true);
@@ -61,7 +61,7 @@ TEST(TESTfilters, CascadingFilters) {
         }
     };
     mondrian::vpipes::pipes::val_materialize<size_t> mat(result, &res_length);
-    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, null_copier, batch_size);
+    mondrian::vpipes::pipes::attribute_switch<size_t, size_t> proj(&mat, ids_copier, null_copier, batch_size);
 
     mondrian::vpipes::pipes::filter<size_t> filter_nums_more_5(&proj, mondrian::vpipes::predicates::batched_predicates<size_t >
     ::greater_equal::micro_optimized_impl(5,true), null_value_filter_policy::skip_null_values, batch_size, true);
@@ -101,7 +101,7 @@ TEST(TESTfilters, NoConditionSatisfied) {
         }
     };
     mondrian::vpipes::pipes::val_materialize<size_t> mat(result, &res_length);
-    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, null_copier, batch_size);
+    mondrian::vpipes::pipes::attribute_switch<size_t, size_t> proj(&mat, ids_copier, null_copier, batch_size);
 
     mondrian::vpipes::pipes::filter<size_t> filter_nums_more_100(&proj , mondrian::vpipes::predicates::batched_predicates<size_t >
     ::greater_equal::micro_optimized_impl(predicate_value,true), null_value_filter_policy::skip_null_values, batch_size, true);

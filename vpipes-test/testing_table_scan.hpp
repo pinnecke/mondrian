@@ -22,7 +22,7 @@ TEST(TestTableScan,TestBasicFunctionality){
         }
     };
     mondrian::vpipes::pipes::val_materialize<size_t> mat(result, &res_length);
-    mondrian::vpipes::pipes::project<size_t, size_t> proj(&mat, ids_copier, null_copier, batch_size);
+    mondrian::vpipes::pipes::attribute_switch<size_t, size_t> proj(&mat, ids_copier, null_copier, batch_size);
 
 
     interval<size_t> all_tuplet_ids(0, input_length);
@@ -35,11 +35,12 @@ TEST(TestTableScan,TestBasicFunctionality){
         }
     };
 
-    mondrian::vpipes::block_null_copy::func_t loc_block_null_copy = [] (mondrian::mtl::smart_bitmask *values, size_t begin, size_t end)
+    mondrian::vpipes::block_null_copy::func_t loc_block_null_copy = [] (mondrian::mtl::smart_bitmask *values,
+                                                                        const mondrian::mtl::smart_array<size_t> *null_mask_indices,
+                                                                        const mondrian::mtl::smart_array<tuplet_id_t> *tuplet_ids)
     {
         assert (values != nullptr);
-        assert (begin < end);
-        values->unset_range_safe(0, (end - begin));
+        values->unset_range_safe(0, null_mask_indices->get_num_elements());
     };
 
 

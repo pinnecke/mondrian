@@ -44,6 +44,11 @@ namespace mondrian
                 {
                     memcpy(destination, data->get_tupletids(), data->get_size() * sizeof(destination_t));
                 }
+
+                virtual const char *get_class_name() const override
+                {
+                    return "vpipes::pipes::tid_materialize";
+                }
             };
         }
     }

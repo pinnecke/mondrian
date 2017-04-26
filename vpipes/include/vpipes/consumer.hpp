@@ -47,6 +47,7 @@ namespace mondrian
             {
                 statistics.num_batches++;
                 if (__builtin_expect(!data->is_empty(), true)) {
+                    statistics.num_tuplets += data->get_size();
                     on_consume(data);
                 } else statistics.num_empty_batches++;
             }
@@ -55,6 +56,8 @@ namespace mondrian
             {
                 return &statistics;
             }
+
+            virtual const char *get_class_name() const = 0;
         };
     }
 }

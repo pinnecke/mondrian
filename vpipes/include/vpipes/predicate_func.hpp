@@ -59,23 +59,23 @@ struct name                                                                     
                 }                                                                                                      \
             }                                                                                                          \
         } else {                                                                                                       \
-            bool is_non_null;                                                                                          \
+            bool tuplet_is_null;                                                                                       \
             statistics->count_null_branch_used++;                                                                      \
             for (size_t idx = 0; idx != num_elements; ++idx) {                                                         \
-                SMART_BITMASK_GET_UNSAFE_FAST(is_non_null, null_mask, idx);                                            \
-                if (is_non_null) {                                                                                     \
+                SMART_BITMASK_GET_UNSAFE_FAST(tuplet_is_null, null_mask, idx);                                         \
+                if (tuplet_is_null) {                                                                                  \
+                    if (null_policy == null_value_filter_policy::skip_null_values) {                                   \
+                        *out_matching_indices++ = idx;                                                                 \
+                        statistics->count_skipped_values++;                                                            \
+                    }                                                                                                  \
+                    statistics->count_null_values++;                                                                   \
+                } else {                                                                                               \
                     if (values[idx] opp compare_value) { 		                                                       \
                         *out_matching_indices++ = idx;                                                                 \
                         statistics->count_satisfying_values++;                                                         \
                     } else {                                                                                           \
                         statistics->count_non_satisfying_values++;                                                     \
                     }                                                                                                  \
-                } else {                                                                                               \
-                    if (null_policy == null_value_filter_policy::skip_null_values) {                                   \
-                        *out_matching_indices++ = idx;                                                                 \
-                        statistics->count_skipped_values++;                                                            \
-                    }                                                                                                  \
-                    statistics->count_null_values++;                                                                   \
                 }                                                                                                      \
             }                                                                                                          \
         }                                                                                                              \

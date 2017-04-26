@@ -54,11 +54,12 @@ namespace testing_vpipes_classes{
                 }
             };
 
-            mondrian::vpipes::block_null_copy::func_t loc_block_null_copy = [] (mondrian::mtl::smart_bitmask *mask, size_t begin, size_t end)
+            mondrian::vpipes::block_null_copy::func_t loc_block_null_copy = [] (mondrian::mtl::smart_bitmask *mask,
+                                                                                const mondrian::mtl::smart_array<size_t> *null_mask_indices,
+                                                                                const mondrian::mtl::smart_array<tuplet_id_t> *tuplet_ids)
             {
                 assert (mask != nullptr);
-                assert (begin < end);
-                mask->unset_range_safe(0, (end - begin));
+                mask->unset_range_safe(0, null_mask_indices->get_num_elements());
             };
 
             auto loc_table = pipes::table_scan<value_t>(m_consumer, &all_tuplet_ids, &all_tuplet_ids + 1, m_predicate,

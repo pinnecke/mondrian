@@ -96,6 +96,11 @@ namespace mondrian
                 {
                     return &this->statistics;
                 }
+
+                virtual const char *get_class_name() const override
+                {
+                    return "vpipes::pipes::filter";
+                }
             };
         }
     }

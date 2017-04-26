@@ -49,8 +49,8 @@ namespace mondrian
         struct block_null_copy
         {
             using func_t = std::function<void(__out__ mtl::smart_bitmask *,
-                                              __in__ tuplet_id_t begin,
-                                              __in__ tuplet_id_t end)>;
+                                              __in__ const mtl::smart_array<size_t> *null_mask_indicies,
+                                              __in__ const mtl::smart_array<tuplet_id_t> *tuplet_ids)>;
         };
     }
 }

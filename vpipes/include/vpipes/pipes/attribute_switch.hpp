@@ -24,7 +24,7 @@ namespace mondrian
         namespace pipes
         {
             template<class Input, class Output>
-            class project : public pipe<Input, Output>
+            class attribute_switch : public pipe<Input, Output>
             {
                 using super = pipe<Input, Output>;
             public:
@@ -46,7 +46,7 @@ namespace mondrian
                 size_t buffer_size;
             public:
 
-                project(__in__ consumer_t *destination,
+                attribute_switch(__in__ consumer_t *destination,
                         __in__ point_copy_func_t point_copy,
                         __in__ point_null_copy_func_t point_null_copy,
                         __in__ unsigned batch_size) :
@@ -83,6 +83,11 @@ namespace mondrian
                 virtual void on_cleanup() override
                 {
                     free (out_projected_values);
+                }
+
+                virtual const char *get_class_name() const override
+                {
+                    return "vpipes::pipes::attribute_switch";
                 }
             };
         }

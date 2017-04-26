@@ -99,6 +99,11 @@ namespace mondrian
                     assert_non_null (filter_operator);
                     return filter_operator;
                 }
+
+                virtual const char *get_class_name() const override
+                {
+                    return "vpipes::pipes::table_scan";
+                }
             };
         }
     }

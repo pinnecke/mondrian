@@ -10,9 +10,9 @@
 
 #include <testing_filters.hpp>
 #include <testing_table_scan.hpp>
-#include <testing_nullable_ops.hpp>
+#include <filter/unary_filter/straightforward/testing_nullable_ops.hpp>
 
- using namespace std;
+using namespace std;
 using namespace mondrian::vpipes;
 
 
