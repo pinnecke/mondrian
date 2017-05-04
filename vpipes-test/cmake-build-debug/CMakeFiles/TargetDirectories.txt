@@ -1,0 +1,4 @@
+/home/pegasus/Dokumente/work/codes/develop_branch_free_null_supported/MondrianDB/vpipes-test/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/pegasus/Dokumente/work/codes/develop_branch_free_null_supported/MondrianDB/vpipes-test/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/pegasus/Dokumente/work/codes/develop_branch_free_null_supported/MondrianDB/vpipes-test/cmake-build-debug/CMakeFiles/test.dir
+/home/pegasus/Dokumente/work/codes/develop_branch_free_null_supported/MondrianDB/vpipes-test/cmake-build-debug/CMakeFiles/VpipesTesting.dir
