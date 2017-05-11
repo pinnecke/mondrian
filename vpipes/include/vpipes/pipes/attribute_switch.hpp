@@ -39,7 +39,7 @@ namespace mondrian
 
             private:
                 point_copy_func_t point_copy;
-                point_null_copy_func_t point_null_copy;
+                point_null_copy_func_t m_point_null_copy;
 
                 output_t *out_projected_values;
                 mtl::smart_bitmask out_projected_bitmask;
@@ -51,7 +51,7 @@ namespace mondrian
                         __in__ point_null_copy_func_t point_null_copy,
                         __in__ unsigned batch_size) :
                         super(destination, batch_size), out_projected_bitmask(batch_size),
-                        point_copy(point_copy), point_null_copy(point_null_copy)
+                        point_copy(point_copy), m_point_null_copy(point_null_copy)
                 {
                     // Note here: The operator is unaware of the batch size of the input. The assignment
                     // of the batch size of this operator as the batch size of the preceding operator
@@ -75,7 +75,7 @@ namespace mondrian
                     }
 
                     out_projected_bitmask.unset_all();
-                    point_null_copy(&out_projected_bitmask, in_tupletids, input_batch_size);
+                    m_point_null_copy(&out_projected_bitmask, in_tupletids, input_batch_size);
                     point_copy(out_projected_values, in_tupletids, input_batch_size);
                     super::produce(in_tupletids, out_projected_values, &out_projected_bitmask, input_batch_size, false);
                 }

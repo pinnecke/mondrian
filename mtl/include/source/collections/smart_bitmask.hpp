@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include <bitset>
+
 #include "../../mtl"
 
 #define IDX_TO_BLOCK(idx,bitmask_ptr)                                                   \
