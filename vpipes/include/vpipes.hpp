@@ -44,6 +44,14 @@ namespace mondrian
                 size_t num_tuplets = 0;
                 size_t num_empty_batches = 0;
             };
+
+            struct join_run
+            {
+                size_t count_null_branch_used = 0, count_non_null_branch_used = 0;
+                size_t count_null_values = 0;
+                size_t count_join_pairs = 0;
+            };
+
         }
 
         using tuplet_id_t = size_t;
@@ -62,6 +70,9 @@ namespace mondrian
 #include "vpipes/consumer.hpp"
 #include "vpipes/producer.hpp"
 #include "vpipes/pipe.hpp"
+#include "vpipes/bi_consumer.hpp"
+#include "vpipes/bi_pipe.hpp"
+#include "vpipes/join_func.hpp"
 
 #include "vpipes/pipes/filter.hpp"
 #include "vpipes/pipes/materializer.hpp"
@@ -73,3 +84,4 @@ namespace mondrian
 #include "vpipes/pipes/map.hpp"
 #include "vpipes/pipes/tee.hpp"
 #include "vpipes/pipes/attribute_switch.hpp"
+#include "vpipes/pipes/joins/block_nested_joins.hpp"

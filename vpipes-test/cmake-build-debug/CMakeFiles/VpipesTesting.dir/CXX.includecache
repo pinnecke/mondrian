@@ -17,6 +17,8 @@ source/collections/smart_bitmask.hpp
 ../../mtl/include/source/collections/smart_array.hpp
 ../../mtl
 ../../mtl/include/mtl
+cstring
+-
 
 ../../mtl/include/source/collections/smart_bitmask.hpp
 bitset
@@ -61,6 +63,12 @@ vpipes/producer.hpp
 ../../vpipes/include/vpipes/producer.hpp
 vpipes/pipe.hpp
 ../../vpipes/include/vpipes/pipe.hpp
+vpipes/bi_consumer.hpp
+../../vpipes/include/vpipes/bi_consumer.hpp
+vpipes/bi_pipe.hpp
+../../vpipes/include/vpipes/bi_pipe.hpp
+vpipes/join_func.hpp
+../../vpipes/include/vpipes/join_func.hpp
 vpipes/pipes/filter.hpp
 ../../vpipes/include/vpipes/pipes/filter.hpp
 vpipes/pipes/materializer.hpp
@@ -81,10 +89,20 @@ vpipes/pipes/tee.hpp
 ../../vpipes/include/vpipes/pipes/tee.hpp
 vpipes/pipes/attribute_switch.hpp
 ../../vpipes/include/vpipes/pipes/attribute_switch.hpp
+vpipes/pipes/joins/block_nested_joins.hpp
+../../vpipes/include/vpipes/pipes/joins/block_nested_joins.hpp
 
 ../../vpipes/include/vpipes/batch.hpp
 ../vpipes.hpp
 ../../vpipes/include/vpipes.hpp
+
+../../vpipes/include/vpipes/bi_consumer.hpp
+vpipes.hpp
+-
+
+../../vpipes/include/vpipes/bi_pipe.hpp
+vpipes.hpp
+-
 
 ../../vpipes/include/vpipes/consumer.hpp
 vpipes.hpp
@@ -95,6 +113,10 @@ vpipes.hpp
 -
 
 ../../vpipes/include/vpipes/iterator.hpp
+vpipes.hpp
+-
+
+../../vpipes/include/vpipes/join_func.hpp
 vpipes.hpp
 -
 
@@ -118,6 +140,14 @@ vpipes.hpp
 
 ../../vpipes/include/vpipes/pipes/filter.hpp
 vpipes.hpp
+-
+
+../../vpipes/include/vpipes/pipes/joins/block_nested_joins.hpp
+vpipes.hpp
+-
+map
+-
+vector
 -
 
 ../../vpipes/include/vpipes/pipes/map.hpp
@@ -184,6 +214,14 @@ testing_utilities.hpp
 vpipes.hpp
 -
 
+.././join/testing_nested_loop_joins.hpp
+gtest/gtest.h
+.././join/gtest/gtest.h
+testing_utilities.hpp
+-
+vpipes.hpp
+-
+
 .././minimal_reader.hpp
 vpipes.hpp
 -
@@ -228,9 +266,9 @@ testing_utilities.hpp
 vpipes.hpp
 -
 
-/home/pegasus/Dokumente/work/codes/develop_branch_free_null_supported/MondrianDB/vpipes-test/tester_main.cpp
+/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/vpipes-test/tester_main.cpp
 gtest/gtest.h
-/home/pegasus/Dokumente/work/codes/develop_branch_free_null_supported/MondrianDB/vpipes-test/gtest/gtest.h
+/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/vpipes-test/gtest/gtest.h
 vpipes.hpp
 -
 testing_batches.hpp
@@ -246,5 +284,7 @@ filter/unary_filter/branch_free_micro_optimized/testing_nullable_ops.hpp
 filter/unary_filter/branch_free_unrolled/testing_nullable_ops.hpp
 -
 filter/unary_filter/straightforward/testing_nullable_ops.hpp
+-
+join/testing_nested_loop_joins.hpp
 -
 

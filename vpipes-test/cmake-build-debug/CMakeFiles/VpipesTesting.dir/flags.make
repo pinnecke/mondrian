@@ -6,5 +6,5 @@ CXX_FLAGS = -O0 -g   -std=gnu++14
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/pegasus/Dokumente/work/codes/develop_branch_free_null_supported/MondrianDB/vpipes-test/../vpipes/include -I/home/pegasus/Dokumente/work/codes/develop_branch_free_null_supported/MondrianDB/vpipes-test/. 
+CXX_INCLUDES = -I/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/vpipes-test/../vpipes/include -I/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/vpipes-test/. 
 

@@ -6,15 +6,19 @@ CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../mtl/include/source/collect
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../mtl/include/source/collections/smart_bitmask.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/batch.hpp
+CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/bi_consumer.hpp
+CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/bi_pipe.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/consumer.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/interval.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/iterator.hpp
+CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/join_func.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/macros.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/map_func.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/memory.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/pipe.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/pipes/attribute_switch.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/pipes/filter.hpp
+CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/pipes/joins/block_nested_joins.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/pipes/map.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/pipes/materializer.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/pipes/materializers/nullmask_materialize.hpp
@@ -28,6 +32,7 @@ CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: ../../vpipes/include/vpipes/prod
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: .././filter/unary_filter/branch_free_micro_optimized/testing_nullable_ops.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: .././filter/unary_filter/branch_free_unrolled/testing_nullable_ops.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: .././filter/unary_filter/straightforward/testing_nullable_ops.hpp
+CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: .././join/testing_nested_loop_joins.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: .././minimal_reader.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: .././testing_batches.hpp
 CMakeFiles/VpipesTesting.dir/tester_main.cpp.o: .././testing_filters.hpp

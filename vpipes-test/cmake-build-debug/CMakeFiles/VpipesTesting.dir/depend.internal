@@ -7,15 +7,19 @@ CMakeFiles/VpipesTesting.dir/tester_main.cpp.o
  ../../mtl/include/source/collections/smart_bitmask.hpp
  ../../vpipes/include/vpipes.hpp
  ../../vpipes/include/vpipes/batch.hpp
+ ../../vpipes/include/vpipes/bi_consumer.hpp
+ ../../vpipes/include/vpipes/bi_pipe.hpp
  ../../vpipes/include/vpipes/consumer.hpp
  ../../vpipes/include/vpipes/interval.hpp
  ../../vpipes/include/vpipes/iterator.hpp
+ ../../vpipes/include/vpipes/join_func.hpp
  ../../vpipes/include/vpipes/macros.hpp
  ../../vpipes/include/vpipes/map_func.hpp
  ../../vpipes/include/vpipes/memory.hpp
  ../../vpipes/include/vpipes/pipe.hpp
  ../../vpipes/include/vpipes/pipes/attribute_switch.hpp
  ../../vpipes/include/vpipes/pipes/filter.hpp
+ ../../vpipes/include/vpipes/pipes/joins/block_nested_joins.hpp
  ../../vpipes/include/vpipes/pipes/map.hpp
  ../../vpipes/include/vpipes/pipes/materializer.hpp
  ../../vpipes/include/vpipes/pipes/materializers/nullmask_materialize.hpp
@@ -29,10 +33,11 @@ CMakeFiles/VpipesTesting.dir/tester_main.cpp.o
  .././filter/unary_filter/branch_free_micro_optimized/testing_nullable_ops.hpp
  .././filter/unary_filter/branch_free_unrolled/testing_nullable_ops.hpp
  .././filter/unary_filter/straightforward/testing_nullable_ops.hpp
+ .././join/testing_nested_loop_joins.hpp
  .././minimal_reader.hpp
  .././testing_batches.hpp
  .././testing_filters.hpp
  .././testing_reader_materlizer.hpp
  .././testing_table_scan.hpp
  .././testing_utilities.hpp
- /home/pegasus/Dokumente/work/codes/develop_branch_free_null_supported/MondrianDB/vpipes-test/tester_main.cpp
+ /home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/vpipes-test/tester_main.cpp

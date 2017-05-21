@@ -1,0 +1,1 @@
+/usr/bin/c++   -g   CMakeFiles/bi_operators_play.dir/main.cpp.o  -o bi_operators_play 

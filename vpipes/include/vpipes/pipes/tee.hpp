@@ -51,6 +51,12 @@ namespace mondrian
                     super::produce(data->get_tupletids(), data->get_values(), data->get_null_mask(), data->get_size(),
                                    true);
                 }
+
+                virtual const char *get_class_name() const override
+                {
+                    return "vpipes::pipes::tee";
+                }
+
             };
         }
     }

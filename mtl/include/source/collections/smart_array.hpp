@@ -16,6 +16,7 @@
 #pragma once
 
 #include "../../mtl"
+#include <cstring>
 
 namespace mondrian
 {
