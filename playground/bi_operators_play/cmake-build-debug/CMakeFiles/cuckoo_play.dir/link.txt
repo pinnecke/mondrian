@@ -1,0 +1,1 @@
+/usr/bin/c++   -g   CMakeFiles/cuckoo_play.dir/cuckoo_playing.cpp.o  -o cuckoo_play -lpthread 

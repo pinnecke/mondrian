@@ -8,43 +8,94 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option working_dir="/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="cuckoo_play">
+				<Option output="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/cuckoo_play" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include"/>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include/vpipes/pipes/joins/hash_libs/sparsehash"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 cuckoo_play"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="cuckoo_play/fast">
+				<Option output="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/cuckoo_play" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include"/>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include/vpipes/pipes/joins/hash_libs/sparsehash"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 cuckoo_play/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
-				<Option working_dir="/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="bi_operators_play">
-				<Option output="/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/bi_operators_play" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
+			<Target title="sparse_hash_playing">
+				<Option output="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/sparse_hash_playing" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include"/>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include"/>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include/vpipes/pipes/joins/hash_libs/sparsehash"/>
 					<Add directory="/usr/include/c++/5"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
 					<Add directory="/usr/include/c++/5/backward"/>
@@ -55,20 +106,21 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 bi_operators_play"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 sparse_hash_playing"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="bi_operators_play/fast">
-				<Option output="/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/bi_operators_play" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
+			<Target title="sparse_hash_playing/fast">
+				<Option output="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/sparse_hash_playing" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include"/>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include"/>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include/vpipes/pipes/joins/hash_libs/sparsehash"/>
 					<Add directory="/usr/include/c++/5"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
 					<Add directory="/usr/include/c++/5/backward"/>
@@ -79,17 +131,179 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 bi_operators_play/fast"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 sparse_hash_playing/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="block_nested_join_play">
+				<Option output="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/block_nested_join_play" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include"/>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include/vpipes/pipes/joins/hash_libs/sparsehash"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 block_nested_join_play"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="block_nested_join_play/fast">
+				<Option output="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/block_nested_join_play" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include"/>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include/vpipes/pipes/joins/hash_libs/sparsehash"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 block_nested_join_play/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="dense_hash_playing">
+				<Option output="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/dense_hash_playing" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include"/>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include/vpipes/pipes/joins/hash_libs/sparsehash"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 dense_hash_playing"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="dense_hash_playing/fast">
+				<Option output="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/dense_hash_playing" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include"/>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include/vpipes/pipes/joins/hash_libs/sparsehash"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 dense_hash_playing/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="stl_un_ordered_hash_join_play">
+				<Option output="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/stl_un_ordered_hash_join_play" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include"/>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include/vpipes/pipes/joins/hash_libs/sparsehash"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 stl_un_ordered_hash_join_play"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="stl_un_ordered_hash_join_play/fast">
+				<Option output="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/stl_un_ordered_hash_join_play" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include"/>
+					<Add directory="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/../../vpipes/include/vpipes/pipes/joins/hash_libs/sparsehash"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 stl_un_ordered_hash_join_play/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/main.cpp">
-			<Option target="bi_operators_play"/>
+		<Unit filename="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/block_nested_join_play.cpp">
+			<Option target="block_nested_join_play"/>
 		</Unit>
-		<Unit filename="/home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/CMakeLists.txt">
+		<Unit filename="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cuckoo_playing.cpp">
+			<Option target="cuckoo_play"/>
+		</Unit>
+		<Unit filename="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/dense_hash_play.cpp">
+			<Option target="dense_hash_playing"/>
+		</Unit>
+		<Unit filename="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/sparse_hash_play.cpp">
+			<Option target="sparse_hash_playing"/>
+		</Unit>
+		<Unit filename="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/stl_un_ordered_hash_join.cpp">
+			<Option target="stl_un_ordered_hash_join_play"/>
+		</Unit>
+		<Unit filename="/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>

@@ -1,1 +1,1 @@
-/usr/bin/c++   -O0 -g   CMakeFiles/VpipesTesting.dir/tester_main.cpp.o  -o VpipesTesting /usr/lib/libgtest.a /usr/lib/libgtest_main.a -lpthread 
+/usr/bin/c++   -DGTEST_USE_OWN_TR1_TUPLE=0 -g   CMakeFiles/VpipesTesting.dir/tester_main.cpp.o  -o VpipesTesting /usr/lib/libgtest.a /usr/lib/libgtest_main.a -lpthread 

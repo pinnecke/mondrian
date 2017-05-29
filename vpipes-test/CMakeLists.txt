@@ -3,6 +3,9 @@ project(tests)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS -O0)
+set(CMAKE_CXX_FLAGS -DGTEST_HAS_TR1_TUPLE=0)
+set(CMAKE_CXX_FLAGS -DGTEST_USE_OWN_TR1_TUPLE=0)
+
 
 #add_definitions(-DNWARNING)
 #add_definitions(-DNINFO)
@@ -36,5 +39,5 @@ endif()
 
 if(GTest_FOUND)
     add_executable(VpipesTesting ./tester_main.cpp )
-    target_link_libraries(VpipesTesting ${GTEST_BOTH_LIBRARIES} pthread)
+    target_link_libraries(VpipesTesting ${GTEST_BOTH_LIBRARIES}  pthread)
 endif()

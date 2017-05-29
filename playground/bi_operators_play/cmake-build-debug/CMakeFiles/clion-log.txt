@@ -1,4 +1,4 @@
-/home/pegasus/Dokumente/work/clion-2016.3.2/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play
+/home/pegasus/Dokumente/work/clion-2016.3.2/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play
 -- The C compiler identification is GNU 5.4.0
 -- The CXX compiler identification is GNU 5.4.0
 -- Check for working C compiler: /usr/bin/cc
@@ -15,4 +15,4 @@
 -- Detecting CXX compile features - done
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug
+-- Build files have been written to: /home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug

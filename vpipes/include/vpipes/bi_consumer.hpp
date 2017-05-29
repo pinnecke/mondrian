@@ -20,7 +20,7 @@
 
 namespace mondrian{
     namespace vpipes{
-            enum class which_operator { left_operator, right_operator, neither };
+            enum class which_operand { outer_operand, inner_operand, neither };
     }
 }
 
@@ -42,12 +42,12 @@ namespace mondrian {
 
             private:
                 bi_consumer_t *context;
-                which_operator operator_role;
+                which_operand operand_role;
 
             public:
                 consumer_proxy(__in__ bi_consumer_t *context,
-                               __in__ which_operator operator_role):
-                        context(context), operator_role(operator_role)
+                               __in__ which_operand operand_role):
+                        context(context), operand_role(operand_role)
                 {
 
                 }
@@ -60,7 +60,7 @@ namespace mondrian {
             protected:
                 inline virtual void on_consume(__in__ const input_batch_t *data) override __attribute__((always_inline))
                 {
-                    this->context->consume(data, this->operator_role);
+                    this->context->consume(data, this->operand_role);
                 }
 
                 inline virtual void on_cleanup() override __attribute__((always_inline))
@@ -82,8 +82,8 @@ namespace mondrian {
 
         protected:
             statistics::operator_run statistics;
-            consumer_proxy_t left_operator;
-            consumer_proxy_t right_operator;
+            consumer_proxy_t outer_operand;
+            consumer_proxy_t inner_operand;
 
         public:
             using input_t = Input;
@@ -93,29 +93,33 @@ namespace mondrian {
             class consumer_proxy<input_t>;
 
         protected:
-            virtual void on_consume(__in__ const input_batch_t *data, __in__ which_operator operator_role) {};
+            virtual void on_consume(__in__ const input_batch_t *data, __in__ which_operand operand_role) {};
 
             virtual void on_cleanup() {};
 
-            inline virtual void consume(__in__ const input_batch_t *data, __in__ which_operator operator_role) final __attribute__((always_inline)) {
-                    on_consume(data, operator_role);
+            inline virtual void consume(__in__ const input_batch_t *data, __in__ which_operand operand_role) final __attribute__((always_inline)) {
+                statistics.num_batches++;
+                if (__builtin_expect(!data->is_empty(), true)) {
+                    statistics.num_tuplets += data->get_size();
+                    on_consume(data, operand_role);
+                } else statistics.num_empty_batches++;
             }
 
         public:
-            bi_consumer() : left_operator(this, which_operator::left_operator),
-                            right_operator(this, which_operator::right_operator)
+            bi_consumer() : outer_operand(this, which_operand::outer_operand),
+                            inner_operand(this, which_operand::inner_operand)
             {
 
             }
 
-            consumer_proxy_t *get_left_operator()
+            consumer_proxy_t *get_outer_operand()
             {
-                return &left_operator;
+                return &outer_operand;
             }
 
-            consumer_proxy_t *get_right_operator()
+            consumer_proxy_t *get_inner_operand()
             {
-                return &right_operator;
+                return &inner_operand;
             }
 
             virtual void close()

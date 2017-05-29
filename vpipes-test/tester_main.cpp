@@ -8,10 +8,7 @@
 #include <testing_reader_materlizer.hpp>
 #include <testing_filters.hpp>
 #include <testing_table_scan.hpp>
-#include <filter/unary_filter/branch_free_micro_optimized/testing_nullable_ops.hpp>
-#include <filter/unary_filter/branch_free_unrolled/testing_nullable_ops.hpp>
-#include <filter/unary_filter/straightforward/testing_nullable_ops.hpp>
-#include <join/testing_nested_loop_joins.hpp>
+#include <join/join_includes.hpp>
 using namespace std;
 using namespace mondrian::vpipes;
 

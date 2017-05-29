@@ -140,13 +140,13 @@ TEST(TestNestedLoopJoin, TestEquiJoinNoneNull)
 
     mondrian::vpipes::bi_pipes::block_nested_join<size_t> b_join (&tee_op,batch_size,
                                                                   mondrian::vpipes::predicates::join_conditions<size_t >::equal_to::join_condition_impl());
-
-    auto rhs_table = pipes::table_scan<size_t >(b_join.get_left_operator(), &all_tuplet_ids, &all_tuplet_ids + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
+    
+    auto rhs_table = pipes::table_scan<size_t >(b_join.get_inner_operand(), &all_tuplet_ids, &all_tuplet_ids + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
                                                 ::greater_equal::micro_optimized_impl(predicate_value,true),
                                                 null_value_filter_policy::skip_null_values,
                                                 loc_block_copy, loc_block_null_copy, batch_size, batch_size, true);
 
-    auto lhs_table = pipes::table_scan<size_t >(b_join.get_right_operator(), &all_tuplet_ids, &all_tuplet_ids + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
+    auto lhs_table = pipes::table_scan<size_t >(b_join.get_outer_operand(), &all_tuplet_ids, &all_tuplet_ids + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
                                                  ::greater_equal::micro_optimized_impl(predicate_value,true),
                                                  null_value_filter_policy::skip_null_values,
                                                  loc_block_copy2, loc_block_null_copy, batch_size, batch_size, true);
@@ -305,12 +305,12 @@ TEST(TestNestedLoopJoin, TestEquiJoinNull)
     mondrian::vpipes::bi_pipes::block_nested_join<size_t> b_join (&tee_op,batch_size,
                                                                   mondrian::vpipes::predicates::join_conditions<size_t >::equal_to::join_condition_impl());
 
-    auto rhs_table = pipes::table_scan<size_t >(b_join.get_left_operator(), &all_tuplet_ids, &all_tuplet_ids + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
+    auto rhs_table = pipes::table_scan<size_t >(b_join.get_inner_operand(), &all_tuplet_ids, &all_tuplet_ids + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
                                                 ::greater_equal::micro_optimized_impl(predicate_value,true),
                                                 null_value_filter_policy::skip_null_values,
                                                 loc_block_copy, loc_block_null_copy, batch_size, batch_size, true);
 
-    auto lhs_table = pipes::table_scan<size_t >(b_join.get_right_operator(), &all_tuplet_ids, &all_tuplet_ids + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
+    auto lhs_table = pipes::table_scan<size_t >(b_join.get_outer_operand(), &all_tuplet_ids, &all_tuplet_ids + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
                                                  ::greater_equal::micro_optimized_impl(predicate_value,true),
                                                  null_value_filter_policy::skip_null_values,
                                                  loc_block_copy2, loc_block_null_copy2, batch_size, batch_size, true);
@@ -455,12 +455,12 @@ TEST(TestNestedLoopJoin, TestEquiJoinDiffLengthColumns)
     mondrian::vpipes::bi_pipes::block_nested_join<size_t> b_join (&tee_op,batch_size,
                                                                   mondrian::vpipes::predicates::join_conditions<size_t >::equal_to::join_condition_impl());
 
-    auto rhs_table = pipes::table_scan<size_t >(b_join.get_left_operator(), &all_tuplet_ids, &all_tuplet_ids + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
+    auto rhs_table = pipes::table_scan<size_t >(b_join.get_inner_operand(), &all_tuplet_ids, &all_tuplet_ids + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
                                                 ::greater_equal::micro_optimized_impl(predicate_value,true),
                                                 null_value_filter_policy::skip_null_values,
                                                 loc_block_copy, loc_block_null_copy, batch_size, batch_size, true);
 
-    auto lhs_table = pipes::table_scan<size_t >(b_join.get_right_operator(), &all_tuplet_ids2, &all_tuplet_ids2 + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
+    auto lhs_table = pipes::table_scan<size_t >(b_join.get_outer_operand(), &all_tuplet_ids2, &all_tuplet_ids2 + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
                                                  ::greater_equal::micro_optimized_impl(predicate_value,true),
                                                  null_value_filter_policy::skip_null_values,
                                                  loc_block_copy, loc_block_null_copy, batch_size, batch_size, true);
@@ -601,12 +601,12 @@ TEST(TestNestedLoopJoin, TestBiggerThanJoinDiffLengthColumns)
     mondrian::vpipes::bi_pipes::block_nested_join<size_t> b_join (&tee_op,batch_size,
                                                                   mondrian::vpipes::predicates::join_conditions<size_t >::greater_than::join_condition_impl());
 
-    auto rhs_table = pipes::table_scan<size_t >(b_join.get_left_operator(), &all_tuplet_ids, &all_tuplet_ids + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
+    auto rhs_table = pipes::table_scan<size_t >(b_join.get_inner_operand(), &all_tuplet_ids, &all_tuplet_ids + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
                                                 ::greater_equal::micro_optimized_impl(predicate_value,true),
                                                 null_value_filter_policy::skip_null_values,
                                                 loc_block_copy, loc_block_null_copy, batch_size, batch_size, true);
 
-    auto lhs_table = pipes::table_scan<size_t >(b_join.get_right_operator(), &all_tuplet_ids2, &all_tuplet_ids2 + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
+    auto lhs_table = pipes::table_scan<size_t >(b_join.get_outer_operand(), &all_tuplet_ids2, &all_tuplet_ids2 + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
                                                 ::greater_equal::micro_optimized_impl(predicate_value,true),
                                                 null_value_filter_policy::skip_null_values,
                                                 loc_block_copy2, loc_block_null_copy, batch_size, batch_size, true);

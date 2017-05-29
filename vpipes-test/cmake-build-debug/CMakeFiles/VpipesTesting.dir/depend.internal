@@ -19,7 +19,15 @@ CMakeFiles/VpipesTesting.dir/tester_main.cpp.o
  ../../vpipes/include/vpipes/pipe.hpp
  ../../vpipes/include/vpipes/pipes/attribute_switch.hpp
  ../../vpipes/include/vpipes/pipes/filter.hpp
- ../../vpipes/include/vpipes/pipes/joins/block_nested_joins.hpp
+ ../../vpipes/include/vpipes/pipes/joins/block_nested_join.hpp
+ ../../vpipes/include/vpipes/pipes/joins/dense_map_hash_join.hpp
+ ../../vpipes/include/vpipes/pipes/joins/hash_libs/libcuckoo/cuckoohash_config.hh
+ ../../vpipes/include/vpipes/pipes/joins/hash_libs/libcuckoo/cuckoohash_map.hh
+ ../../vpipes/include/vpipes/pipes/joins/hash_libs/libcuckoo/cuckoohash_util.hh
+ ../../vpipes/include/vpipes/pipes/joins/hash_libs/libcuckoo/libcuckoo_bucket_container.hh
+ ../../vpipes/include/vpipes/pipes/joins/libcuckoo_hash_join.hpp
+ ../../vpipes/include/vpipes/pipes/joins/sparse_map_hash_join.hpp
+ ../../vpipes/include/vpipes/pipes/joins/stl_hash_join.hpp.hpp
  ../../vpipes/include/vpipes/pipes/map.hpp
  ../../vpipes/include/vpipes/pipes/materializer.hpp
  ../../vpipes/include/vpipes/pipes/materializers/nullmask_materialize.hpp
@@ -30,14 +38,16 @@ CMakeFiles/VpipesTesting.dir/tester_main.cpp.o
  ../../vpipes/include/vpipes/pipes/tee.hpp
  ../../vpipes/include/vpipes/predicate_func.hpp
  ../../vpipes/include/vpipes/producer.hpp
- .././filter/unary_filter/branch_free_micro_optimized/testing_nullable_ops.hpp
- .././filter/unary_filter/branch_free_unrolled/testing_nullable_ops.hpp
- .././filter/unary_filter/straightforward/testing_nullable_ops.hpp
+ .././join/join_includes.hpp
+ .././join/testing_cuckoo_hash_join.hpp
+ .././join/testing_dense_hash_join.hpp
  .././join/testing_nested_loop_joins.hpp
+ .././join/testing_sparse_hash_join.hpp
+ .././join/testing_stl_hash_joins.hpp
  .././minimal_reader.hpp
  .././testing_batches.hpp
  .././testing_filters.hpp
  .././testing_reader_materlizer.hpp
  .././testing_table_scan.hpp
  .././testing_utilities.hpp
- /home/pegasus/Dokumente/work/codes/develop_bi/MondrianDB/vpipes-test/tester_main.cpp
+ /home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/vpipes-test/tester_main.cpp

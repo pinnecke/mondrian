@@ -73,6 +73,7 @@ namespace mondrian
 #include "vpipes/bi_consumer.hpp"
 #include "vpipes/bi_pipe.hpp"
 #include "vpipes/join_func.hpp"
+#include "vpipes/pipes/joins/hash_libs/libcuckoo/cuckoohash_map.hh"
 
 #include "vpipes/pipes/filter.hpp"
 #include "vpipes/pipes/materializer.hpp"
@@ -84,4 +85,8 @@ namespace mondrian
 #include "vpipes/pipes/map.hpp"
 #include "vpipes/pipes/tee.hpp"
 #include "vpipes/pipes/attribute_switch.hpp"
-#include "vpipes/pipes/joins/block_nested_joins.hpp"
+#include "vpipes/pipes/joins/block_nested_join.hpp"
+#include "vpipes/pipes/joins/stl_hash_join.hpp.hpp"
+#include "vpipes/pipes/joins/libcuckoo_hash_join.hpp"
+#include "vpipes/pipes/joins/dense_map_hash_join.hpp"
+#include "vpipes/pipes/joins/sparse_map_hash_join.hpp"
