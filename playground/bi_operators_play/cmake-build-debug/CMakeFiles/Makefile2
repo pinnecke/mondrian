@@ -60,13 +60,50 @@ CMAKE_SOURCE_DIR = /home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianD
 CMAKE_BINARY_DIR = /home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug
 
 #=============================================================================
+# Target rules for target CMakeFiles/bench_mark.dir
+
+# All Build rule for target.
+CMakeFiles/bench_mark.dir/all:
+	$(MAKE) -f CMakeFiles/bench_mark.dir/build.make CMakeFiles/bench_mark.dir/depend
+	$(MAKE) -f CMakeFiles/bench_mark.dir/build.make CMakeFiles/bench_mark.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles --progress-num=1,2 "Built target bench_mark"
+.PHONY : CMakeFiles/bench_mark.dir/all
+
+# Include target in all.
+all: CMakeFiles/bench_mark.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/bench_mark.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/bench_mark.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles 0
+.PHONY : CMakeFiles/bench_mark.dir/rule
+
+# Convenience name for target.
+bench_mark: CMakeFiles/bench_mark.dir/rule
+
+.PHONY : bench_mark
+
+# clean rule for target.
+CMakeFiles/bench_mark.dir/clean:
+	$(MAKE) -f CMakeFiles/bench_mark.dir/build.make CMakeFiles/bench_mark.dir/clean
+.PHONY : CMakeFiles/bench_mark.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/bench_mark.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
 # Target rules for target CMakeFiles/cuckoo_play.dir
 
 # All Build rule for target.
 CMakeFiles/cuckoo_play.dir/all:
 	$(MAKE) -f CMakeFiles/cuckoo_play.dir/build.make CMakeFiles/cuckoo_play.dir/depend
 	$(MAKE) -f CMakeFiles/cuckoo_play.dir/build.make CMakeFiles/cuckoo_play.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles --progress-num=3,4 "Built target cuckoo_play"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles --progress-num=5,6 "Built target cuckoo_play"
 .PHONY : CMakeFiles/cuckoo_play.dir/all
 
 # Include target in all.
@@ -103,7 +140,7 @@ clean: CMakeFiles/cuckoo_play.dir/clean
 CMakeFiles/sparse_hash_playing.dir/all:
 	$(MAKE) -f CMakeFiles/sparse_hash_playing.dir/build.make CMakeFiles/sparse_hash_playing.dir/depend
 	$(MAKE) -f CMakeFiles/sparse_hash_playing.dir/build.make CMakeFiles/sparse_hash_playing.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles --progress-num=7,8 "Built target sparse_hash_playing"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles --progress-num=9,10 "Built target sparse_hash_playing"
 .PHONY : CMakeFiles/sparse_hash_playing.dir/all
 
 # Include target in all.
@@ -140,7 +177,7 @@ clean: CMakeFiles/sparse_hash_playing.dir/clean
 CMakeFiles/block_nested_join_play.dir/all:
 	$(MAKE) -f CMakeFiles/block_nested_join_play.dir/build.make CMakeFiles/block_nested_join_play.dir/depend
 	$(MAKE) -f CMakeFiles/block_nested_join_play.dir/build.make CMakeFiles/block_nested_join_play.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles --progress-num=1,2 "Built target block_nested_join_play"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles --progress-num=3,4 "Built target block_nested_join_play"
 .PHONY : CMakeFiles/block_nested_join_play.dir/all
 
 # Include target in all.
@@ -177,7 +214,7 @@ clean: CMakeFiles/block_nested_join_play.dir/clean
 CMakeFiles/dense_hash_playing.dir/all:
 	$(MAKE) -f CMakeFiles/dense_hash_playing.dir/build.make CMakeFiles/dense_hash_playing.dir/depend
 	$(MAKE) -f CMakeFiles/dense_hash_playing.dir/build.make CMakeFiles/dense_hash_playing.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles --progress-num=5,6 "Built target dense_hash_playing"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles --progress-num=7,8 "Built target dense_hash_playing"
 .PHONY : CMakeFiles/dense_hash_playing.dir/all
 
 # Include target in all.
@@ -214,7 +251,7 @@ clean: CMakeFiles/dense_hash_playing.dir/clean
 CMakeFiles/stl_un_ordered_hash_join_play.dir/all:
 	$(MAKE) -f CMakeFiles/stl_un_ordered_hash_join_play.dir/build.make CMakeFiles/stl_un_ordered_hash_join_play.dir/depend
 	$(MAKE) -f CMakeFiles/stl_un_ordered_hash_join_play.dir/build.make CMakeFiles/stl_un_ordered_hash_join_play.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles --progress-num=9,10 "Built target stl_un_ordered_hash_join_play"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles --progress-num=11,12 "Built target stl_un_ordered_hash_join_play"
 .PHONY : CMakeFiles/stl_un_ordered_hash_join_play.dir/all
 
 # Include target in all.

@@ -3,6 +3,7 @@
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true" buildAllGenerated="true">
     <generated>
       <config projectName="bi_operators_play" targetName="block_nested_join_play" />
+      <config projectName="bi_operators_play" targetName="bench_mark" />
       <config projectName="bi_operators_play" targetName="cuckoo_play" />
       <config projectName="bi_operators_play" targetName="sparse_hash_playing" />
       <config projectName="bi_operators_play" targetName="dense_hash_playing" />
@@ -27,21 +28,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="libcuckoo_hash_join.hpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/joins/libcuckoo_hash_join.hpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="54">
-              <caret line="46" column="55" lean-forward="false" selection-start-line="46" selection-start-column="55" selection-end-line="46" selection-end-column="55" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="stl_hash_join.hpp.hpp" pinned="false" current-in-tab="true">
+      <file leaf-file-name="stl_hash_join.hpp.hpp" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/joins/stl_hash_join.hpp.hpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="230">
-              <caret line="46" column="54" lean-forward="false" selection-start-line="46" selection-start-column="54" selection-end-line="46" selection-end-column="54" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -57,11 +48,85 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dense_map_hash_join.hpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/joins/dense_map_hash_join.hpp">
+      <file leaf-file-name="cuckoo_playing.cpp" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/cuckoo_playing.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="47" column="64" lean-forward="false" selection-start-line="47" selection-start-column="64" selection-end-line="47" selection-end-column="64" />
+            <state relative-caret-position="234">
+              <caret line="87" column="0" lean-forward="true" selection-start-line="87" selection-start-column="0" selection-end-line="87" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#19#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="bench_marking_play.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bench_marking_play.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#19#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="join_results.png" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/join_results.png">
+          <provider selected="true" editor-type-id="images">
+            <state />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="block_nested_join_play.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/block_nested_join_play.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="162">
+              <caret line="71" column="0" lean-forward="true" selection-start-line="69" selection-start-column="1" selection-end-line="71" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="thread" pinned="false" current-in-tab="false">
+        <entry file="file:///usr/include/c++/5/thread">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="116">
+              <caret line="136" column="0" lean-forward="false" selection-start-line="136" selection-start-column="0" selection-end-line="136" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CMakeLists.txt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="342">
+              <caret line="19" column="32" lean-forward="false" selection-start-line="19" selection-start-column="32" selection-end-line="19" selection-end-column="32" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="profiler.hpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/profiler.hpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="72">
+              <caret line="4" column="13" lean-forward="false" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
+              <folding>
+                <element signature="e#247#290#0" expanded="true" />
+                <element signature="e#356#386#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="utility" pinned="false" current-in-tab="false">
+        <entry file="file:///usr/include/c++/5/utility">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -88,6 +153,8 @@
       <find>column_operand_matching_indicies</find>
       <find>.get_right_operator()</find>
       <find>indicies_offset</find>
+      <find>&quot;cuckoo_hashing&quot;</find>
+      <find>&quot;\&lt;\&lt;\&lt;&quot;</find>
     </findStrings>
     <replaceStrings>
       <replace>join_map</replace>
@@ -100,6 +167,7 @@
       <replace>operand</replace>
       <replace>inner_operand_matching_indicies</replace>
       <replace>.get_outer_operand()</replace>
+      <replace>&quot;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&quot;</replace>
     </replaceStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -116,20 +184,22 @@
         <option value="$PROJECT_DIR$/../../vpipes/include/vpipes/bi_consumer.hpp" />
         <option value="$PROJECT_DIR$/another_play.cpp" />
         <option value="$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/joins/block_nested_joins.hpp" />
-        <option value="$PROJECT_DIR$/cuckoo_playing.cpp" />
         <option value="$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/joins/stl_bucket_hash_join.hpp.hpp" />
         <option value="$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/joins/hash_libs/sparsehash/dense_hash_map" />
         <option value="$PROJECT_DIR$/main.cpp" />
         <option value="$PROJECT_DIR$/dense_hash_play.cpp" />
         <option value="$PROJECT_DIR$/sparse_hash_play.cpp" />
         <option value="$PROJECT_DIR$/../../vpipes/include/vpipes.hpp" />
-        <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/../../../../develop_bi/MondrianDB/vpipes-test/join/testing_nested_loop_joins.hpp" />
         <option value="$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/joins/block_nested_join.hpp" />
         <option value="$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/joins/stl_hash_join.hpp.hpp" />
         <option value="$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/joins/dense_map_hash_join.hpp" />
         <option value="$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/joins/sparse_map_hash_join.hpp" />
         <option value="$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/joins/libcuckoo_hash_join.hpp" />
+        <option value="$PROJECT_DIR$/profiler.hpp" />
+        <option value="$PROJECT_DIR$/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/bench_marking_play.cpp" />
+        <option value="$PROJECT_DIR$/cuckoo_playing.cpp" />
       </list>
     </option>
   </component>
@@ -279,6 +349,24 @@
               <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Header Search Paths" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="include" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bi_operators_play" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="bi_operators_play" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -293,11 +381,12 @@
     <property name="settings.editor.selected.configurable" value="configurable.group.tools" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/joins/hash_libs" />
       <recent name="$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/joins" />
     </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/joins/hash_libs" />
+    <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/joins" />
     </key>
   </component>
@@ -313,7 +402,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.stl_un_ordered_hash_join_play">
+  <component name="RunManager" selected="Application.bench_mark">
     <configuration default="true" type="CLion_Remote" factoryName="GDB Remote Debug" remoteCommand="" symbolFile="" sysroot="">
       <method />
     </configuration>
@@ -500,6 +589,10 @@
       <envs />
       <method />
     </configuration>
+    <configuration default="false" name="bench_mark" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="bi_operators_play" TARGET_NAME="bench_mark" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="bi_operators_play" RUN_TARGET_NAME="bench_mark">
+      <envs />
+      <method />
+    </configuration>
     <configuration default="false" name="block_nested_join_play" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="bi_operators_play" TARGET_NAME="block_nested_join_play" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="bi_operators_play" RUN_TARGET_NAME="block_nested_join_play">
       <envs />
       <method />
@@ -520,13 +613,14 @@
       <envs />
       <method />
     </configuration>
-    <list size="6">
+    <list size="7">
       <item index="0" class="java.lang.String" itemvalue="Application.Build All" />
-      <item index="1" class="java.lang.String" itemvalue="Application.block_nested_join_play" />
-      <item index="2" class="java.lang.String" itemvalue="Application.cuckoo_play" />
-      <item index="3" class="java.lang.String" itemvalue="Application.dense_hash_playing" />
-      <item index="4" class="java.lang.String" itemvalue="Application.sparse_hash_playing" />
-      <item index="5" class="java.lang.String" itemvalue="Application.stl_un_ordered_hash_join_play" />
+      <item index="1" class="java.lang.String" itemvalue="Application.bench_mark" />
+      <item index="2" class="java.lang.String" itemvalue="Application.block_nested_join_play" />
+      <item index="3" class="java.lang.String" itemvalue="Application.cuckoo_play" />
+      <item index="4" class="java.lang.String" itemvalue="Application.dense_hash_playing" />
+      <item index="5" class="java.lang.String" itemvalue="Application.sparse_hash_playing" />
+      <item index="6" class="java.lang.String" itemvalue="Application.stl_un_ordered_hash_join_play" />
     </list>
   </component>
   <component name="ShelveChangesManager" show_recycled="false">
@@ -555,12 +649,12 @@
       <workItem from="1496019821648" duration="982000" />
       <workItem from="1496045956094" duration="2788000" />
       <workItem from="1496056799778" duration="278000" />
-      <workItem from="1496057960661" duration="903000" />
+      <workItem from="1496057960661" duration="6148000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="85798000" />
+    <option name="totallyTimeSpent" value="91043000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="-4" width="1301" height="772" extended-state="6" />
@@ -600,34 +694,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/materializer.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-482">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/map.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-801">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../mtl/include/mtl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="164">
-          <caret line="18" column="17" lean-forward="false" selection-start-line="18" selection-start-column="17" selection-end-line="18" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../vpipes/include/vpipes/pipe.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="2" lean-forward="false" selection-start-line="6" selection-start-column="2" selection-end-line="6" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/join_func.hpp" />
     <entry file="file://$PROJECT_DIR$/../../vpipes/include/vpipes/map_func.hpp">
       <provider selected="true" editor-type-id="text-editor">
@@ -779,13 +845,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/include/c++/5/thread">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="73">
-          <caret line="136" column="0" lean-forward="false" selection-start-line="136" selection-start-column="0" selection-end-line="136" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../vpipes/include/vpipes/join_func.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="337">
@@ -829,26 +888,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/block_nested_join_play.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1728">
-          <caret line="96" column="1" lean-forward="false" selection-start-line="96" selection-start-column="1" selection-end-line="96" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../vpipes/include/vpipes.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1566">
           <caret line="87" column="46" lean-forward="false" selection-start-line="87" selection-start-column="46" selection-end-line="87" selection-end-column="46" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="12" column="37" lean-forward="false" selection-start-line="12" selection-start-column="37" selection-end-line="12" selection-end-column="37" />
           <folding />
         </state>
       </provider>
@@ -866,16 +909,6 @@
         <state relative-caret-position="1710">
           <caret line="95" column="0" lean-forward="false" selection-start-line="95" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cuckoo_playing.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1188">
-          <caret line="66" column="48" lean-forward="false" selection-start-line="66" selection-start-column="20" selection-end-line="66" selection-end-column="48" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -916,7 +949,7 @@
         <state relative-caret-position="18">
           <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
           <folding>
-            <element signature="e#0#19#0" expanded="true" />
+            <element signature="e#0#19#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -947,9 +980,77 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../../vpipes/include/vpipes/pipes/joins/stl_hash_join.hpp.hpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="46" column="54" lean-forward="false" selection-start-line="46" selection-start-column="54" selection-end-line="46" selection-end-column="54" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/profiler.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="4" column="13" lean-forward="false" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
+          <folding>
+            <element signature="e#247#290#0" expanded="true" />
+            <element signature="e#356#386#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/c++/5/utility">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/c++/5/thread">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="116">
+          <caret line="136" column="0" lean-forward="false" selection-start-line="136" selection-start-column="0" selection-end-line="136" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="19" column="32" lean-forward="false" selection-start-line="19" selection-start-column="32" selection-end-line="19" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/block_nested_join_play.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="71" column="0" lean-forward="true" selection-start-line="69" selection-start-column="1" selection-end-line="71" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bench_marking_play.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/join_results.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cuckoo_playing.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="87" column="0" lean-forward="true" selection-start-line="87" selection-start-column="0" selection-end-line="87" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -14,6 +14,8 @@ add_executable(block_nested_join_play block_nested_join_play.cpp)
 add_executable(cuckoo_play cuckoo_playing.cpp)
 add_executable(dense_hash_playing dense_hash_play.cpp)
 add_executable(sparse_hash_playing sparse_hash_play.cpp)
+add_executable(bench_mark bench_marking_play.cpp)
 
 target_link_libraries(cuckoo_play pthread)
+target_link_libraries(bench_mark pthread)
 

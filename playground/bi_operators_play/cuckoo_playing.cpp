@@ -10,9 +10,9 @@ int main() {
 
 
     using namespace mondrian::vpipes;
-    size_t res_length = 1000;
+    size_t res_length = 10000000;
     auto batch_size =4;
-    auto  input_length= 8;
+    auto  input_length= 10000000;
     auto  val_result = new size_t[res_length];
     auto  ids_result = new size_t[res_length];
     auto predicate_value = 0 ;
@@ -74,7 +74,7 @@ int main() {
     auto loc_table2 = pipes::table_scan<size_t >(b_join.get_outer_operand(), &all_tuplet_ids, &all_tuplet_ids + 1,mondrian::vpipes::predicates::batched_predicates<size_t >
                                                  ::greater_equal::micro_optimized_impl(predicate_value,true),
                                                  null_value_filter_policy::skip_null_values,
-                                                 loc_block_copy2, loc_block_null_copy, batch_size, batch_size, true);
+                                                 loc_block_copy, loc_block_null_copy, batch_size, batch_size, true);
 
     loc_table.start();
     loc_table2.start();

@@ -1,4 +1,5 @@
 /home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles/bench_mark.dir
 /home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles/cuckoo_play.dir
 /home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles/edit_cache.dir
 /home/pegasus/Dokumente/work/codes/final_develop_bi/MondrianDB/playground/bi_operators_play/cmake-build-debug/CMakeFiles/sparse_hash_playing.dir
